@@ -36,7 +36,7 @@ const startSearching = useCallback((queryToEncode: string) => {
     } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
       setSuggestedQuery("");
     }
-  
+
     // Start searching immediately when user types
     if (!userQueryIsBlank) {
       debouncedStartSearching(userQuery);
