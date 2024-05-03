@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { usePubSub } from "create-pubsub/react";
 import {
   promptPubSub,
@@ -11,14 +12,14 @@ import { SettingsButton } from "../../components/SettingsButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { useEffect } from "react";
 import { prepareTextGeneration } from "../../modules/textGeneration";
 import { useLocation } from 'react-router-dom';
+import { search } from "../../modules/search";
 
 export const SearchPage = () => {
     const [query, setQuery] = usePubSub(promptPubSub);
     const [response] = usePubSub(responsePubSub);
-    const [searchResults] = usePubSub(searchResultsPubSub);
+    const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
     const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   
     useEffect(() => {
@@ -35,7 +36,16 @@ export const SearchPage = () => {
       }
     }, [location.search, setQuery]);
 
-    
+    // Add a new useEffect hook to call the search function when query changes
+    useEffect(() => {
+      async function performSearch() {
+        const results = await search(query);
+        setSearchResults(results);
+      }
+
+      performSearch();
+    }, [query, setSearchResults]);
+
   return (
     <>
       <SearchForm query={query} updateQuery={setQuery} />
