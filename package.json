@@ -13,7 +13,9 @@
     "prettier:fix": "prettier --write \"**/*.{ts,js,json}\" \"!package.json\""
   },
   "dependencies": {
+    "@capacitor/android": "^6.0.0",
     "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
     "@energetic-ai/core": "^0.2.0",
     "@energetic-ai/embeddings": "^0.2.0",
     "@energetic-ai/model-embeddings-en": "^0.2.0",
