@@ -59,6 +59,13 @@ export function SearchForm({
           }
         }
       }
+
+      if (event.code === "Escape") {
+        if (textAreaRef.current) {
+          textAreaRef.current.value = "";
+          startSearching(""); // Reset search results if press ESC
+        }
+      }
     };
     const textArea = textAreaRef.current;
     textArea?.addEventListener("keypress", keyboardEventHandler);
