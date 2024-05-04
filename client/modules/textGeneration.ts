@@ -9,8 +9,6 @@ import {
   getSearchResults,
   updateUrlsDescriptions,
   getUrlsDescriptions,
-  updateReRankedSearchResults,
-  getReRankedSearchResults,
   getDisableWebGpuUsageSetting,
 } from "./pubSub";
 import { search } from "./search";
@@ -52,8 +50,6 @@ export async function prepareTextGeneration() {
 
   updateSearchResults(searchResults);
 
-  updateReRankedSearchResults(searchResults);
-
   updateUrlsDescriptions(
     searchResults.reduce(
       (acc, [, snippet, url]) => ({ ...acc, [url]: snippet }),
@@ -73,15 +69,20 @@ export async function prepareTextGeneration() {
 
       if (getDisableWebGpuUsageSetting()) throw Error("WebGPU is disabled.");
 
-      await generateTextWithWebLlm();
+      if (getUseLargerModelSetting()) {
+        try {
+          await generateTextWithWebLlm();
+        } catch (error) {
+          await generateTextWithRatchet();
+        }
+      } else {
+        try {
+          await generateTextWithRatchet();
+        } catch (error) {
+          await generateTextWithWebLlm();
+        }
+      }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : (error as string);
-
-      console.info(
-        `Could not generate response with Web-LLM: ${errorMessage}\n\nFalling back to Wllama.`,
-      );
-
       await generateTextWithWllama();
     }
   } catch (error) {
@@ -161,7 +162,7 @@ async function generateTextWithWebLlm() {
       "I have a request/question for you, but before that, I want to provide you with some context.",
       "\n",
       "Context:",
-      getReRankedSearchResults()
+      getSearchResults()
         .slice(0, isRunningOnMobile ? 3 : 6)
         .map(([title, snippet]) => `- ${title}: ${snippet}`)
         .join("\n"),
@@ -333,7 +334,7 @@ async function generateTextWithWllama() {
       [
         "You are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.",
         "If the information below is useful, you can use it to complement your response. Otherwise, ignore it.",
-        getReRankedSearchResults()
+        getSearchResults()
           .slice(0, isRunningOnMobile ? 5 : 10)
           .map(([title, snippet]) => `- ${title}: ${snippet}`)
           .join("\n"),
@@ -410,4 +411,75 @@ async function generateTextWithWllama() {
   }
 
   await exitWllama();
+}
+
+async function generateTextWithRatchet() {
+  const { initializeRatchet, runCompletion, exitRatchet } = await import(
+    "./ratchet"
+  );
+
+  await initializeRatchet((loadingProgressPercentage) =>
+    updateLoadingToast(`Loading: ${Math.floor(loadingProgressPercentage)}%`),
+  );
+
+  if (!getDisableAiResponseSetting()) {
+    if (!query) throw Error("Query is empty.");
+
+    updateLoadingToast("Generating response...");
+
+    const prompt = [
+      "Provide a concise response to the request below.",
+      "If the information from the Web Search Results below is useful, you can use it to complement your response. Otherwise, ignore it.",
+      "",
+      "Web Search Results:",
+      "",
+      getSearchResults()
+        .slice(0, isRunningOnMobile ? 5 : 10)
+        .map(([title, snippet]) => `- ${title}: ${snippet}`)
+        .join("\n"),
+      "",
+      "Request:",
+      "",
+      query,
+    ].join("\n");
+
+    let response = "";
+
+    await runCompletion(prompt, (completionChunk) => {
+      response += completionChunk;
+      updateResponse(response);
+    });
+
+    if (!response.endsWith(".")) {
+      response += ".";
+      updateResponse(response);
+    }
+  }
+
+  if (getSummarizeLinksSetting()) {
+    updateLoadingToast("Summarizing links...");
+
+    for (const [title, snippet, url] of getSearchResults()) {
+      const prompt = [
+        "Context:",
+        `Link title: ${title}`,
+        `Link snippet: ${snippet}`,
+        "",
+        "Question:",
+        "What is this link about?",
+      ].join("\n");
+
+      let response = "";
+
+      await runCompletion(prompt, (completionChunk) => {
+        response += completionChunk;
+        updateUrlsDescriptions({
+          ...getUrlsDescriptions(),
+          [url]: response,
+        });
+      });
+    }
+  }
+
+  await exitRatchet();
 }
