@@ -5,7 +5,7 @@ import Confetti from 'react-confetti';
 const LEMON_SQUEEZY_CHECKOUT_URL = 'https://your-lemonsqueezy-checkout-url';
 
 const PricingContainer = styled.div`
-  max-width: 400px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   text-align: center;
@@ -16,11 +16,19 @@ const PricingHeader = styled.h2`
   margin-bottom: 20px;
 `;
 
+const PricingCardContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
 const PricingCard = styled.div`
   background-color: #f0f0f0;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin: 10px;
+  flex: 1 1 300px;
+  max-width: 400px;
   position: relative;
 `;
 
@@ -80,36 +88,38 @@ export const PricingPage: React.FC = () => {
   return (
     <PricingContainer>
       <PricingHeader>Pricing</PricingHeader>
-      <PricingCard>
-        <PlanName>Free</PlanName>
-        <Price>$0</Price>
-        <FeatureList>
-          <Feature>Basic search functionality</Feature>
-          <Feature>Access to fundamental AI models</Feature>
-        </FeatureList>
-      </PricingCard>
-      <PricingCard ref={confettiRef}>
-        <PlanName>Pro</PlanName>
-        <Price>$15/mo</Price>
-        <FeatureList>
-          <Feature>Unlimited searches</Feature>
-          <Feature>Smarter results (with access to latest most advance AI models)</Feature>
-          <Feature>No ads or trackers</Feature>
-          <Feature>100% anonymous</Feature>
-        </FeatureList>
-        <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
-          Purchase
-        </PurchaseButton>
-        {showConfetti && confettiRef.current && (
-          <Confetti
-            numberOfPieces={200}
-            recycle={false}
-            width={confettiRef.current.offsetWidth}
-            height={confettiRef.current.offsetHeight}
-            style={{ position: 'absolute', top: 0, left: 0 }}
-          />
-        )}
-      </PricingCard>
+      <PricingCardContainer>
+        <PricingCard>
+          <PlanName>Free</PlanName>
+          <Price>$0</Price>
+          <FeatureList>
+            <Feature>Basic search functionality</Feature>
+            <Feature>Access to fundamental AI models</Feature>
+          </FeatureList>
+        </PricingCard>
+        <PricingCard ref={confettiRef}>
+          <PlanName>Pro</PlanName>
+          <Price>$15/mo</Price>
+          <FeatureList>
+            <Feature>Unlimited searches</Feature>
+            <Feature>Smarter results (with access to latest most advance AI models)</Feature>
+            <Feature>No ads or trackers</Feature>
+            <Feature>100% anonymous</Feature>
+          </FeatureList>
+          <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
+            Purchase
+          </PurchaseButton>
+          {showConfetti && confettiRef.current && (
+            <Confetti
+              numberOfPieces={200}
+              recycle={false}
+              width={confettiRef.current.offsetWidth}
+              height={confettiRef.current.offsetHeight}
+              style={{ position: 'absolute', top: 0, left: 0 }}
+            />
+          )}
+        </PricingCard>
+      </PricingCardContainer>
     </PricingContainer>
   );
 };
