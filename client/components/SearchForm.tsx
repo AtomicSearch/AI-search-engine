@@ -1,54 +1,34 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import styled from "styled-components";
+import Confetti from 'react-confetti';
 
-const LoadingSpinner = styled.div`
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 3px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #000;
-  animation: spin 1s ease-in-out infinite;
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
-export function SearchForm({
-  query,
-  updateQuery,
-}: {
+interface SearchFormProps {
   query: string;
   updateQuery: (query: string) => void;
-}) {
+}
+
+export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
     getRandomQuerySuggestion(),
   );
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const confettiRef = useRef<HTMLDivElement>(null);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   const startSearching = useCallback(
     (queryToEncode: string) => {
-      setIsLoading(true);
       updateQuery(queryToEncode);
       navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
     },
     [updateQuery, navigate],
   );
 
-  const debouncedStartSearching = debounce(startSearching, 500); // 500ms = 0.5s
+  const debouncedStartSearching = debounce(startSearching, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const userQuery = event.target.value.trim();
@@ -80,20 +60,29 @@ export function SearchForm({
           }
         }
       }
-
       if (event.code === "Escape") {
         if (textAreaRef.current) {
           textAreaRef.current.value = "";
-          startSearching(""); // Reset search results if press ESC
+          startSearching(""); // Reset search results if press Esc
         }
       }
     };
+
     const textArea = textAreaRef.current;
     textArea?.addEventListener("keypress", keyboardEventHandler);
+
     return () => {
       textArea?.removeEventListener("keypress", keyboardEventHandler);
     };
   }, [startSearching]);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('firstVisit');
+    if (!visited) {
+      setShowConfetti(true);
+      localStorage.setItem('firstVisit', 'true');
+    }
+  }, []);
 
   return (
     <div
@@ -108,30 +97,38 @@ export function SearchForm({
           : undefined
       }
     >
-      <form style={{ width: "100%" }}>
-        <TextareaAutosize
-          defaultValue={query}
-          placeholder={suggestedQuery}
-          ref={textAreaRef}
-          onChange={handleInputChange}
-          autoFocus
-          minRows={1}
-          maxRows={6}
-        />
-        {isLoading && <LoadingSpinner />}
-      </form>
+      <div ref={confettiRef} style={{ position: 'relative' }}>
+        <form style={{ width: "100%" }}>
+          <TextareaAutosize
+            defaultValue={query}
+            placeholder={suggestedQuery}
+            ref={textAreaRef}
+            onChange={handleInputChange}
+            autoFocus
+            minRows={1}
+            maxRows={6}
+          />
+        </form>
+        {showConfetti && confettiRef.current && (
+          <Confetti
+            numberOfPieces={200}
+            recycle={false}
+            width={confettiRef.current.offsetWidth}
+            height={confettiRef.current.offsetHeight}
+            style={{ position: 'absolute', top: 0, left: 0 }}
+          />
+        )}
+      </div>
     </div>
   );
 }
 
 function useWindowInnerHeight() {
-  const [windowInnerHeight, setWindowInnerHeight] = useState(self.innerHeight);
+  const [windowInnerHeight, setWindowInnerHeight] = useState<number>(self.innerHeight);
 
   useEffect(() => {
     const handleResize = () => setWindowInnerHeight(self.innerHeight);
-
     self.addEventListener("resize", handleResize);
-
     return () => self.removeEventListener("resize", handleResize);
   }, []);
 
