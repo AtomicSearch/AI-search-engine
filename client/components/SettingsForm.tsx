@@ -26,13 +26,13 @@ export function SettingsForm() {
     <div>
       <div
         style={{
-          textAlign: "center",
+          textAlign: "left",
           fontSize: "16px",
           fontWeight: "bolder",
           margin: "10px",
         }}
       >
-        Settings
+        Preferences
       </div>
       <div>
         <Tooltip
@@ -54,7 +54,7 @@ export function SettingsForm() {
           Use a larger AI model
         </label>
       </div>
-      <div>
+      {/* <div>
         <Tooltip
           id="summarize-links-setting-tooltip"
           place="top-start"
@@ -73,8 +73,8 @@ export function SettingsForm() {
           />
           Summarize links
         </label>
-      </div>
-      {isWebGPUAvailable && (
+      </div> */}
+      {/* {isWebGPUAvailable && (
         <div>
           <Tooltip
             id="use-large-model-setting-tooltip"
@@ -95,8 +95,8 @@ export function SettingsForm() {
             Disable WebGPU usage
           </label>
         </div>
-      )}
-      <div>
+      )} */}
+      {/* <div>
         <Tooltip
           id="disable-ai-setting-tooltip"
           place="top-start"
@@ -115,7 +115,7 @@ export function SettingsForm() {
           />
           Disable AI response
         </label>
-      </div>
+      </div> */}
     </div>
   );
 }

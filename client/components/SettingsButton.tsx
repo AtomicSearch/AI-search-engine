@@ -12,7 +12,7 @@ export function SettingsButton() {
             <div
               style={{
                 display: "flex",
-                justifyContent: "center",
+                justifyContent: "left",
                 marginTop: "8px",
               }}
             >
@@ -20,14 +20,14 @@ export function SettingsButton() {
                 style={{ fontSize: "small" }}
                 onClick={() => toast.dismiss()}
               >
-                Done
+                ✅
               </button>
             </div>
           </div>,
           {
             id: "settings-toast",
             duration: Infinity,
-            position: "bottom-center",
+            position: "bottom-left",
             style: {
               borderRadius: "10px",
               background: "var(--background)",
@@ -37,7 +37,7 @@ export function SettingsButton() {
         )
       }
     >
-      Settings
+      Options
     </button>
   );
 }

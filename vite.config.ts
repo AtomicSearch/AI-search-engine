@@ -123,12 +123,12 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   });
 
   server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/search")) return next();
+    if (!request.url.startsWith("/search")) {
+      return next();
+    }
 
-    const { searchParams } = new URL(
-      request.url,
-      `http://${request.headers.host}`,
-    );
+    const url = `https://${request.headers.host}`;
+    const { searchParams } = new URL(request.url, url);
 
     const token = searchParams.get("token");
 

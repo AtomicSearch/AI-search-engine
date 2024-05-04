@@ -15,6 +15,7 @@ import { SearchResultsList } from "../../components/SearchResultsList";
 import { prepareTextGeneration } from "../../modules/textGeneration";
 import { useLocation } from 'react-router-dom';
 import { search } from "../../modules/search";
+import { FooterInfo } from "../../components/FooterInfo";
 
 export const SearchPage = () => {
     const [query, setQuery] = usePubSub(promptPubSub);
@@ -65,6 +66,7 @@ export const SearchPage = () => {
           />
         </div>
       )}
+      <SettingsButton />
       <div
         style={
           searchResults.length === 0
@@ -82,7 +84,7 @@ export const SearchPage = () => {
               }
         }
       >
-        <SettingsButton />
+        <FooterInfo />
       </div>
       <Toaster />
     </>

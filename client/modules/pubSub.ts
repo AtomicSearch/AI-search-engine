@@ -1,6 +1,13 @@
 import { createPubSub } from "create-pubsub";
 import { SearchResults } from "./search";
 
+const SearchOptions = {
+  IS_AI_RESPONSE_DISABLED: false,
+  IS_WEBGPU_USAGE_DISABLED: false,
+  IS_LINKS_SUMMARIZED_ENABLED: true, // enable by default
+  IS_LARGE_MODEL_ENABLED: false,
+};
+
 function createLocalStoragePubSub<T>(localStorageKey: string, defaultValue: T) {
   const localStorageValue = localStorage.getItem(localStorageKey);
   const localStoragePubSub = createPubSub(
@@ -18,28 +25,28 @@ function createLocalStoragePubSub<T>(localStorageKey: string, defaultValue: T) {
 
 export const disableAiResponseSettingPubSub = createLocalStoragePubSub(
   "disableAiResponse",
-  false,
+  SearchOptions.IS_AI_RESPONSE_DISABLED,
 );
 
 export const [, , getDisableAiResponseSetting] = disableAiResponseSettingPubSub;
 
 export const summarizeLinksSettingPubSub = createLocalStoragePubSub(
   "summarizeLinks",
-  false,
+  SearchOptions.IS_LINKS_SUMMARIZED_ENABLED,
 );
 
 export const [, , getSummarizeLinksSetting] = summarizeLinksSettingPubSub;
 
 export const useLargerModelSettingPubSub = createLocalStoragePubSub(
   "useLargerModel",
-  false,
+  SearchOptions.IS_LARGE_MODEL_ENABLED,
 );
 
 export const [, , getUseLargerModelSetting] = useLargerModelSettingPubSub;
 
 export const disableWebGpuUsageSettingPubSub = createLocalStoragePubSub(
   "disableWebGpuUsage",
-  false,
+  SearchOptions.IS_WEBGPU_USAGE_DISABLED,
 );
 
 export const [, , getDisableWebGpuUsageSetting] =
