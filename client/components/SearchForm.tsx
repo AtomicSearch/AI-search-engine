@@ -42,10 +42,9 @@ export function SearchForm({
     // Start searching immediately when user types
     if (!userQueryIsBlank) {
       debouncedStartSearching(userQuery);
-    }
-    // If the user deleted the input, reset the search results
-    else {
-      debouncedStartSearching("");
+    } else {
+      // If the user deleted the input, reset the search results
+      startSearching("");
     }
   };
 
