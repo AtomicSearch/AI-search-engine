@@ -18,9 +18,8 @@ const ModalHeader = styled.div`
   margin-bottom: 10px;
 `;
 
-const Logo = styled.img`
-  width: 24px;
-  height: 24px;
+const Logo = styled.span`
+  font-size: 24px;
   margin-right: 8px;
 `;
 
@@ -46,7 +45,11 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-export const UpgradeOptionModal = () => {
+export const UpgradeModal = () => {
+  const handleButtonClick = () => {
+    window.location.href = '/pricing';
+  };
+
   return (
     <ModalWrapper>
       <ModalHeader>
@@ -56,7 +59,7 @@ export const UpgradeOptionModal = () => {
       <Description>
         Unlock unlimited searches with advanced models and more
       </Description>
-      <Button>Try Now</Button>
+      <Button onClick={handleButtonClick}>Try Now</Button>
     </ModalWrapper>
   );
 };
