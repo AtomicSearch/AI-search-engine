@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components"
+import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
 
 interface FooterInfoWrapperProps {
@@ -8,8 +8,9 @@ interface FooterInfoWrapperProps {
 const FooterInfoWrapper = styled.div<FooterInfoWrapperProps>`
   display: flex;
   justify-content: center;
+  z-index: -1;
 
-  ${props =>
+  ${(props) =>
     props.isEmpty &&
     css`
       position: fixed;
@@ -20,15 +21,17 @@ const FooterInfoWrapper = styled.div<FooterInfoWrapperProps>`
 `;
 
 const Slogan = styled.div`
-  margin-bottom: .5rem;
-`
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  color: #888;
+`;
 
 export const FooterInfo = ({ searchResults }: { searchResults: SearchResults }) => {
   return (
     <FooterInfoWrapper isEmpty={searchResults.length === 0}>
-    <Slogan>
-      <em>The Simplest. But The Most Relevant</em>
-    </Slogan>
+      <Slogan>
+        <em>The Simplest. But The Most Relevant</em>
+      </Slogan>
     </FooterInfoWrapper>
   );
 };
