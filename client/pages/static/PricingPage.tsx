@@ -39,6 +39,20 @@ const FeatureList = styled.ul`
   margin-bottom: 20px;
 `;
 
+const Feature = styled.li`
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 24px;
+
+  &:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #007bff;
+    font-weight: bold;
+  }
+`;
+
 const PurchaseButton = styled.a`
   display: inline-block;
   background-color: #007bff;
@@ -68,18 +82,18 @@ export const PricingPage = () => {
         <PlanName>Free</PlanName>
         <Price>$0</Price>
         <FeatureList>
-          <li>Basic search functionality</li>
-          <li>Access to our fundamental language model</li>
+          <Feature>Basic search functionality</Feature>
+          <Feature>Access to fundamental AI models</Feature>
         </FeatureList>
       </PricingCard>
       <PricingCard>
         <PlanName>Pro</PlanName>
         <Price>$15/mo</Price>
         <FeatureList>
-          <li>Unlimited searches</li>
-          <li>Smarter and more accurate Agent Mode</li>
-          <li>Advanced language model support</li>
-          <li>GitHub integration (Coming soon)</li>
+          <Feature>Unlimited searches</Feature>
+          <Feature>Smarter results (with access to latest most advance AI models)</Feature>
+          <Feature>No ads or trackers</Feature>
+          <Feature>100% anonymous</Feature>
         </FeatureList>
         <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
           Purchase
