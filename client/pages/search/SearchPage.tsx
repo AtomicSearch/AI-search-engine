@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePubSub } from "create-pubsub/react";
 import {
   promptPubSub,
@@ -17,40 +17,80 @@ import { useLocation } from 'react-router-dom';
 import { search } from "../../modules/search";
 import { FooterInfo } from "../../components/FooterInfo";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
+import styled from "styled-components";
+
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const LoadingText = styled.span`
+  font-size: 16px;
+  color: #333;
+`;
 
 export const SearchPage = () => {
-    const [query, setQuery] = usePubSub(promptPubSub);
-    const [response] = usePubSub(responsePubSub);
-    const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
-    const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
-  
-    useEffect(() => {
-      prepareTextGeneration();
-    }, []);
+  const [query, setQuery] = usePubSub(promptPubSub);
+  const [response] = usePubSub(responsePubSub);
+  const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
+  const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const location = useLocation();
-  
-    useEffect(() => {
-      const params = new URLSearchParams(location.search);
-      const newQuery = params.get('q');
-      if (newQuery !== null) {
-        setQuery(newQuery);
-      }
-    }, [location.search, setQuery]);
+  useEffect(() => {
+    prepareTextGeneration();
+  }, []);
 
-    // Add a new useEffect hook to call the search function when query changes
-    useEffect(() => {
-      async function performSearch() {
-        const results = await search(query);
-        setSearchResults(results);
-      }
+  const location = useLocation();
 
-      performSearch();
-    }, [query, setSearchResults]);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const newQuery = params.get('q');
+    if (newQuery !== null) {
+      setQuery(newQuery);
+    }
+  }, [location.search, setQuery]);
+
+  // Add a new useEffect hook to call the search function when query changes
+  useEffect(() => {
+    async function performSearch() {
+      setIsLoading(true);
+      const results = await search(query);
+      setSearchResults(results);
+      setIsLoading(false);
+    }
+    performSearch();
+  }, [query, setSearchResults]);
 
   return (
     <>
       <SearchForm query={query} updateQuery={setQuery} />
+      {isLoading && (
+        <LoadingContainer>
+          <LoadingSpinner />
+          <LoadingText>Answer...</LoadingText>
+        </LoadingContainer>
+      )}
       {!getDisableAiResponseSetting() && response.length > 0 && (
         <div className="mt-4">
           <h2 className="text-lg font-semibold">AI's thoughts:</h2>
