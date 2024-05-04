@@ -44,6 +44,7 @@ const Feature = styled.li`
   margin-bottom: 8px;
   position: relative;
   padding-left: 24px;
+  list-style: none;
 
   &:before {
     content: '✓';
