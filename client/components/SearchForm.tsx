@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import Confetti from 'react-confetti';
+import Confetti from "react-confetti";
 
 interface SearchFormProps {
   query: string;
@@ -12,13 +12,16 @@ interface SearchFormProps {
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const confettiRef = useRef<HTMLDivElement>(null);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
     getRandomQuerySuggestion(),
   );
+
   const navigate = useNavigate();
-  const confettiRef = useRef<HTMLDivElement>(null);
-  const [showConfetti, setShowConfetti] = useState<boolean>(false);
 
   const startSearching = useCallback(
     (queryToEncode: string) => {
@@ -78,10 +81,10 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   }, [startSearching]);
 
   useEffect(() => {
-    const visited = localStorage.getItem('firstVisit');
+    const visited = localStorage.getItem("firstVisit");
     if (!visited) {
       setShowConfetti(true);
-      localStorage.setItem('firstVisit', 'true');
+      localStorage.setItem("firstVisit", "true");
     }
   }, []);
 
@@ -98,8 +101,17 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
           : undefined
       }
     >
-      <div ref={confettiRef} style={{ position: 'relative' }}>
-        <form style={{ width: "100%" }}>
+      <form style={{ width: "100%" }}>
+        <div ref={confettiRef} style={{ position: "relative" }}>
+          {showConfetti && confettiRef.current && (
+            <Confetti
+              numberOfPieces={200}
+              recycle={false}
+              width={confettiRef.current.offsetWidth}
+              height={confettiRef.current.offsetHeight}
+              style={{ position: "absolute", top: 0, left: 0 }}
+            />
+          )}
           <TextareaAutosize
             defaultValue={query}
             placeholder={suggestedQuery}
@@ -109,23 +121,16 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
             minRows={1}
             maxRows={6}
           />
-        </form>
-        {showConfetti && confettiRef.current && (
-          <Confetti
-            numberOfPieces={200}
-            recycle={false}
-            width={confettiRef.current.offsetWidth}
-            height={confettiRef.current.offsetHeight}
-            style={{ position: 'absolute', top: 0, left: 0 }}
-          />
-        )}
-      </div>
+        </div>
+      </form>
     </div>
   );
 }
 
 function useWindowInnerHeight() {
-  const [windowInnerHeight, setWindowInnerHeight] = useState<number>(self.innerHeight);
+  const [windowInnerHeight, setWindowInnerHeight] = useState<number>(
+    self.innerHeight,
+  );
 
   useEffect(() => {
     const handleResize = () => setWindowInnerHeight(self.innerHeight);
