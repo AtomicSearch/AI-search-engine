@@ -16,7 +16,7 @@ import { prepareTextGeneration } from "../../modules/textGeneration";
 import { useLocation } from 'react-router-dom';
 import { search } from "../../modules/search";
 import { FooterInfo } from "../../components/FooterInfo";
-import { UpgradeOptionModal } from "../../components/UpgradeOptionModal";
+import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 
 export const SearchPage = () => {
     const [query, setQuery] = usePubSub(promptPubSub);
@@ -67,7 +67,7 @@ export const SearchPage = () => {
           />
         </div>
       )}
-      <UpgradeOptionModal />
+      <UpgradePlanModal />
       <FooterInfo searchResults={searchResults} />
       <Toaster />
     </>

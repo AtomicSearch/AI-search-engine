@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import 'water.css';
+import Confetti from 'react-confetti';
+
+const LEMON_SQUEEZY_CHECKOUT_URL = 'https://your-lemonsqueezy-checkout-url';
 
 const PricingContainer = styled.div`
   max-width: 400px;
@@ -48,8 +50,19 @@ const PurchaseButton = styled.a`
 `;
 
 export const PricingPage = () => {
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
+    const visited = localStorage.getItem('pricingVisited');
+    if (!visited) {
+      setShowConfetti(true);
+      localStorage.setItem('pricingVisited', 'true');
+    }
+  }, []);
+
   return (
     <PricingContainer>
+      {showConfetti && <Confetti />}
       <PricingHeader>Pricing</PricingHeader>
       <PricingCard>
         <PlanName>Free</PlanName>
@@ -68,7 +81,7 @@ export const PricingPage = () => {
           <li>Advanced language model support</li>
           <li>GitHub integration (Coming soon)</li>
         </FeatureList>
-        <PurchaseButton href="">
+        <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
           Purchase
         </PurchaseButton>
       </PricingCard>
