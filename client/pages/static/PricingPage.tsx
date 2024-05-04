@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
 
@@ -21,6 +21,7 @@ const PricingCard = styled.div`
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+  position: relative;
 `;
 
 const PlanName = styled.h3`
@@ -63,8 +64,9 @@ const PurchaseButton = styled.a`
   font-weight: bold;
 `;
 
-export const PricingPage = () => {
+export const PricingPage: React.FC = () => {
   const [showConfetti, setShowConfetti] = useState(false);
+  const confettiRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const visited = localStorage.getItem('pricingVisited');
@@ -76,7 +78,6 @@ export const PricingPage = () => {
 
   return (
     <PricingContainer>
-      {showConfetti && <Confetti />}
       <PricingHeader>Pricing</PricingHeader>
       <PricingCard>
         <PlanName>Free</PlanName>
@@ -86,7 +87,7 @@ export const PricingPage = () => {
           <Feature>Access to fundamental AI models</Feature>
         </FeatureList>
       </PricingCard>
-      <PricingCard>
+      <PricingCard ref={confettiRef}>
         <PlanName>Pro</PlanName>
         <Price>$15/mo</Price>
         <FeatureList>
@@ -98,6 +99,15 @@ export const PricingPage = () => {
         <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
           Purchase
         </PurchaseButton>
+        {showConfetti && confettiRef.current && (
+          <Confetti
+            numberOfPieces={200}
+            recycle={false}
+            width={confettiRef.current.offsetWidth}
+            height={confettiRef.current.offsetHeight}
+            style={{ position: 'absolute', top: 0, left: 0 }}
+          />
+        )}
       </PricingCard>
     </PricingContainer>
   );
