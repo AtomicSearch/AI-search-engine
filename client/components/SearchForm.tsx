@@ -27,7 +27,7 @@ export function SearchForm({
     [updateQuery, navigate],
   );
 
-  const debouncedStartSearching = debounce(startSearching, 1000); // 1000ms = 1s
+  const debouncedStartSearching = debounce(startSearching, 500); // 500ms = 0.5s
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const userQuery = event.target.value.trim();
