@@ -8,8 +8,9 @@
     "start": "vite preview",
     "build": "tsc && vite build",
     "dev": "vite",
-    "lint": "prettier --check . && eslint --fix client",
-    "format": "prettier --write ."
+    "prettier:lint": "prettier --check . && eslint --fix client",
+    "prettier:check": "prettier --check \"src/**/*.{ts,js,json}\" \"!package.json\"",
+    "prettier:fix": "prettier --write \"**/*.{ts,js,json}\" \"!package.json\""
   },
   "dependencies": {
     "@energetic-ai/core": "^0.2.0",
