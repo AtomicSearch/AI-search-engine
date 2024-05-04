@@ -40,7 +40,8 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
       setSuggestedQuery("");
     }
-    // Start searching immediately when user types
+
+    // Start searching immediately when user types (with a debounce)
     if (!userQueryIsBlank) {
       debouncedStartSearching(userQuery);
     } else {
