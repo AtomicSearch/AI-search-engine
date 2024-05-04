@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SucceedAISearch</string>
+    <string name="title_activity_main">SucceedAISearch</string>
+    <string name="package_name">me.ph7.succeedaisearch</string>
+    <string name="custom_url_scheme">me.ph7.succeedaisearch</string>
+</resources>
