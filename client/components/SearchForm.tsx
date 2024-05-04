@@ -3,6 +3,23 @@ import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
+import styled from "styled-components";
+
+const LoadingSpinner = styled.div`
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #000;
+  animation: spin 1s ease-in-out infinite;
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 export function SearchForm({
   query,
@@ -16,13 +33,17 @@ export function SearchForm({
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
     getRandomQuerySuggestion(),
   );
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const startSearching = useCallback(
     (queryToEncode: string) => {
+      setIsLoading(true);
       updateQuery(queryToEncode);
       navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
     },
     [updateQuery, navigate],
   );
@@ -97,6 +118,7 @@ export function SearchForm({
           minRows={1}
           maxRows={6}
         />
+        {isLoading && <LoadingSpinner />}
       </form>
     </div>
   );
