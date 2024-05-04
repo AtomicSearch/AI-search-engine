@@ -8,7 +8,8 @@ import {
 import { Tooltip } from "react-tooltip";
 import { isWebGPUAvailable } from "../modules/webGpu";
 
-export function SettingsForm() {
+export const SettingsForm = () => {
+
   const [disableAiResponse, setDisableAiResponse] = usePubSub(
     disableAiResponseSettingPubSub,
   );

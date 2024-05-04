@@ -2,10 +2,12 @@ import { createPubSub } from "create-pubsub";
 import { SearchResults } from "./search";
 
 const SearchOptions = {
-  IS_AI_RESPONSE_DISABLED: false,
-  IS_WEBGPU_USAGE_DISABLED: false,
-  IS_LINKS_SUMMARIZED_ENABLED: true, // enable by default
-  IS_LARGE_MODEL_ENABLED: false,
+  IS_AI_RESPONSE_DISABLED: true,
+  IS_WEBGPU_USAGE_DISABLED: true,
+
+  // enable by default
+  IS_LINKS_SUMMARIZED_ENABLED: true,
+  IS_LARGE_MODEL_ENABLED: true,
 };
 
 function createLocalStoragePubSub<T>(localStorageKey: string, defaultValue: T) {

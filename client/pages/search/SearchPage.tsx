@@ -8,7 +8,7 @@ import {
 } from "../../modules/pubSub";
 import { SearchForm } from "../../components/SearchForm";
 import { Toaster } from "react-hot-toast";
-import { SettingsButton } from "../../components/SettingsButton";
+import { SettingButton } from "../../components/SettingButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
@@ -66,26 +66,8 @@ export const SearchPage = () => {
           />
         </div>
       )}
-      <SettingsButton />
-      <div
-        style={
-          searchResults.length === 0
-            ? {
-                position: "fixed",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                display: "flex",
-                justifyContent: "center",
-              }
-            : {
-                display: "flex",
-                justifyContent: "center",
-              }
-        }
-      >
-        <FooterInfo />
-      </div>
+      <SettingButton />
+      <FooterInfo searchResults={searchResults} />
       <Toaster />
     </>
   );
