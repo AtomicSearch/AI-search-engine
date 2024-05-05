@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import Confetti from 'react-confetti';
-import { LocalStorageKeys } from '../../constants/localStorages.constant';
-
-const LEMON_SQUEEZY_CHECKOUT_URL = 'https://your-lemonsqueezy-checkout-url';
+import React, { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
+import Confetti from "react-confetti";
+import { LocalStorageKeys } from "../../constants/localStorages.constant";
+import { CheckoutInfo } from "../../constants/appInfo.constant";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -56,7 +55,7 @@ const Feature = styled.li`
   list-style: none;
 
   &:before {
-    content: '✓';
+    content: "✓";
     position: absolute;
     left: 0;
     color: #007bff;
@@ -82,7 +81,7 @@ export const PricingPage: React.FC = () => {
     const visited = localStorage.getItem(LocalStorageKeys.PRICING_VISITED);
     if (!visited) {
       setShowConfetti(true);
-      localStorage.setItem(LocalStorageKeys.PRICING_VISITED, 'true');
+      localStorage.setItem(LocalStorageKeys.PRICING_VISITED, "true");
     }
   }, []);
 
@@ -103,11 +102,14 @@ export const PricingPage: React.FC = () => {
           <Price>$15/mo</Price>
           <FeatureList>
             <Feature>Unlimited searches</Feature>
-            <Feature>Smarter results (with access to latest most advance AI models)</Feature>
-            <Feature>No ads or trackers</Feature>
-            <Feature>100% anonymous</Feature>
+            <Feature>
+              Smarter results (with access to latest most advance AI models)
+            </Feature>
+            <Feature>
+              No ads or analytic trackers. 100% anonymous guaranteed
+            </Feature>
           </FeatureList>
-          <PurchaseButton href={`${LEMON_SQUEEZY_CHECKOUT_URL}`}>
+          <PurchaseButton href={`${CheckoutInfo.PRO_SUBSCRIPTION_URL}`}>
             Purchase
           </PurchaseButton>
           {showConfetti && confettiRef.current && (
@@ -116,7 +118,7 @@ export const PricingPage: React.FC = () => {
               recycle={false}
               width={confettiRef.current.offsetWidth}
               height={confettiRef.current.offsetHeight}
-              style={{ position: 'absolute', top: 0, left: 0 }}
+              style={{ position: "absolute", top: 0, left: 0 }}
             />
           )}
         </PricingCard>
