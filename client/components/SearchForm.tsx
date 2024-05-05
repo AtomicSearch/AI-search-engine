@@ -114,8 +114,19 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const handleTextAreaClick = () => {
     const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
     if (!isFirstVisit) {
-      confetti(confettiOptions);
-      localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
+      const textAreaRect = textAreaRef.current?.getBoundingClientRect();
+      if (textAreaRect) {
+        const confettiOptions = {
+          spread: 100,
+          startVelocity: 35,
+          origin: {
+            x: textAreaRect.left + textAreaRect.width / 2,
+            y: textAreaRect.top,
+          },
+        };
+        confetti(confettiOptions);
+        localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
+      }
     }
   };
 
