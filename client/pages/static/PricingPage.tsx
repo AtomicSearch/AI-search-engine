@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Confetti from "react-confetti";
+import confetti from "canvas-confetti";
 import 'react-phone-number-input/style.css';
 import {
   FaSearch,
@@ -8,7 +9,6 @@ import {
   FaShieldAlt,
   FaRegPaperPlane,
   FaLockOpen,
-  FaBrain,
 } from "react-icons/fa";
 import { FaRegLightbulb } from "react-icons/fa6";
 import {
@@ -24,6 +24,7 @@ import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
 import { FooterInfo } from "../../components/FooterInfo";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
+import { confettiOptions } from "../../constants/confettiOptions.constant";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -182,6 +183,7 @@ export const PricingPage: React.FC = () => {
   }, []);
 
   const handleNotifyMeClick = () => {
+    confetti(confettiOptions);
     setShowModal(true);
   };
 
