@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
+import confetti from "canvas-confetti";
+
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import confetti from "canvas-confetti";
+import { LocalStorageKeys } from "../constants/localStorages";
+
 
 interface SearchFormProps {
   query: string;
@@ -12,7 +15,9 @@ interface SearchFormProps {
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [isFirstClick, setIsFirstClick] = useState<boolean>(true);
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(
+    !sessionStorage.getItem(LocalStorageKeys.FIRST_VISIT)
+  );
 
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
@@ -55,6 +60,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     if (isFirstClick) {
       confetti();
       setIsFirstClick(false);
+      sessionStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
     }
   };
 
