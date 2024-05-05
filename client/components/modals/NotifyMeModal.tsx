@@ -145,6 +145,8 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
     return null;
   }
 
+  const labels = AppInfo.DEFAULT_LANGUAGE_CODE === "en" ? en : {};
+
   return (
     <Modal>
       <ModalContent ref={modalRef}>
@@ -161,17 +163,17 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             value={phoneNumber}
             onChange={(value: string) => setPhoneNumber(value)}
             defaultCountry={AppInfo.DEFAULT_COUNTRY_CODE}
-            labels={AppInfo.DEFAULT_LANGUAGE_CODE === "en" ? en : undefined}
+            labels={labels}
             countrySelectComponent={({ value, onChange, labels, ...rest }) => (
               <select
                 {...rest}
                 value={value}
                 onChange={(event) => onChange(event.target.value || undefined)}
               >
-                <option value="">{labels.ZZ}</option>
+                <option value="">{labels?.ZZ || "Unknown"}</option>
                 {getCountries().map((country) => (
                   <option key={country} value={country}>
-                    {labels[country]} +{getCountryCallingCode(country)}
+                    {labels?.[country] || country} +{getCountryCallingCode(country)}
                   </option>
                 ))}
               </select>
