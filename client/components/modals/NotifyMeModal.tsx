@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import PhoneInput from "react-phone-number-input";
+import PhoneInput, { getCountryCallingCode } from "react-phone-number-input";
+import "country-flag-icons/3x2/flags.css";
 import "react-phone-number-input/style.css";
 import { AppInfo } from "../../constants/appInfo.constant";
 
@@ -24,6 +25,9 @@ const ModalContent = styled.div`
   max-width: 400px;
   text-align: center;
   position: relative;
+  a:hover {
+    text-decoration: none !important;
+  }
 
   @media (max-width: 600px) {
     max-width: 90%;
@@ -42,8 +46,21 @@ const PhoneInputWrapper = styled.div`
   margin-bottom: 20px;
 
   .PhoneInputCountryIcon {
-    width: 20px;
-    height: 20px;
+    width: 2rem;
+    height: 1.5rem;
+  }
+
+  .PhoneInputCountryIcon--border {
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.5),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+
+  .PhoneInputCountryIconImg {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 `;
 
@@ -56,14 +73,14 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-const CloseButton = styled.button`
+const CloseButton = styled.a`
   position: absolute;
   top: 10px;
   right: 10px;
   background: none;
   border: none;
   font-size: 24px;
-  cursor: pointer;
+  cursor: pointer !important;
 `;
 
 interface NotifyMeModalProps {
@@ -95,11 +112,12 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 
       if (!response.ok) {
         throw new Error(
-          "We couldn't submit your phone number. Please try again."
+          "We couldn't submit your phone number. Please try again.",
         );
       }
 
       onSubmitSuccess();
+      setPhoneNumber(""); // clear phone number after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
       onSubmitError();
@@ -138,7 +156,16 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             placeholder="Enter phone number"
             value={phoneNumber}
             onChange={(value: string) => setPhoneNumber(value)}
-            defaultCountry="US"
+            defaultCountry={AppInfo.DEFAULT_COUNTRY_CODE}
+            countryIconComponent={({ country }: { country: string }) => (
+              <div className="PhoneInputCountryIcon PhoneInputCountryIcon--border">
+                <img
+                  className="PhoneInputCountryIconImg"
+                  src={`/flags/3x2/${country.toLowerCase()}.svg`}
+                  alt={`${country} flag`}
+                />
+              </div>
+            )}
           />
         </PhoneInputWrapper>
         <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>

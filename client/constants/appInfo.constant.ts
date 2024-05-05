@@ -1,5 +1,6 @@
 export enum AppInfo {
   APP_NAME = "Atomic Search",
+  DEFAULT_COUNTRY_CODE = "US",
   GOOGLE_FORM_WAITING_LIST_URL = "https://your-google-form-url", // Your Google Form URL
 }
 
