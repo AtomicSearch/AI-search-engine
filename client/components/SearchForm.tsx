@@ -15,9 +15,6 @@ interface SearchFormProps {
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [isFirstClick, setIsFirstClick] = useState<boolean>(
-    !sessionStorage.getItem(LocalStorageKeys.FIRST_VISIT)
-  );
 
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
@@ -57,10 +54,10 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   };
 
   const handleTextAreaClick = () => {
-    if (isFirstClick) {
+    const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
+    if (!isFirstVisit) {
       confetti();
-      setIsFirstClick(false);
-      sessionStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
+      localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
     }
   };
 
