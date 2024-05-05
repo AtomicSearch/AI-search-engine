@@ -111,24 +111,18 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     }
   };
 
-  const handleTextAreaClick = () => {
+  useEffect(() => {
     const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
     if (!isFirstVisit) {
-      const textAreaRect = textAreaRef.current?.getBoundingClientRect();
-      if (textAreaRect) {
-        const confettiOptions = {
-          spread: 100,
-          startVelocity: 35,
-          origin: {
-            x: textAreaRect.left + textAreaRect.width / 2,
-            y: textAreaRect.top,
-          },
-        };
-        confetti(confettiOptions);
-        localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
-      }
+      const updatedConfettiOptions = {
+        ...confettiOptions,
+        spread: 70,
+        disableForReducedMotion: true,
+      };
+      confetti(updatedConfettiOptions);
+      localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
     }
-  };
+  }, []);
 
   useEffect(() => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
@@ -178,7 +172,6 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               placeholder={suggestedQuery}
               ref={textAreaRef}
               onChange={handleInputChange}
-              onClick={handleTextAreaClick}
               autoFocus
               minRows={1}
               maxRows={6}
