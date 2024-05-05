@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import PhoneInput, { getCountryCallingCode } from "react-phone-number-input";
+import PhoneInput, {
+  getCountryCallingCode,
+  getCountries,
+} from "react-phone-number-input";
+import en from "react-phone-number-input/locale/en.json";
 import "country-flag-icons/3x2/flags.css";
 import "react-phone-number-input/style.css";
 import { AppInfo } from "../../constants/appInfo.constant";
@@ -157,14 +161,20 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             value={phoneNumber}
             onChange={(value: string) => setPhoneNumber(value)}
             defaultCountry={AppInfo.DEFAULT_COUNTRY_CODE}
-            countryIconComponent={({ country }: { country: string }) => (
-              <div className="PhoneInputCountryIcon PhoneInputCountryIcon--border">
-                <img
-                  className="PhoneInputCountryIconImg"
-                  src={`/flags/3x2/${country.toLowerCase()}.svg`}
-                  alt={`${country} flag`}
-                />
-              </div>
+            labels={AppInfo.DEFAULT_LANGUAGE_CODE === "en" ? en : undefined}
+            countrySelectComponent={({ value, onChange, labels, ...rest }) => (
+              <select
+                {...rest}
+                value={value}
+                onChange={(event) => onChange(event.target.value || undefined)}
+              >
+                <option value="">{labels.ZZ}</option>
+                {getCountries().map((country) => (
+                  <option key={country} value={country}>
+                    {labels[country]} +{getCountryCallingCode(country)}
+                  </option>
+                ))}
+              </select>
             )}
           />
         </PhoneInputWrapper>

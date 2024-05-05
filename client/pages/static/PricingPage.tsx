@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Confetti from "react-confetti";
 import confetti from "canvas-confetti";
-import 'react-phone-number-input/style.css';
+import "react-phone-number-input/style.css";
 import {
   FaSearch,
   FaClock,
@@ -17,8 +17,7 @@ import {
   TbRocket,
   TbRocketOff,
 } from "react-icons/tb";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast from "react-hot-toast";
 
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
@@ -193,24 +192,16 @@ export const PricingPage: React.FC = () => {
 
   const handleSubmitSuccess = () => {
     setShowModal(false);
-    toast.success('Thank you for your interest! We\'ll notify you when the Smart plan is available.', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.success(
+      "Amazing! We'll notify you when the Smart plan is available.",
+      { position: "top-right", duration: 5000, icon: "🎉" },
+    );
   };
 
   const handleSubmitError = () => {
-    toast.error('Oops! Something went wrong. Please try again later.', {
+    toast.error("Oops! Something went wrong. Please try again later.", {
       position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
+      duration: 5000,
     });
   };
 
@@ -259,7 +250,7 @@ export const PricingPage: React.FC = () => {
               </Feature>
             </FeatureList>
             <PurchaseButton onClick={handleNotifyMeClick}>
-              Notify Me. Upgrade when ready.
+              Get Notified. Upgrade when ready.
             </PurchaseButton>
             {showConfetti && confettiRef.current && (
               <Confetti
@@ -296,8 +287,6 @@ export const PricingPage: React.FC = () => {
         onSubmitSuccess={handleSubmitSuccess}
         onSubmitError={handleSubmitError}
       />
-
-      <ToastContainer />
     </>
   );
 };

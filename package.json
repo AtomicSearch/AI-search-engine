@@ -41,7 +41,6 @@
     "react-phone-number-input": "^3.4.1",
     "react-router-dom": "^6.23.0",
     "react-textarea-autosize": "^8.5.3",
-    "react-toastify": "^10.0.5",
     "react-tooltip": "^5.21.6",
     "styled-components": "^6.1.9",
     "temp-dir": "^3.0.0",
