@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Confetti from "react-confetti";
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
+import { FaSearch, FaClock, FaShieldAlt, FaCheck, FaInfinity, FaRocket, FaUserSecret } from "react-icons/fa";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -20,21 +21,11 @@ const PricingSubHeader = styled.h2`
   margin-bottom: 20px;
 `;
 
-const BenefitsList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  margin-bottom: 30px;
-`;
-
-const Benefit = styled.li`
-  font-size: 18px;
-  margin-bottom: 10px;
-`;
-
 const PricingCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 40px;
 `;
 
 const PricingCard = styled.div`
@@ -59,22 +50,21 @@ const Price = styled.p`
 `;
 
 const FeatureList = styled.ul`
-  text-align: left;
+  text-align: center;
   margin-bottom: 20px;
+  padding: 0;
+  list-style-type: none;
 `;
 
 const Feature = styled.li`
   margin-bottom: 8px;
-  position: relative;
-  padding-left: 24px;
-  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &:before {
-    content: "✓";
-    position: absolute;
-    left: 0;
+  svg {
+    margin-right: 8px;
     color: #007bff;
-    font-weight: bold;
   }
 `;
 
@@ -86,6 +76,26 @@ const PurchaseButton = styled.a`
   border-radius: 4px;
   text-decoration: none;
   font-weight: bold;
+`;
+
+const BenefitsList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Benefit = styled.li`
+  font-size: 18px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: 12px;
+    color: #007bff;
+  }
 `;
 
 export const PricingPage: React.FC = () => {
@@ -106,29 +116,35 @@ export const PricingPage: React.FC = () => {
       <PricingSubHeader>
         Your Success is Our Success. Go Big by Choosing Pro
       </PricingSubHeader>
-      <BenefitsList>
-        <Benefit>Anticipate risks and seize opportunities</Benefit>
-        <Benefit>Save time and boost productivity</Benefit>
-        <Benefit>Search with confidence and peace of mind</Benefit>
-      </BenefitsList>
       <PricingCardContainer>
         <PricingCard>
           <PlanName>Free</PlanName>
           <Price>$0</Price>
           <FeatureList>
-            <Feature>Basic search functionality</Feature>
-            <Feature>Access to fundamental AI models</Feature>
+            <Feature>
+              <FaCheck />
+              Basic search functionality
+            </Feature>
+            <Feature>
+              <FaCheck />
+              Access to fundamental AI models
+            </Feature>
           </FeatureList>
         </PricingCard>
         <PricingCard ref={confettiRef}>
           <PlanName>Pro</PlanName>
           <Price>$15/mo</Price>
           <FeatureList>
-            <Feature>Unlimited searches</Feature>
             <Feature>
+              <FaInfinity />
+              Unlimited searches
+            </Feature>
+            <Feature>
+              <FaRocket />
               Smarter results (with access to latest most advance AI models)
             </Feature>
             <Feature>
+              <FaUserSecret />
               No ads or analytic trackers. 100% anonymous guaranteed
             </Feature>
           </FeatureList>
@@ -146,6 +162,20 @@ export const PricingPage: React.FC = () => {
           )}
         </PricingCard>
       </PricingCardContainer>
+      <BenefitsList>
+        <Benefit>
+          <FaSearch />
+          Anticipate risks and seize opportunities
+        </Benefit>
+        <Benefit>
+          <FaClock />
+          Save time and boost productivity
+        </Benefit>
+        <Benefit>
+          <FaShieldAlt />
+          Search with confidence and peace of mind
+        </Benefit>
+      </BenefitsList>
     </PricingContainer>
   );
 };
