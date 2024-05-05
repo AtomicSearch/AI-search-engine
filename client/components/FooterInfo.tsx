@@ -2,18 +2,16 @@ import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
 import { GitHubInfo } from "../constants/appInfo.constant";
-
 interface FooterInfoWrapperProps {
-  isEmpty: boolean;
+  $isEmpty: boolean;
 }
 
 const FooterInfoWrapper = styled.div<FooterInfoWrapperProps>`
   display: flex;
   justify-content: center;
   z-index: -1;
-
   ${(props) =>
-    props.isEmpty &&
+    props.$isEmpty &&
     css`
       position: fixed;
       bottom: 0;
@@ -34,7 +32,7 @@ export const FooterInfo = ({
   searchResults?: SearchResults;
 }) => {
   return (
-    <FooterInfoWrapper isEmpty={searchResults.length === 0}>
+    <FooterInfoWrapper $isEmpty={searchResults.length === 0}>
       <Slogan>
         <em>The Simplest. Reliable by Design <FaBrain /></em> – Brought with <FaHeart /> by{" "}
         <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>{GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
