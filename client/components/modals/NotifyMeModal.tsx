@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { AppInfo } from "../../constants/appInfo.constant";
-import { on } from "events";
 
 const Modal = styled.div`
   position: fixed;
@@ -24,6 +23,7 @@ const ModalContent = styled.div`
   border-radius: 8px;
   max-width: 400px;
   text-align: center;
+  position: relative;
 
   @media (max-width: 600px) {
     max-width: 90%;
@@ -40,6 +40,11 @@ const ModalText = styled.p`
 
 const PhoneInputWrapper = styled.div`
   margin-bottom: 20px;
+
+  .PhoneInputCountryIcon {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const SubmitButton = styled.button`
@@ -75,6 +80,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
   onSubmitError,
 }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async () => {
     try {
@@ -86,20 +92,32 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
         mode: "no-cors",
         body: formData,
       });
-      // fail-early if response is't OK
+
       if (!response.ok) {
         throw new Error(
-          "We couldn't submit your phone number. Please try again.",
+          "We couldn't submit your phone number. Please try again."
         );
       }
 
       onSubmitSuccess();
-      //setPhoneNumber(""); // TODO Do I need this?
     } catch (error) {
       console.error("Error submitting form:", error);
       onSubmitError();
     }
   };
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   if (!isOpen) {
     return null;
@@ -107,7 +125,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 
   return (
     <Modal>
-      <ModalContent>
+      <ModalContent ref={modalRef}>
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalTitle>Get Notified When Smart Plan is Available</ModalTitle>
         <ModalText>
