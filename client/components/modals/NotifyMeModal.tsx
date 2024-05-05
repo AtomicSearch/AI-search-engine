@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import { AppInfo } from "../../constants/appInfo.constant";
 import { on } from "events";
 
@@ -104,17 +104,17 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
         <CloseButton onClick={onClose}>&times;</CloseButton>
         <ModalTitle>Get Notified When Smart Plan is Available</ModalTitle>
         <ModalText>
-          The Smart plan isn't available yet. Enter your phone number below,
-          and we'll notify you as soon as it's ready. Be among the first to
+          The Smart plan isn't available yet. Enter your phone number below, and
+          we'll notify you as soon as it's ready. Be among the first to
           experience the power of advanced AI with early bird advantages!
         </ModalText>
         <PhoneInputWrapper>
-            <PhoneInput
-                placeholder="Enter phone number"
-                value={phoneNumber}
-                onChange={(value: string) => setPhoneNumber(value)}
-                defaultCountry="US"
-            />
+          <PhoneInput
+            placeholder="Enter phone number"
+            value={phoneNumber}
+            onChange={(value: string) => setPhoneNumber(value)}
+            defaultCountry="US"
+          />
         </PhoneInputWrapper>
         <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
       </ModalContent>
