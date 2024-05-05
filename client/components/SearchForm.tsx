@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import confetti from "canvas-confetti";
+import { FaMicrophone } from "react-icons/fa";
 
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import { LocalStorageKeys } from "../constants/localStorages";
-import { confettiOptions } from "../constants/confettiOptions";
-
+import { LocalStorageKeys } from "../constants/localStorages.constant.ts";
+import { confettiOptions } from "../constants/confettiOptions.constant.ts";
+import { SpeechRecognitionEvent } from "../types/SpeechRecognition.type";
 
 interface SearchFormProps {
   query: string;
@@ -16,11 +17,13 @@ interface SearchFormProps {
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
     getRandomQuerySuggestion(),
   );
+  const [isListening, setIsListening] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -51,6 +54,39 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     } else {
       // If the user deleted the input, reset the search results
       startSearching("");
+    }
+  };
+
+  const handleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.lang = "en-US";
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
+
+      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+        const transcript = event.results[0][0].transcript;
+        if (textAreaRef.current) {
+          textAreaRef.current.value = transcript;
+          startSearching(transcript);
+        }
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onerror = () => {
+        setIsListening(false);
+      };
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
     }
   };
 
@@ -113,6 +149,9 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
           minRows={1}
           maxRows={6}
         />
+        <button type="button" onClick={handleVoiceInput}>
+          <FaMicrophone color={isListening ? "red" : "black"} />
+        </button>
       </form>
     </div>
   );
