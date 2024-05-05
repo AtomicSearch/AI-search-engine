@@ -3,18 +3,37 @@ import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
+import styled from "styled-components";
 
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import { LocalStorageKeys } from "../constants/localStorages.constant.ts";
-import { confettiOptions } from "../constants/confettiOptions.constant.ts";
-import { SpeechRecognitionEvent } from "../types/SpeechRecognition.type";
-import { Button } from "./atoms/Button.tsx";
+import { LocalStorageKeys } from "../constants/localStorages.constant";
+import { confettiOptions } from "../constants/confettiOptions.constant";
 
 interface SearchFormProps {
   query: string;
   updateQuery: (query: string) => void;
 }
+
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+`;
+
+const TextAreaWrapper = styled.div`
+  flex: 1;
+`;
+
+const MicrophoneButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+`;
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -140,19 +159,23 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
       }
     >
       <form style={{ width: "100%" }}>
-        <TextareaAutosize
-          defaultValue={query}
-          placeholder={suggestedQuery}
-          ref={textAreaRef}
-          onChange={handleInputChange}
-          onClick={handleTextAreaClick}
-          autoFocus
-          minRows={1}
-          maxRows={6}
-        />
-        <Button onClick={handleVoiceInput}>
-          <FaMicrophone color={isListening ? "red" : "black"} />
-        </Button>
+        <SearchContainer>
+          <TextAreaWrapper>
+            <TextareaAutosize
+              defaultValue={query}
+              placeholder={suggestedQuery}
+              ref={textAreaRef}
+              onChange={handleInputChange}
+              onClick={handleTextAreaClick}
+              autoFocus
+              minRows={1}
+              maxRows={6}
+            />
+          </TextAreaWrapper>
+          <MicrophoneButton type="button" onClick={handleVoiceInput}>
+            <FaMicrophone color={isListening ? "red" : "black"} />
+          </MicrophoneButton>
+        </SearchContainer>
       </form>
     </div>
   );
