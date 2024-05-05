@@ -1,3 +1,4 @@
+import { FaBrain } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
 import { GitHubInfo } from "../constants/appInfo.constant";
@@ -28,14 +29,14 @@ const Slogan = styled.div`
 `;
 
 export const FooterInfo = ({
-  searchResults,
+  searchResults = [],
 }: {
-  searchResults: SearchResults;
+  searchResults?: SearchResults;
 }) => {
   return (
     <FooterInfoWrapper isEmpty={searchResults.length === 0}>
       <Slogan>
-        <em>The Simplest. But Reliable</em> – Brought with 💙 by{" "}
+        <em>The Simplest. Reliable by Design <FaBrain /></em> – Brought with 💙 by{" "}
         <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>{GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
       </Slogan>
     </FooterInfoWrapper>

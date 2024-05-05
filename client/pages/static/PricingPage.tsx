@@ -4,13 +4,21 @@ import Confetti from "react-confetti";
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
 import { FaRegLightbulb } from "react-icons/fa6";
-import { FaSearch, FaClock, FaShieldAlt, FaRegPaperPlane, FaLockOpen } from "react-icons/fa";
+import {
+  FaSearch,
+  FaClock,
+  FaShieldAlt,
+  FaRegPaperPlane,
+  FaLockOpen,
+  FaBrain,
+} from "react-icons/fa";
 import {
   TbInfinity,
   TbInfinityOff,
   TbRocket,
   TbRocketOff,
 } from "react-icons/tb";
+import { FooterInfo } from "../../components/FooterInfo";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -119,73 +127,80 @@ export const PricingPage: React.FC = () => {
   }, []);
 
   return (
-    <PricingContainer>
-      <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
-      <PricingSubHeader>
-        <FaLockOpen /> Unlock Your Full Potential with Smarter Plan
-      </PricingSubHeader>
-      <PricingCardContainer>
-        <PricingCard>
-          <PlanName><FaRegPaperPlane /> Basic</PlanName>
-          <Price>$0</Price>
-          <FeatureList>
-            <Feature>
-              <TbInfinityOff />
-              Limited search functionality
-            </Feature>
-            <Feature>
-              <TbRocketOff />
-              Access to basic AI models
-            </Feature>
-          </FeatureList>
-        </PricingCard>
-        <PricingCard ref={confettiRef}>
-          <PlanName>
-            <FaRegLightbulb /> Smarter
-          </PlanName>
-          <Price>$15/mo</Price>
-          <FeatureList>
-            <Feature>
-              <TbInfinity />
-              Fuel your growth with unlimited searches
-            </Feature>
-            <Feature>
-              <TbRocket />
-              Take advantage of the most advanced AI models
-            </Feature>
-            <Feature>
-              <FaShieldAlt />
-              Enjoy a distraction-free, fully secure, and private search experience
-            </Feature>
-          </FeatureList>
-          <PurchaseButton href={`${CheckoutInfo.PRO_SUBSCRIPTION_URL}`}>
-            Upgrade Now
-          </PurchaseButton>
-          {showConfetti && confettiRef.current && (
-            <Confetti
-              numberOfPieces={200}
-              recycle={false}
-              width={confettiRef.current.offsetWidth}
-              height={confettiRef.current.offsetHeight}
-              style={{ position: "absolute", top: 0, left: 0 }}
-            />
-          )}
-        </PricingCard>
-      </PricingCardContainer>
-      <BenefitsList>
-        <Benefit>
-          <FaSearch />
-          Stay ahead of the curve with predictive insights
-        </Benefit>
-        <Benefit>
-          <FaClock />
-          Accelerate your workflow and achieve more in less time
-        </Benefit>
-        <Benefit>
-          <FaShieldAlt />
-          Gain a competitive edge while maintaining complete privacy
-        </Benefit>
-      </BenefitsList>
-    </PricingContainer>
+    <>
+      <PricingContainer>
+        <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
+        <PricingSubHeader>
+          <FaLockOpen /> Unlock Full Knowledge with Smarter Plan
+        </PricingSubHeader>
+        <PricingCardContainer>
+          <PricingCard>
+            <PlanName>
+              <FaRegPaperPlane /> Basic
+            </PlanName>
+            <Price>$0</Price>
+            <FeatureList>
+              <Feature>
+                <TbInfinityOff />
+                Limited search functionality
+              </Feature>
+              <Feature>
+                <TbRocketOff />
+                Access to basic AI models
+              </Feature>
+            </FeatureList>
+          </PricingCard>
+          <PricingCard ref={confettiRef}>
+            <PlanName>
+              <FaRegLightbulb /> Smarter
+            </PlanName>
+            <Price>$15/mo</Price>
+            <FeatureList>
+              <Feature>
+                <TbInfinity />
+                Fuel your growth with unlimited searches
+              </Feature>
+              <Feature>
+                <TbRocket />
+                Take advantage of the most advanced AI models
+              </Feature>
+              <Feature>
+                <FaShieldAlt />
+                Enjoy a distraction-free, fully secure, and private search
+                experience
+              </Feature>
+            </FeatureList>
+            <PurchaseButton href={`${CheckoutInfo.PRO_SUBSCRIPTION_URL}`}>
+              Notify Me. Upgrade when ready.
+            </PurchaseButton>
+            {showConfetti && confettiRef.current && (
+              <Confetti
+                numberOfPieces={200}
+                recycle={false}
+                width={confettiRef.current.offsetWidth}
+                height={confettiRef.current.offsetHeight}
+                style={{ position: "absolute", top: 0, left: 0 }}
+              />
+            )}
+          </PricingCard>
+        </PricingCardContainer>
+        <BenefitsList>
+          <Benefit>
+            <FaSearch />
+            Stay ahead of the curve with predictive insights
+          </Benefit>
+          <Benefit>
+            <FaClock />
+            Accelerate your workflow and achieve more in less time
+          </Benefit>
+          <Benefit>
+            <FaShieldAlt />
+            Gain a competitive edge while maintaining complete privacy
+          </Benefit>
+        </BenefitsList>
+      </PricingContainer>
+
+      <FooterInfo />
+    </>
   );
 };
