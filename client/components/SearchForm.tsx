@@ -23,6 +23,7 @@ const SearchContainer = styled.div`
 
 const TextAreaWrapper = styled.div`
   flex: 1;
+  position: relative;
 `;
 
 const MicrophoneButton = styled.button`
@@ -170,11 +171,12 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               autoFocus
               minRows={1}
               maxRows={6}
+              style={{ paddingRight: "40px" }}
             />
+            <MicrophoneButton type="button" onClick={handleVoiceInput}>
+              <FaMicrophone color={isListening ? "red" : "black"} />
+            </MicrophoneButton>
           </TextAreaWrapper>
-          <MicrophoneButton type="button" onClick={handleVoiceInput}>
-            <FaMicrophone color={isListening ? "red" : "black"} />
-          </MicrophoneButton>
         </SearchContainer>
       </form>
     </div>
