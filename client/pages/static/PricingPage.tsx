@@ -3,7 +3,14 @@ import styled from "styled-components";
 import Confetti from "react-confetti";
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
-import { FaSearch, FaClock, FaShieldAlt, FaCheck, FaInfinity, FaRocket, FaUserSecret } from "react-icons/fa";
+import { FaRegLightbulb } from "react-icons/fa6";
+import { FaSearch, FaClock, FaShieldAlt, FaRegPaperPlane, FaLockOpen } from "react-icons/fa";
+import {
+  TbInfinity,
+  TbInfinityOff,
+  TbRocket,
+  TbRocketOff,
+} from "react-icons/tb";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -57,6 +64,7 @@ const FeatureList = styled.ul`
 `;
 
 const Feature = styled.li`
+  font-size: 18px;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -114,42 +122,44 @@ export const PricingPage: React.FC = () => {
     <PricingContainer>
       <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
       <PricingSubHeader>
-        Your Success is Our Success. Go Big by Choosing Pro
+        <FaLockOpen /> Unlock Your Full Potential with Smarter Plan
       </PricingSubHeader>
       <PricingCardContainer>
         <PricingCard>
-          <PlanName>Free</PlanName>
+          <PlanName><FaRegPaperPlane /> Basic</PlanName>
           <Price>$0</Price>
           <FeatureList>
             <Feature>
-              <FaCheck />
-              Basic search functionality
+              <TbInfinityOff />
+              Limited search functionality
             </Feature>
             <Feature>
-              <FaCheck />
-              Access to fundamental AI models
+              <TbRocketOff />
+              Access to basic AI models
             </Feature>
           </FeatureList>
         </PricingCard>
         <PricingCard ref={confettiRef}>
-          <PlanName>Pro</PlanName>
+          <PlanName>
+            <FaRegLightbulb /> Smarter
+          </PlanName>
           <Price>$15/mo</Price>
           <FeatureList>
             <Feature>
-              <FaInfinity />
-              Unlimited searches
+              <TbInfinity />
+              Fuel your growth with unlimited searches
             </Feature>
             <Feature>
-              <FaRocket />
-              Smarter results (with access to latest most advance AI models)
+              <TbRocket />
+              Take advantage of the most advanced AI models
             </Feature>
             <Feature>
-              <FaUserSecret />
-              No ads or analytic trackers. 100% anonymous guaranteed
+              <FaShieldAlt />
+              Enjoy a distraction-free, fully secure, and private search experience
             </Feature>
           </FeatureList>
           <PurchaseButton href={`${CheckoutInfo.PRO_SUBSCRIPTION_URL}`}>
-            Purchase
+            Upgrade Now
           </PurchaseButton>
           {showConfetti && confettiRef.current && (
             <Confetti
@@ -165,15 +175,15 @@ export const PricingPage: React.FC = () => {
       <BenefitsList>
         <Benefit>
           <FaSearch />
-          Anticipate risks and seize opportunities
+          Stay ahead of the curve with predictive insights
         </Benefit>
         <Benefit>
           <FaClock />
-          Save time and boost productivity
+          Accelerate your workflow and achieve more in less time
         </Benefit>
         <Benefit>
           <FaShieldAlt />
-          Search with confidence and peace of mind
+          Gain a competitive edge while maintaining complete privacy
         </Benefit>
       </BenefitsList>
     </PricingContainer>
