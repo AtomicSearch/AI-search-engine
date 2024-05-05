@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
+import { GitHubInfo } from "../constants/appInfo.constant";
 
 interface FooterInfoWrapperProps {
   isEmpty: boolean;
@@ -26,11 +27,16 @@ const Slogan = styled.div`
   color: #888;
 `;
 
-export const FooterInfo = ({ searchResults }: { searchResults: SearchResults }) => {
+export const FooterInfo = ({
+  searchResults,
+}: {
+  searchResults: SearchResults;
+}) => {
   return (
     <FooterInfoWrapper isEmpty={searchResults.length === 0}>
       <Slogan>
-        <em>The Simplest. But The Most Relevant</em>
+        <em>The Simplest. But Reliable</em> – Brought with 💙 by{" "}
+        <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>${GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
       </Slogan>
     </FooterInfoWrapper>
   );
