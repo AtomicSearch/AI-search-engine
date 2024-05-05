@@ -9,6 +9,7 @@ import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant.ts";
 import { confettiOptions } from "../constants/confettiOptions.constant.ts";
 import { SpeechRecognitionEvent } from "../types/SpeechRecognition.type";
+import { Button } from "./atoms/Button.tsx";
 
 interface SearchFormProps {
   query: string;
@@ -149,9 +150,9 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
           minRows={1}
           maxRows={6}
         />
-        <button type="button" onClick={handleVoiceInput}>
+        <Button onClick={handleVoiceInput}>
           <FaMicrophone color={isListening ? "red" : "black"} />
-        </button>
+        </Button>
       </form>
     </div>
   );
