@@ -11,8 +11,12 @@ const PricingContainer = styled.div`
   text-align: center;
 `;
 
-const PricingHeader = styled.h2`
-  font-size: 24px;
+const PricingHeader = styled.h1`
+  margin-bottom: 8px;
+`;
+
+const PricingSubHeader = styled.h2`
+  font-size: 20px;
   margin-bottom: 20px;
 `;
 
@@ -87,7 +91,10 @@ export const PricingPage: React.FC = () => {
 
   return (
     <PricingContainer>
-      <PricingHeader>Pricing</PricingHeader>
+      <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
+      <PricingSubHeader>
+        Your Success is Our Success. Go Big by Choosing Pro
+      </PricingSubHeader>
       <PricingCardContainer>
         <PricingCard>
           <PlanName>Free</PlanName>
