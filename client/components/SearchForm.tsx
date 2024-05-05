@@ -10,13 +10,9 @@ interface SearchFormProps {
   updateQuery: (query: string) => void;
 }
 
-const CONFETTI_TRIGGERED_KEY = "confettiTriggered";
-
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const [isFirstClick, setIsFirstClick] = useState<boolean>(
-    !localStorage.getItem(CONFETTI_TRIGGERED_KEY)
-  );
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(true);
 
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
@@ -59,7 +55,6 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     if (isFirstClick) {
       confetti();
       setIsFirstClick(false);
-      localStorage.setItem(CONFETTI_TRIGGERED_KEY, "true");
     }
   };
 
