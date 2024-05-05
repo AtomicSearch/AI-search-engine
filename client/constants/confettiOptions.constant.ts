@@ -1,11 +1,13 @@
 type ConfettiOptions = {
   spread: number;
-  startVelocity: number;
   origin: { y: number };
+  particleCount?: number;
+  startVelocity?: number;
+  angle?: number;
 };
 
 export const confettiOptions: ConfettiOptions = {
-  spread: 200,
-  startVelocity: 30,
+  spread: 100,
+  startVelocity: 35,
   origin: { y: 0.6 },
 };
