@@ -20,6 +20,17 @@ const PricingSubHeader = styled.h2`
   margin-bottom: 20px;
 `;
 
+const BenefitsList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 30px;
+`;
+
+const Benefit = styled.li`
+  font-size: 18px;
+  margin-bottom: 10px;
+`;
+
 const PricingCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -95,6 +106,11 @@ export const PricingPage: React.FC = () => {
       <PricingSubHeader>
         Your Success is Our Success. Go Big by Choosing Pro
       </PricingSubHeader>
+      <BenefitsList>
+        <Benefit>Anticipate risks and seize opportunities</Benefit>
+        <Benefit>Save time and boost productivity</Benefit>
+        <Benefit>Search with confidence and peace of mind</Benefit>
+      </BenefitsList>
       <PricingCardContainer>
         <PricingCard>
           <PlanName>Free</PlanName>
