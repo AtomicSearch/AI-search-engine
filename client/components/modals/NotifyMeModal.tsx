@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PhoneInput, {
+  Country,
   getCountryCallingCode,
   getCountries,
 } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
-import "country-flag-icons/3x2/flags.css";
 import "react-phone-number-input/style.css";
 import { AppInfo } from "../../constants/appInfo.constant";
 
@@ -48,24 +48,6 @@ const ModalText = styled.p`
 
 const PhoneInputWrapper = styled.div`
   margin-bottom: 20px;
-
-  .PhoneInputCountryIcon {
-    width: 2rem;
-    height: 1.5rem;
-  }
-
-  .PhoneInputCountryIcon--border {
-    background-color: rgba(0, 0, 0, 0.1);
-    box-shadow:
-      0 0 0 1px rgba(0, 0, 0, 0.5),
-      inset 0 0 0 1px rgba(0, 0, 0, 0.5);
-  }
-
-  .PhoneInputCountryIconImg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
 `;
 
 const SubmitButton = styled.button`
@@ -101,7 +83,21 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
   onSubmitError,
 }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState<Country>(
+    AppInfo.DEFAULT_COUNTRY_CODE,
+  );
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const detectCountryCode = () => {
+      const navigatorLanguage =
+        navigator.languages?.[0] || navigator.language || "";
+      const detectedCountryCode = navigatorLanguage.split("-")?.[1] || "";
+      setCountryCode(detectedCountryCode as Country);
+    };
+
+    detectCountryCode();
+  }, []);
 
   const handleSubmit = async () => {
     try {
@@ -162,7 +158,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             placeholder="Enter phone number"
             value={phoneNumber}
             onChange={(value: string) => setPhoneNumber(value)}
-            defaultCountry={AppInfo.DEFAULT_COUNTRY_CODE}
+            defaultCountry={countryCode || AppInfo.DEFAULT_COUNTRY_CODE}
             labels={labels}
             countrySelectComponent={({ value, onChange, labels, ...rest }) => (
               <select
@@ -173,7 +169,8 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
                 <option value="">{labels?.ZZ || "Unknown"}</option>
                 {getCountries().map((country) => (
                   <option key={country} value={country}>
-                    {labels?.[country] || country} +{getCountryCallingCode(country)}
+                    {labels?.[country] || country} +
+                    {getCountryCallingCode(country)}
                   </option>
                 ))}
               </select>
