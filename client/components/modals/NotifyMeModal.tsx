@@ -94,7 +94,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       }
 
       onSubmitSuccess();
-      //setPhoneNumber("");
+      //setPhoneNumber(""); // TODO Do I need this?
     } catch (error) {
       console.error("Error submitting form:", error);
       onSubmitError();
