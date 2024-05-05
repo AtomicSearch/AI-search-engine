@@ -1,4 +1,4 @@
-import { FaBrain } from "react-icons/fa";
+import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
 import { GitHubInfo } from "../constants/appInfo.constant";
@@ -36,7 +36,7 @@ export const FooterInfo = ({
   return (
     <FooterInfoWrapper isEmpty={searchResults.length === 0}>
       <Slogan>
-        <em>The Simplest. Reliable by Design <FaBrain /></em> – Brought with 💙 by{" "}
+        <em>The Simplest. Reliable by Design <FaBrain /></em> – Brought with <FaHeart /> by{" "}
         <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>{GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
       </Slogan>
     </FooterInfoWrapper>
