@@ -6,6 +6,7 @@ import confetti from "canvas-confetti";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages";
+import { confettiOptions } from "../constants/confettiOptions";
 
 
 interface SearchFormProps {
@@ -56,7 +57,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const handleTextAreaClick = () => {
     const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
     if (!isFirstVisit) {
-      confetti();
+      confetti(confettiOptions);
       localStorage.setItem(LocalStorageKeys.FIRST_VISIT, "true");
     }
   };
