@@ -88,7 +88,7 @@ export const SearchPage = () => {
       {isLoading && (
         <LoadingContainer>
           <LoadingSpinner />
-          <LoadingText>Answer...</LoadingText>
+          <LoadingText>Answering...</LoadingText>
         </LoadingContainer>
       )}
       {!getDisableAiResponseSetting() && response.length > 0 && (
