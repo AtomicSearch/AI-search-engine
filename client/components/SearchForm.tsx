@@ -3,18 +3,20 @@ import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
-import Confetti from "react-confetti";
+import confetti from "canvas-confetti";
 
 interface SearchFormProps {
   query: string;
   updateQuery: (query: string) => void;
 }
 
+const CONFETTI_TRIGGERED_KEY = "confettiTriggered";
+
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  const confettiRef = useRef<HTMLDivElement>(null);
-  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+  const [isFirstClick, setIsFirstClick] = useState<boolean>(
+    !localStorage.getItem(CONFETTI_TRIGGERED_KEY)
+  );
 
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>(
@@ -53,6 +55,14 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     }
   };
 
+  const handleTextAreaClick = () => {
+    if (isFirstClick) {
+      confetti();
+      setIsFirstClick(false);
+      localStorage.setItem(CONFETTI_TRIGGERED_KEY, "true");
+    }
+  };
+
   useEffect(() => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
       if (event.code === "Enter" && !event.shiftKey) {
@@ -80,14 +90,6 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     };
   }, [startSearching]);
 
-  useEffect(() => {
-    const visited = localStorage.getItem("firstVisit");
-    if (!visited) {
-      setShowConfetti(true);
-      localStorage.setItem("firstVisit", "true");
-    }
-  }, []);
-
   return (
     <div
       style={
@@ -102,26 +104,16 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
       }
     >
       <form style={{ width: "100%" }}>
-        <div ref={confettiRef} style={{ position: "relative" }}>
-          {showConfetti && confettiRef.current && (
-            <Confetti
-              numberOfPieces={200}
-              recycle={false}
-              width={confettiRef.current.offsetWidth}
-              height={confettiRef.current.offsetHeight}
-              style={{ position: "absolute", top: 0, left: 0 }}
-            />
-          )}
-          <TextareaAutosize
-            defaultValue={query}
-            placeholder={suggestedQuery}
-            ref={textAreaRef}
-            onChange={handleInputChange}
-            autoFocus
-            minRows={1}
-            maxRows={6}
-          />
-        </div>
+        <TextareaAutosize
+          defaultValue={query}
+          placeholder={suggestedQuery}
+          ref={textAreaRef}
+          onChange={handleInputChange}
+          onClick={handleTextAreaClick}
+          autoFocus
+          minRows={1}
+          maxRows={6}
+        />
       </form>
     </div>
   );

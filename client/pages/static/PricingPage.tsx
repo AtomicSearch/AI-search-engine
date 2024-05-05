@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Confetti from 'react-confetti';
+import { LocalStorageKeys } from '../../constants/localStorages';
 
 const LEMON_SQUEEZY_CHECKOUT_URL = 'https://your-lemonsqueezy-checkout-url';
 
@@ -78,10 +79,10 @@ export const PricingPage: React.FC = () => {
   const confettiRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const visited = localStorage.getItem('pricingVisited');
+    const visited = localStorage.getItem(LocalStorageKeys.PRICING_VISITED);
     if (!visited) {
       setShowConfetti(true);
-      localStorage.setItem('pricingVisited', 'true');
+      localStorage.setItem(LocalStorageKeys.PRICING_VISITED, 'true');
     }
   }, []);
 

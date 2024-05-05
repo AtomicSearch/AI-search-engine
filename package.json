@@ -22,6 +22,7 @@
     "@mlc-ai/web-llm": "0.2.35",
     "@ratchet-ml/ratchet-web": "^0.4.0",
     "@wllama/wllama": "^1.4.2",
+    "canvas-confetti": "^1.9.3",
     "create-pubsub": "^1.6.3",
     "html-to-text": "^9.0.5",
     "inter-ui": "^4.0.2",
