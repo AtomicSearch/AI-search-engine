@@ -36,7 +36,7 @@ export const FooterInfo = ({
     <FooterInfoWrapper isEmpty={searchResults.length === 0}>
       <Slogan>
         <em>The Simplest. But Reliable</em> – Brought with 💙 by{" "}
-        <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>${GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
+        <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>{GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
       </Slogan>
     </FooterInfoWrapper>
   );
