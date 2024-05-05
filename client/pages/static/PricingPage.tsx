@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Confetti from "react-confetti";
-import { LocalStorageKeys } from "../../constants/localStorages.constant";
-import { CheckoutInfo } from "../../constants/appInfo.constant";
-import { FaRegLightbulb } from "react-icons/fa6";
+import 'react-phone-number-input/style.css';
 import {
   FaSearch,
   FaClock,
@@ -12,28 +10,47 @@ import {
   FaLockOpen,
   FaBrain,
 } from "react-icons/fa";
+import { FaRegLightbulb } from "react-icons/fa6";
 import {
   TbInfinity,
   TbInfinityOff,
   TbRocket,
   TbRocketOff,
 } from "react-icons/tb";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { LocalStorageKeys } from "../../constants/localStorages.constant";
+import { CheckoutInfo } from "../../constants/appInfo.constant";
 import { FooterInfo } from "../../components/FooterInfo";
+import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 
 const PricingContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+
+  @media (max-width: 600px) {
+    padding: 10px;
+  }
 `;
 
 const PricingHeader = styled.h1`
   margin-bottom: 8px;
+
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 `;
 
 const PricingSubHeader = styled.h2`
   font-size: 20px;
   margin-bottom: 20px;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 `;
 
 const PricingCardContainer = styled.div`
@@ -41,6 +58,10 @@ const PricingCardContainer = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   margin-bottom: 40px;
+
+  @media (max-width: 600px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const PricingCard = styled.div`
@@ -51,17 +72,30 @@ const PricingCard = styled.div`
   flex: 1 1 300px;
   max-width: 400px;
   position: relative;
+
+  @media (max-width: 600px) {
+    padding: 15px;
+    margin: 5px;
+  }
 `;
 
 const PlanName = styled.h3`
   font-size: 20px;
   margin-bottom: 10px;
+
+  @media (max-width: 600px) {
+    font-size: 18px;
+  }
 `;
 
 const Price = styled.p`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
+
+  @media (max-width: 600px) {
+    font-size: 20px;
+  }
 `;
 
 const FeatureList = styled.ul`
@@ -69,6 +103,10 @@ const FeatureList = styled.ul`
   margin-bottom: 20px;
   padding: 0;
   list-style-type: none;
+
+  @media (max-width: 600px) {
+    margin-bottom: 15px;
+  }
 `;
 
 const Feature = styled.li`
@@ -82,9 +120,13 @@ const Feature = styled.li`
     margin-right: 8px;
     color: #007bff;
   }
+
+  @media (max-width: 600px) {
+    font-size: 16px;
+  }
 `;
 
-const PurchaseButton = styled.a`
+const PurchaseButton = styled.button`
   display: inline-block;
   background-color: #007bff;
   color: #fff;
@@ -92,6 +134,13 @@ const PurchaseButton = styled.a`
   border-radius: 4px;
   text-decoration: none;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
+
+  @media (max-width: 600px) {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 `;
 
 const BenefitsList = styled.ul`
@@ -112,11 +161,17 @@ const Benefit = styled.li`
     margin-right: 12px;
     color: #007bff;
   }
+
+  @media (max-width: 600px) {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const PricingPage: React.FC = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const confettiRef = useRef<HTMLDivElement | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const visited = localStorage.getItem(LocalStorageKeys.PRICING_VISITED);
@@ -125,6 +180,37 @@ export const PricingPage: React.FC = () => {
       localStorage.setItem(LocalStorageKeys.PRICING_VISITED, "true");
     }
   }, []);
+
+  const handleNotifyMeClick = () => {
+    setShowModal(true);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const handleSubmitSuccess = () => {
+    setShowModal(false);
+    toast.success('Thank you for your interest! We\'ll notify you when the Smart plan is available.', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
+
+  const handleSubmitError = () => {
+    toast.error('Oops! Something went wrong. Please try again later.', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  };
 
   return (
     <>
@@ -170,7 +256,7 @@ export const PricingPage: React.FC = () => {
                 experience
               </Feature>
             </FeatureList>
-            <PurchaseButton href={`${CheckoutInfo.PRO_SUBSCRIPTION_URL}`}>
+            <PurchaseButton onClick={handleNotifyMeClick}>
               Notify Me. Upgrade when ready.
             </PurchaseButton>
             {showConfetti && confettiRef.current && (
@@ -201,6 +287,15 @@ export const PricingPage: React.FC = () => {
       </PricingContainer>
 
       <FooterInfo />
+
+      <NotifyMeModal
+        isOpen={showModal}
+        onClose={handleModalClose}
+        onSubmitSuccess={handleSubmitSuccess}
+        onSubmitError={handleSubmitError}
+      />
+
+      <ToastContainer />
     </>
   );
 };
