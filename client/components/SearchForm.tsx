@@ -22,7 +22,7 @@ const SearchContainer = styled.div`
   background-color: #ffffff;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const TextAreaWrapper = styled.div`
@@ -193,10 +193,11 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
                 color: "#333",
                 outline: "none",
                 paddingRight: "40px",
+                overflow: "hidden",
               }}
             />
             <MicrophoneButton type="button" onClick={handleVoiceInput}>
-              <FaMicrophone color={isListening ? "#00b8d4" : "#888"} />
+              <FaMicrophone color={isListening ? "#00b8d4" : "#888"} size={20} />
             </MicrophoneButton>
           </TextAreaWrapper>
         </SearchContainer>
