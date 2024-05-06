@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
@@ -183,8 +183,9 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       searchResults = JSON.parse(searchResults);
     } else {
       // Pass the redisClient instance to fetchSearXNG
-      searchResults = await fetchSearXNG(query, limit, redisClient);
-      await redisClient.set(query, JSON.stringify(searchResults));
+      const fetchedResults = await fetchSearXNG(query, limit, redisClient);
+      searchResults = JSON.stringify(fetchedResults);
+      await redisClient.set(query, searchResults);
     }
 
     searchesSinceLastRestart++;
@@ -195,9 +196,8 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     try {
-      response.end(
-        JSON.stringify(await rankSearchResults(query, searchResults)),
-      );
+      const rankedResults = await rankSearchResults(query, JSON.parse(searchResults));
+      response.end(JSON.stringify(rankedResults));
     } catch (error) {
       console.error("Error ranking search results:", error);
       response.end(JSON.stringify(searchResults));
@@ -224,8 +224,8 @@ function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
 async function fetchSearXNG(
   query: string,
   limit?: number,
-  redisClient?: Redis.Redis,
-) {
+  redisClient?: RedisClient,
+): Promise<[title: string, content: string, url: string][]> {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
 
@@ -234,6 +234,7 @@ async function fetchSearXNG(
       language: "auto",
       safesearch: "0",
       format: "json",
+      engine: "all", // Exclude the Wikidata engine
     }).toString();
 
     const response = await fetch(url);
