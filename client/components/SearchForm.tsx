@@ -90,7 +90,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   const debouncedStartSearching = debounce(startSearching, 500);
 
   const showUpgradeModal = () => {
-    setModalShown(true);
+    setModalShown(true); // Prevent showing the modal multiple times
 
     toast.custom(
       <div
