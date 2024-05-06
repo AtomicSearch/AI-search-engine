@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { isRunningOnMobile } from "../mobileDetection";
 import { I18n } from "../../constants/appInfo.constant";
 
-export namespace Academic {
+export namespace Gossip {
   export async function prepareTextGeneration() {
     if (query === null) return;
 
@@ -165,7 +165,7 @@ export namespace Academic {
       updateLoadingToast("Generating response...");
 
       const prompt = [
-        "As a software engineer. I have a request/question for you, but before that, I want to provide you with some context.",
+        "As a journalist. I have a request/question for you, but before that, I want to provide you with some context.",
         "\n",
         "Context:",
         getSearchResults()
@@ -215,7 +215,7 @@ export namespace Academic {
             {
               role: "system",
               content:
-                "You are a highly knowledgeable and friendly teacher. Your goal is to understand and respond to user inquiries with clarity like their are 5.",
+                "You are a highly knowledgeable and friendly journalist who is addicted to gossips. Your goal is to understand and respond to user inquiries with clarity like their are 5.",
             },
             { role: "user", content: prompt },
           ];

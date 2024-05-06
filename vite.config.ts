@@ -301,7 +301,9 @@ function getSearchToken() {
 
 function getQuerySuggestions(limit?: number) {
   return (
-    JSON.parse(fs.readFileSync("query-suggestions.json").toString()) as string[]
+    JSON.parse(
+      fs.readFileSync("gossip.query-suggestions.json").toString(),
+    ) as string[]
   )
     .sort(() => Math.random() - 0.5)
     .slice(0, limit);

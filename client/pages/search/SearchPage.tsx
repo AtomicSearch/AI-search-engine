@@ -11,7 +11,7 @@ import { Toaster } from "react-hot-toast";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { Academic as AcademicNiche } from "../../modules/engine-niche/academic.textGeneration";
+import { Gossip as GossipNiche } from "../../modules/engine-niche/gossip.textGeneration";
 import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
@@ -45,7 +45,7 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    AcademicNiche.prepareTextGeneration();
+    GossipNiche.prepareTextGeneration();
   }, []);
 
   useEffect(() => {
