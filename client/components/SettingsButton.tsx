@@ -14,6 +14,8 @@ const SettingsButtonWrapper = styled.div`
 `;
 
 export const SettingsButton = () => {
+  const toastId = "settings-toast";
+
   return (
     <SettingsButtonWrapper>
       <Button
@@ -33,14 +35,14 @@ export const SettingsButton = () => {
               >
                 <Button
                   style={{ fontSize: "small" }}
-                  onClick={() => toast.dismiss()}
+                  onClick={() => toast.dismiss(toastId)}
                 >
                   ✅
                 </Button>
               </div>
             </div>,
           {
-            id: "settings-toast",
+            id: toastId,
             duration: Infinity,
             position: "bottom-center",
             style: {
