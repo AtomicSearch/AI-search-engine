@@ -123,7 +123,6 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
-  // give an ideal options for the rate limiter
   const rateLimiterOptions = {
     points: 4, // allocate points
     duration: 5, // per second
@@ -180,8 +179,15 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 
     if (searchResults) {
       // If the search results are cached in Redis, parse them and return
-      searchResults = JSON.parse(searchResults);
-    } else {
+      try {
+        searchResults = JSON.parse(searchResults);
+      } catch (error) {
+        console.error("Error parsing JSON data from Redis:", error);
+        searchResults = null; // Reset searchResults to null if parsing fails
+      }
+    }
+
+    if (!searchResults) {
       // Pass the redisClient instance to fetchSearXNG
       const fetchedResults = await fetchSearXNG(query, limit, redisClient);
       searchResults = JSON.stringify(fetchedResults);
@@ -196,10 +202,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     try {
-      const rankedResults = await rankSearchResults(
-        query,
-        JSON.parse(searchResults),
-      );
+      const rankedResults = await rankSearchResults(query, searchResults);
       response.end(JSON.stringify(rankedResults));
     } catch (error) {
       console.error("Error ranking search results:", error);
@@ -238,6 +241,7 @@ async function fetchSearXNG(
       safesearch: "0",
       format: "json",
       engine: "all", // Exclude the Wikidata engine
+      timeout: "5000", // Set a timeout of 5 seconds
     }).toString();
 
     const response = await fetch(url);
@@ -276,7 +280,7 @@ async function fetchSearXNG(
 
     return searchResults;
   } catch (e) {
-    console.error(e);
+    console.error("Error fetching search results from SearXNG:", e);
     return [];
   }
 }
@@ -326,25 +330,30 @@ async function rankSearchResults(
     return searchResults; // Return the original search results if it's not an array or if it's empty
   }
 
-  const scores = await getSimilarityScores(
-    query.toLocaleLowerCase(),
-    searchResults.map(([title, snippet]) =>
-      `${title}: ${snippet}`.toLocaleLowerCase(),
-    ),
-  );
-
-  const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
-    new Map();
-
-  scores.map((score, index) =>
-    searchResultToScoreMap.set(searchResults[index], score ?? 0),
-  );
-
-  return searchResults
-    .slice()
-    .sort(
-      (a, b) =>
-        (searchResultToScoreMap.get(b) ?? 0) -
-        (searchResultToScoreMap.get(a) ?? 0),
+  try {
+    const scores = await getSimilarityScores(
+      query.toLocaleLowerCase(),
+      searchResults.map(([title, snippet]) =>
+        `${title}: ${snippet}`.toLocaleLowerCase(),
+      ),
     );
+
+    const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
+      new Map();
+
+    scores.map((score, index) =>
+      searchResultToScoreMap.set(searchResults[index], score ?? 0),
+    );
+
+    return searchResults
+      .slice()
+      .sort(
+        (a, b) =>
+          (searchResultToScoreMap.get(b) ?? 0) -
+          (searchResultToScoreMap.get(a) ?? 0),
+      );
+  } catch (error) {
+    console.error("Error ranking search results:", error);
+    return searchResults;
+  }
 }
