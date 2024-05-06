@@ -4,6 +4,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
+import toast from "react-hot-toast";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { SettingsButton } from "./SettingsButton";
 
@@ -61,6 +62,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     getRandomQuerySuggestion(),
   );
   const [isListening, setIsListening] = useState<boolean>(false);
+  const [modalShown, setModalShown] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -87,13 +89,56 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
 
   const debouncedStartSearching = debounce(startSearching, 500);
 
+  const showUpgradeModal = () => {
+    setModalShown(true);
+
+    toast.custom(
+      <div
+        style={{
+          background: "#fff",
+          color: "#333",
+          padding: "16px",
+          borderRadius: "8px",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <p style={{ marginBottom: "8px" }}>
+          Upgrade your subscription for longer queries?
+        </p>
+        <button
+          style={{
+            background: "#007bff",
+            color: "#fff",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            window.location.href = "/pricing";
+          }}
+        >
+          Upgrade
+        </button>
+      </div>,
+      {
+        duration: 5000,
+        position: "top-center",
+        style: {
+          background: "transparent",
+          boxShadow: "none",
+        },
+      },
+    );
+  };
+
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const userQuery = event.target.value.trim();
     const wordCount = userQuery.split(/\s+/).length;
     const needToUpgradeSubscription = wordCount > 10;
-    if (needToUpgradeSubscription) {
-      // Redirect to the pricing page
-      window.location.href = "/pricing";
+    if (needToUpgradeSubscription && !modalShown) {
+      showUpgradeModal();
+      return;
     }
 
     const userQueryIsBlank = userQuery.length === 0;
