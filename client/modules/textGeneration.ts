@@ -203,7 +203,7 @@ async function generateTextWithWebLlm() {
       const prompt = [
         `When searching for "${query}", this link was found: [${title}](${url} "${snippet}")`,
         "Now, tell me: What is this link about and how is it related to the search?",
-        "Note: Don't cite the link in your response. Just write a few sentences to indicate if it's worth visiting.",
+        "Note: Don't cite the link in your response. Write only a short summary and a few sentences indicating if it's worth visiting the website.",
       ].join("\n");
 
       const messages: import("@mlc-ai/web-llm").ChatCompletionMessageParam[] = [
