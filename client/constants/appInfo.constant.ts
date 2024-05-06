@@ -1,9 +1,10 @@
 export enum AppInfo {
   APP_NAME = "Atomic Search",
+  APP_URL = "http://localhost:7860",
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE = "english",
   DEFAULT_LANGUAGE_CODE = "en",
-  NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk",
+  NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }
 
 export enum AppLegalLinks {
