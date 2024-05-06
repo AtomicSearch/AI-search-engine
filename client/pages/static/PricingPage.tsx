@@ -8,10 +8,11 @@ import {
   FaSearch,
   FaClock,
   FaShieldAlt,
+  FaSearchengin,
   FaRegPaperPlane,
   FaLockOpen,
 } from "react-icons/fa";
-import { FaRegLightbulb } from "react-icons/fa6";
+import { FaRegLightbulb, } from "react-icons/fa6";
 import {
   TbInfinity,
   TbInfinityOff,
@@ -223,7 +224,7 @@ export const PricingPage: React.FC = () => {
             <FeatureList>
               <Feature>
                 <TbInfinityOff />
-                Limited search functionality
+                Limited words per query
               </Feature>
               <Feature>
                 <TbRocketOff />
@@ -235,11 +236,15 @@ export const PricingPage: React.FC = () => {
             <PlanName>
               <FaRegLightbulb /> Smarter
             </PlanName>
-            <Price>$15/mo</Price>
+            <Price>$17/mo</Price>
             <FeatureList>
               <Feature>
                 <TbInfinity />
                 Fuel your growth with unlimited searches
+              </Feature>
+              <Feature>
+                <FaSearchengin />
+                Get string accuracy rate for every query
               </Feature>
               <Feature>
                 <TbRocket />
