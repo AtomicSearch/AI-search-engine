@@ -15,37 +15,22 @@ interface SearchFormProps {
   updateQuery: (query: string) => void;
 }
 
-export const SearchContainer = styled.div`
+const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-export const TextAreaWrapper = styled.div`
+const TextAreaWrapper = styled.div`
   flex: 1;
   position: relative;
 `;
 
-export const TextArea = styled(TextareaAutosize)`
-  width: 100%;
-  border: none;
-  resize: none;
-  background-color: transparent;
-  font-size: 18px;
-  color: #333;
-  outline: none;
-  padding-right: 40px;
-
-  &::placeholder {
-    color: #999;
-  }
-`;
-
-export const MicrophoneButton = styled.button`
+const MicrophoneButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
@@ -199,10 +184,19 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               autoFocus
               minRows={1}
               maxRows={6}
-              style={{ paddingRight: "40px" }}
+              style={{
+                width: "100%",
+                border: "none",
+                resize: "none",
+                backgroundColor: "transparent",
+                fontSize: "18px",
+                color: "#333",
+                outline: "none",
+                paddingRight: "40px",
+              }}
             />
             <MicrophoneButton type="button" onClick={handleVoiceInput}>
-              <FaMicrophone color={isListening ? "red" : "black"} />
+              <FaMicrophone color={isListening ? "#00b8d4" : "#888"} />
             </MicrophoneButton>
           </TextAreaWrapper>
         </SearchContainer>

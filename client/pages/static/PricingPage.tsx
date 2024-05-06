@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { CheckoutInfo } from "../../constants/appInfo.constant";
-import { FooterInfo } from "../../components/FooterInfo";
+import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 import { confettiOptions } from "../../constants/confettiOptions.constant";
 
@@ -281,7 +281,7 @@ export const PricingPage: React.FC = () => {
         </BenefitsList>
       </PricingContainer>
 
-      <FooterInfo />
+      <Footer />
 
       <NotifyMeModal
         isOpen={showModal}

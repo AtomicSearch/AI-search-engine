@@ -2,11 +2,18 @@ import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
 import { GitHubInfo } from "../constants/appInfo.constant";
-interface FooterInfoWrapperProps {
+
+interface FooterContainerProps {
   $isEmpty: boolean;
 }
 
-const FooterInfoWrapper = styled.div<FooterInfoWrapperProps>`
+const FooterContainer = styled.footer<FooterContainerProps>`
+  background-color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+  color: #888;
+
   display: flex;
   justify-content: center;
   z-index: -1;
@@ -26,17 +33,22 @@ const Slogan = styled.div`
   color: #888;
 `;
 
-export const FooterInfo = ({
+export const Footer = ({
   searchResults = [],
 }: {
   searchResults?: SearchResults;
 }) => {
   return (
-    <FooterInfoWrapper $isEmpty={searchResults.length === 0}>
+    <FooterContainer $isEmpty={searchResults.length === 0}>
       <Slogan>
-        <em>The Simplest. Reliable by Design <FaBrain /></em> – Brought with <FaHeart /> by{" "}
-        <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>{GitHubInfo.AUTHOR_GITHUB_HANDLE}</a>
+        <em>
+          The Simplest. Reliable by Design <FaBrain />
+        </em>{" "}
+        – Brought with <FaHeart /> by{" "}
+        <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>
+          {GitHubInfo.AUTHOR_GITHUB_HANDLE}
+        </a>
       </Slogan>
-    </FooterInfoWrapper>
+    </FooterContainer>
   );
 };

@@ -12,13 +12,14 @@ import { SettingButton } from "../../components/SettingButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { prepareTextGeneration } from "../../modules/textGeneration";
-import { useLocation } from 'react-router-dom';
+import { prepareTextGeneration } from "../../modules/engine/textGeneration";
+import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
-import { FooterInfo } from "../../components/FooterInfo";
+import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading";
+import { Header } from "../../components/Header";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -47,7 +48,7 @@ export const SearchPage = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const newQuery = params.get('q');
+    const newQuery = params.get("q");
     if (newQuery !== null) {
       setQuery(newQuery);
     }
@@ -66,6 +67,7 @@ export const SearchPage = () => {
 
   return (
     <>
+      <Header />
       <SearchForm query={query} updateQuery={setQuery} />
       {isLoading && (
         <LoadingContainer>
@@ -90,7 +92,7 @@ export const SearchPage = () => {
         </div>
       )}
       <UpgradePlanModal />
-      <FooterInfo searchResults={searchResults} />
+      <Footer searchResults={searchResults} />
       <Toaster />
     </>
   );

@@ -104,13 +104,10 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       const formData = new FormData();
       formData.append("phoneNumber", phoneNumber);
 
-      const response = await fetch(
-        AppInfo.NOTIFY_ME_FORM_API_URL,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const response = await fetch(AppInfo.NOTIFY_ME_FORM_API_URL, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error(

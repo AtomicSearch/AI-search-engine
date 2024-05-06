@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -47,7 +47,7 @@ const Button = styled.button`
 
 export const UpgradePlanModal = () => {
   const handleButtonClick = () => {
-    window.location.href = '/pricing';
+    window.location.href = "/pricing";
   };
 
   return (
