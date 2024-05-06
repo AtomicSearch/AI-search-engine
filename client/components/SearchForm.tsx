@@ -9,6 +9,7 @@ import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
+import { Header } from "./Header";
 
 interface SearchFormProps {
   query: string;
@@ -69,6 +70,19 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
     [updateQuery, navigate],
   );
 
+  const clearSearchResults = () => {
+    startSearching("");
+  };
+
+  const navigateToHomePage = () => {
+    navigate("/");
+
+    if (textAreaRef.current) {
+      textAreaRef.current.value = "";
+      clearSearchResults();
+    }
+  };
+
   const debouncedStartSearching = debounce(startSearching, 500);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -87,7 +101,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
       debouncedStartSearching(userQuery);
     } else {
       // If the user deleted the input, reset the search results
-      startSearching("");
+      clearSearchResults();
     }
   };
 
@@ -152,7 +166,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
       if (event.code === "Escape") {
         if (textAreaRef.current) {
           textAreaRef.current.value = "";
-          startSearching(""); // Reset search results if press Esc
+          clearSearchResults(); // Reset results if press Esc
         }
       }
     };
@@ -166,51 +180,54 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
   }, [startSearching]);
 
   return (
-    <div
-      style={
-        query.length === 0
-          ? {
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: windowInnerHeight * 0.8,
-            }
-          : undefined
-      }
-    >
-      <form style={{ width: "100%" }}>
-        <SearchContainer>
-          <TextAreaWrapper>
-            <TextareaAutosize
-              defaultValue={query}
-              placeholder={suggestedQuery}
-              ref={textAreaRef}
-              onChange={handleInputChange}
-              autoFocus
-              minRows={1}
-              maxRows={6}
-              style={{
-                width: "100%",
-                border: "1px solid #ccc",
-                resize: "none",
-                backgroundColor: "transparent",
-                fontSize: "18px",
-                color: "#333",
-                outline: "none",
-                paddingRight: "40px",
-                overflow: "hidden",
-              }}
-            />
-            <MicrophoneButton type="button" onClick={handleVoiceInput}>
-              <FaMicrophone
-                color={isListening ? "#00b8d4" : "#888"}
-                size={20}
+    <>
+      <Header goTo={navigateToHomePage} />
+      <div
+        style={
+          query.length === 0
+            ? {
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: windowInnerHeight * 0.8,
+              }
+            : undefined
+        }
+      >
+        <form style={{ width: "100%" }}>
+          <SearchContainer>
+            <TextAreaWrapper>
+              <TextareaAutosize
+                defaultValue={query}
+                placeholder={suggestedQuery}
+                ref={textAreaRef}
+                onChange={handleInputChange}
+                autoFocus
+                minRows={1}
+                maxRows={6}
+                style={{
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  resize: "none",
+                  backgroundColor: "transparent",
+                  fontSize: "18px",
+                  color: "#333",
+                  outline: "none",
+                  paddingRight: "40px",
+                  overflow: "hidden",
+                }}
               />
-            </MicrophoneButton>
-          </TextAreaWrapper>
-        </SearchContainer>
-      </form>
-    </div>
+              <MicrophoneButton type="button" onClick={handleVoiceInput}>
+                <FaMicrophone
+                  color={isListening ? "#00b8d4" : "#888"}
+                  size={20}
+                />
+              </MicrophoneButton>
+            </TextAreaWrapper>
+          </SearchContainer>
+        </form>
+      </div>
+    </>
   );
 }
 

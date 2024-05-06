@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import { AppInfo } from "../constants/appInfo.constant";
+import { useNavigate } from "react-router-dom";
 
 const HeaderContainer = styled.header`
   background-color: #ffffff;
@@ -21,10 +22,10 @@ const Logo = styled.h1`
   }
 `;
 
-export const Header = () => {
+export const Header = ({ goTo }: { goTo: () => void }) => {
   return (
     <HeaderContainer>
-      <Logo onClick={(e) => (location.href = AppInfo.APP_URL)}>
+      <Logo onClick={goTo}>
         <span role="img" aria-label="rocket">
           🚀
         </span>

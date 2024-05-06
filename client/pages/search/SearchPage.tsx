@@ -12,14 +12,13 @@ import { SettingButton } from "../../components/SettingButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { Academic as AcademicNiche} from "../../modules/engine-niche/academic.textGeneration";
+import { Academic as AcademicNiche } from "../../modules/engine-niche/academic.textGeneration";
 import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading";
-import { Header } from "../../components/Header";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -40,11 +39,11 @@ export const SearchPage = () => {
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
 
+  const location = useLocation();
+
   useEffect(() => {
     AcademicNiche.prepareTextGeneration();
   }, []);
-
-  const location = useLocation();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -67,7 +66,6 @@ export const SearchPage = () => {
 
   return (
     <>
-      <Header />
       <SearchForm query={query} updateQuery={setQuery} />
       {isLoading && (
         <LoadingContainer>
