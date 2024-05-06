@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Confetti from "react-confetti";
 import confetti from "canvas-confetti";
+import { Toaster } from "react-hot-toast";
 import "react-phone-number-input/style.css";
 import {
   FaSearch,
@@ -192,10 +193,11 @@ export const PricingPage: React.FC = () => {
 
   const handleSubmitSuccess = () => {
     setShowModal(false);
-    toast.success(
-      "Amazing! We'll notify you when the Smart plan is available.",
-      { position: "top-right", duration: 5000, icon: "🎉" },
-    );
+    toast("Amazing! We'll notify you when the Smart plan is available.", {
+      position: "top-right",
+      duration: 5000,
+      icon: "🎉",
+    });
   };
 
   const handleSubmitError = () => {
@@ -287,6 +289,7 @@ export const PricingPage: React.FC = () => {
         onSubmitSuccess={handleSubmitSuccess}
         onSubmitError={handleSubmitError}
       />
+      <Toaster />
     </>
   );
 };
