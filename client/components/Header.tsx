@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { I18n } from "../constants/appInfo.constant";
+import { AppInfo } from "../constants/appInfo.constant";
 
 const HeaderContainer = styled.header`
   background-color: #f0f0f0;
@@ -43,7 +43,7 @@ export const Header = ({ goTo }: { goTo: () => void }) => {
         <span role="img" aria-label="rocket">
           🚀
         </span>
-        <span>{I18n.APP_NAME}</span>
+        <span>{AppInfo.APP_NAME}</span>
       </Logo>
     </HeaderContainer>
   );

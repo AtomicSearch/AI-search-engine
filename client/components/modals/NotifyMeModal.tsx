@@ -7,7 +7,7 @@ import PhoneInput, {
 } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
-import { I18n } from "../../constants/appInfo.constant";
+import { AppInfo, I18n } from "../../constants/appInfo.constant";
 
 const Modal = styled.div`
   position: fixed;
@@ -104,7 +104,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       const formData = new FormData();
       formData.append("phoneNumber", phoneNumber);
 
-      const response = await fetch(I18n.NOTIFY_ME_FORM_API_URL, {
+      const response = await fetch(AppInfo.NOTIFY_ME_FORM_API_URL, {
         method: "POST",
         body: formData,
       });

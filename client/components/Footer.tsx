@@ -1,7 +1,7 @@
 import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
 import { SearchResults } from "../modules/search";
-import { GitHubInfo } from "../constants/appInfo.constant";
+import { AppInfo, GitHubInfo } from "../constants/appInfo.constant";
 
 interface FooterContainerProps {
   $isEmpty: boolean;
@@ -44,8 +44,8 @@ export const Footer = ({
       <Slogan>
         <em>
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
-        </em>{" "}
-        – Brought with <FaHeart /> by{" "}
+        </em><br />
+        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by{" "}
         <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>
           {GitHubInfo.AUTHOR_GITHUB_HANDLE}
         </a>
