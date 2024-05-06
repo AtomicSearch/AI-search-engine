@@ -118,7 +118,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
             window.location.href = "/pricing";
           }}
         >
-          Upgrade
+          Upgrade Now 🚀
         </button>
       </div>,
       {
