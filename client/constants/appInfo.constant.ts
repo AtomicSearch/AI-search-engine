@@ -1,5 +1,5 @@
 export enum AppInfo {
-  APP_NAME = "Atomic Search",
+  APP_NAME = "MassivePrediction",
   APP_URL = "http://localhost:7860",
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE = "english",
