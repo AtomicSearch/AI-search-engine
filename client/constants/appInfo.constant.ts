@@ -3,7 +3,7 @@ export enum AppInfo {
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE = "english",
   DEFAULT_LANGUAGE_CODE = "en",
-  GOOGLE_FORM_WAITING_LIST_URL = "https://forms.gle/4ktmuFNBPGku4Xhm7",
+  NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk",
 }
 
 export enum AppLegalLinks {

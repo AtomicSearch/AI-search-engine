@@ -105,7 +105,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       formData.append("phoneNumber", phoneNumber);
 
       const response = await fetch(
-        "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk",
+        AppInfo.NOTIFY_ME_FORM_API_URL,
         {
           method: "POST",
           body: formData,
