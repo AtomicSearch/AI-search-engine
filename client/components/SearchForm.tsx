@@ -233,10 +233,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
                 }}
               />
               <MicrophoneButton type="button" onClick={handleVoiceInput}>
-                <FaMicrophone
-                  color={isListening ? "red" : "#888"}
-                  size={20}
-                />
+                <FaMicrophone color={isListening ? "red" : "#888"} size={20} />
               </MicrophoneButton>
             </TextAreaWrapper>
           </SearchContainer>
