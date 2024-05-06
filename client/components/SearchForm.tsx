@@ -43,6 +43,10 @@ const MicrophoneButton = styled.button`
   &:hover {
     color: #007bff;
   }
+
+  &:active {
+    transform: translateY(-50%); /* Prevent movement on click */
+  }
 `;
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
@@ -106,7 +110,8 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
         setIsListening(false);
       };
 
-      recognitionRef.current.onerror = () => {
+      recognitionRef.current.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error("Speech recognition error:", event.error);
         setIsListening(false);
       };
     }
@@ -186,7 +191,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               maxRows={6}
               style={{
                 width: "100%",
-                border: "none",
+                border: "1px solid #ccc",
                 resize: "none",
                 backgroundColor: "transparent",
                 fontSize: "18px",
@@ -197,7 +202,10 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               }}
             />
             <MicrophoneButton type="button" onClick={handleVoiceInput}>
-              <FaMicrophone color={isListening ? "#00b8d4" : "#888"} size={20} />
+              <FaMicrophone
+                color={isListening ? "#00b8d4" : "#888"}
+                size={20}
+              />
             </MicrophoneButton>
           </TextAreaWrapper>
         </SearchContainer>
