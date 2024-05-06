@@ -92,8 +92,8 @@ export const SearchPage = () => {
         </div>
       )}
       <UpgradePlanModal />
-      <Footer searchResults={searchResults} />
       <Toaster />
+      <Footer searchResults={searchResults} />
     </>
   );
 };
