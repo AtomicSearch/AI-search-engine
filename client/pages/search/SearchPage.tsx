@@ -12,7 +12,7 @@ import { SettingButton } from "../../components/SettingButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { prepareTextGeneration } from "../../modules/engine/textGeneration";
+import { Developer as DeveloperNiche} from "../../modules/engine-niche/developer.textGeneration";
 import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
@@ -41,7 +41,7 @@ export const SearchPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    prepareTextGeneration();
+    DeveloperNiche.prepareTextGeneration();
   }, []);
 
   const location = useLocation();
