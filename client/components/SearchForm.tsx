@@ -232,7 +232,6 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               </MicrophoneButton>
             </TextAreaWrapper>
           </SearchContainer>
-          <SettingsButton />
         </form>
       </div>
     </>
