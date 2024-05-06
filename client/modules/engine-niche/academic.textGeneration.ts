@@ -25,7 +25,7 @@ export namespace Academic {
 
     updatePrompt(query);
 
-    updateLoadingToast("Searching the web...");
+    updateLoadingToast("Searching the Web 🚀");
 
     let searchResults = await search(query, 30);
 
@@ -41,7 +41,7 @@ export namespace Academic {
 
     if (searchResults.length === 0) {
       toast(
-        "It looks like your current search did not return any results. Try refining your search by adding more keywords or rephrasing your query.",
+        "Oops! Current search did't return any results. Try refining your search",
         {
           position: "bottom-center",
           duration: 10000,
