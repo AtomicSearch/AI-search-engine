@@ -70,7 +70,9 @@ export namespace Academic {
 
     try {
       try {
-        if (!isWebGPUAvailable) throw Error("WebGPU is not available.");
+        if (!isWebGPUAvailable) {
+          throw Error("WebGPU is not available.");
+        }
 
         if (getDisableWebGpuUsageSetting()) throw Error("WebGPU is disabled.");
 
@@ -204,7 +206,7 @@ export namespace Academic {
       for (const [title, snippet, url] of getSearchResults()) {
         const prompt = [
           `When searching for "${query}", this link was found: [${title}](${url} "${snippet}")`,
-          "Now, tell me: What is this link about and how is it related to the search?",
+          "Tell me what this link is about and how it is related to the search?",
           "Note: Don't cite the link in your response. Just write a few sentences to indicate if it's worth visiting.",
         ].join("\n");
 
@@ -213,7 +215,7 @@ export namespace Academic {
             {
               role: "system",
               content:
-                "You are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.",
+                "You are a highly knowledgeable and friendly teacher. Your goal is to understand and respond to user inquiries with clarity like their are 5.",
             },
             { role: "user", content: prompt },
           ];
