@@ -21,3 +21,8 @@ body {
     font-family: InterVariable, sans-serif;
   }
 }
+
+button:hover {
+  color: #007bff;
+  background-color: transparent;
+}
