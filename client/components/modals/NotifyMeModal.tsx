@@ -106,7 +106,9 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 
       const response = await fetch(AppInfo.GOOGLE_FORM_WAITING_LIST_URL, {
         method: "POST",
-        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
         body: formData,
       });
 

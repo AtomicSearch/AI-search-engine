@@ -3,7 +3,7 @@ export enum AppInfo {
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE = "english",
   DEFAULT_LANGUAGE_CODE = "en",
-  GOOGLE_FORM_WAITING_LIST_URL = "https://your-google-form-url", // Your Google Form URL
+  GOOGLE_FORM_WAITING_LIST_URL = "https://forms.gle/4ktmuFNBPGku4Xhm7",
 }
 
 export enum AppLegalLinks {
