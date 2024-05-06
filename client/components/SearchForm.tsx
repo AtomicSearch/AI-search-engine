@@ -15,18 +15,37 @@ interface SearchFormProps {
   updateQuery: (query: string) => void;
 }
 
-const SearchContainer = styled.div`
+export const SearchContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const TextAreaWrapper = styled.div`
+export const TextAreaWrapper = styled.div`
   flex: 1;
   position: relative;
 `;
 
-const MicrophoneButton = styled.button`
+export const TextArea = styled(TextareaAutosize)`
+  width: 100%;
+  border: none;
+  resize: none;
+  background-color: transparent;
+  font-size: 18px;
+  color: #333;
+  outline: none;
+  padding-right: 40px;
+
+  &::placeholder {
+    color: #999;
+  }
+`;
+
+export const MicrophoneButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
@@ -34,6 +53,11 @@ const MicrophoneButton = styled.button`
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #007bff;
+  }
 `;
 
 export function SearchForm({ query, updateQuery }: SearchFormProps) {
