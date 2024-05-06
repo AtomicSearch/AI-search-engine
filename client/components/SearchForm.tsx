@@ -45,7 +45,7 @@ const MicrophoneButton = styled.button`
   }
 
   &:active {
-    transform: translateY(-50%); /* Prevent movement on click */
+    transform: translateY(-40%); /* Decrease movement on click */
   }
 `;
 
