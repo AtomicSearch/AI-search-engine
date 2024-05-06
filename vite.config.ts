@@ -15,7 +15,10 @@ import {
 } from "@energetic-ai/embeddings";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-const redis = new Redis();
+const redisClient = new Redis({
+  host: "redis", // service name from docker-compose.yml
+  port: 6379,
+});
 
 const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
@@ -173,22 +176,20 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     // Try to get the search results from Redis
-    let searchResults = await redis.get(query);
+    let searchResults = await redisClient.get(query);
 
     if (searchResults) {
       // If the search results are cached in Redis, parse them and return
       searchResults = JSON.parse(searchResults);
     } else {
-      // If the search results are not cached in Redis, make the search request
-      searchResults = await fetchSearXNG(query, limit);
-
-      // Cache the search results in Redis
-      await redis.set(query, JSON.stringify(searchResults));
+      // Pass the redisClient instance to fetchSearXNG
+      searchResults = await fetchSearXNG(query, limit, redisClient);
+      await redisClient.set(query, JSON.stringify(searchResults));
     }
 
     searchesSinceLastRestart++;
 
-    if (searchResults.length === 0) {
+    if (!Array.isArray(searchResults) || searchResults.length === 0) {
       response.end(JSON.stringify([]));
       return;
     }
@@ -220,7 +221,11 @@ function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
   });
 }
 
-async function fetchSearXNG(query: string, limit?: number) {
+async function fetchSearXNG(
+  query: string,
+  limit?: number,
+  redisClient?: Redis.Redis,
+) {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
 
@@ -313,6 +318,10 @@ async function rankSearchResults(
   query: string,
   searchResults: [title: string, content: string, url: string][],
 ) {
+  if (!Array.isArray(searchResults) || searchResults.length === 0) {
+    return searchResults; // Return the original search results if it's not an array or if it's empty
+  }
+
   const scores = await getSimilarityScores(
     query.toLocaleLowerCase(),
     searchResults.map(([title, snippet]) =>
