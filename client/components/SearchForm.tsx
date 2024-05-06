@@ -89,6 +89,13 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const userQuery = event.target.value.trim();
+    const wordCount = userQuery.split(/\s+/).length;
+    const needToUpgradeSubscription = wordCount > 10;
+    if (needToUpgradeSubscription) {
+      // Redirect to the pricing page
+      window.location.href = "/pricing";
+    }
+
     const userQueryIsBlank = userQuery.length === 0;
     const suggestedQueryIsBlank = suggestedQuery.trim().length === 0;
 
