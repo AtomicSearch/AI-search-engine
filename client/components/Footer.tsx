@@ -8,22 +8,23 @@ interface FooterContainerProps {
 }
 
 const FooterContainer = styled.footer<FooterContainerProps>`
-  background-color: #ffffff;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
-  color: #888;
-
   display: flex;
   justify-content: center;
-  z-index: -1;
+  color: #888;
+  margin-top: 10%;
+
   ${(props) =>
     props.$isEmpty &&
     css`
+      z-index: -1;
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
+
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
     `}
 `;
 
