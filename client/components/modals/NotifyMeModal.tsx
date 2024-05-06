@@ -7,7 +7,7 @@ import PhoneInput, {
 } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
-import { AppInfo } from "../../constants/appInfo.constant";
+import { I18n } from "../../constants/appInfo.constant";
 
 const Modal = styled.div`
   position: fixed;
@@ -84,7 +84,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState<Country>(
-    AppInfo.DEFAULT_COUNTRY_CODE,
+    I18n.DEFAULT_COUNTRY_CODE,
   );
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -104,7 +104,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       const formData = new FormData();
       formData.append("phoneNumber", phoneNumber);
 
-      const response = await fetch(AppInfo.NOTIFY_ME_FORM_API_URL, {
+      const response = await fetch(I18n.NOTIFY_ME_FORM_API_URL, {
         method: "POST",
         body: formData,
       });
@@ -140,7 +140,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
     return null;
   }
 
-  const labels = AppInfo.DEFAULT_LANGUAGE_CODE === "en" ? en : {};
+  const labels = I18n.DEFAULT_LANGUAGE_CODE === "en" ? en : {};
 
   return (
     <Modal>
@@ -157,7 +157,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             placeholder="Enter phone number"
             value={phoneNumber}
             onChange={(value: string) => setPhoneNumber(value)}
-            defaultCountry={countryCode || AppInfo.DEFAULT_COUNTRY_CODE}
+            defaultCountry={countryCode || I18n.DEFAULT_COUNTRY_CODE}
             labels={labels}
             countrySelectComponent={({ value, onChange, labels, ...rest }) => (
               <select

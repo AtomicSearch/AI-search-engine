@@ -15,7 +15,7 @@ import { search } from "../search";
 import { query, debug } from "../urlParams";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "../mobileDetection";
-import { AppInfo } from "../../constants/appInfo.constant";
+import { I18n } from "../../constants/appInfo.constant";
 
 export namespace Academic {
   export async function prepareTextGeneration() {
@@ -32,7 +32,7 @@ export namespace Academic {
     if (searchResults.length === 0) {
       const queryKeywords = (await import("keyword-extractor")).default
         .extract(query, {
-          language: AppInfo.DEFAULT_LANGUAGE,
+          language: I18n.DEFAULT_LANGUAGE,
         })
         .slice(0, 10);
 

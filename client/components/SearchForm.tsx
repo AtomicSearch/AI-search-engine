@@ -11,6 +11,7 @@ import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
+import { I18n } from "../constants/appInfo.constant";
 
 interface SearchFormProps {
   query: string;
@@ -119,7 +120,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
         window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.continuous = false;
-      recognitionRef.current.lang = "en-US";
+      recognitionRef.current.lang = I18n.DEFAULT_LANGUAGE_COUNTRY_CODE;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.maxAlternatives = 1;
 
@@ -226,7 +227,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               />
               <MicrophoneButton type="button" onClick={handleVoiceInput}>
                 <FaMicrophone
-                  color={isListening ? "#00b8d4" : "#888"}
+                  color={isListening ? "red" : "#888"}
                   size={20}
                 />
               </MicrophoneButton>
