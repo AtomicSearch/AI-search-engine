@@ -59,6 +59,9 @@ export namespace Academic {
       ),
     );
 
+    // Dismiss loading toast after finishing the search process, so it's dismissed in case AI is disabled
+    dismissLoadingToast();
+
     if (getDisableAiResponseSetting() && !getSummarizeLinksSetting()) return;
 
     if (debug) console.time("Response Generation Time");

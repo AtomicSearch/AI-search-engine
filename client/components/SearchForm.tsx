@@ -1,9 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import TextareaAutosize from "react-textarea-autosize";
+<<<<<<< HEAD
 import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
+=======
+import { getRandomQuerySuggestion } from "../modules/querySuggestions";
+import { SettingsButton } from "./SettingsButton";
+>>>>>>> 3a1a56f71007d29107200b83b277636ca722833b
 
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
@@ -225,6 +230,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
               </MicrophoneButton>
             </TextAreaWrapper>
           </SearchContainer>
+          <SettingsButton />
         </form>
       </div>
     </>

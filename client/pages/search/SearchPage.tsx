@@ -73,14 +73,15 @@ export const SearchPage = () => {
           <LoadingText>Answering...</LoadingText>
         </LoadingContainer>
       )}
+
       {!getDisableAiResponseSetting() && response.length > 0 && (
         <div className="mt-4">
-          <h2 className="text-lg font-semibold">AI's thoughts:</h2>
           <div className="bg-gray-100 p-4 rounded-md mt-2">
             <Markdown>{response}</Markdown>
           </div>
         </div>
       )}
+
       {searchResults.length > 0 && (
         <div>
           <SearchResultsList
