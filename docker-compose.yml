@@ -17,3 +17,10 @@ services:
       [
         "/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & npm install && npm run dev",
       ]
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

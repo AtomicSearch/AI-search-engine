@@ -1,3 +1,4 @@
+import Redis from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
@@ -13,6 +14,8 @@ import {
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+
+const redis = new Redis();
 
 const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
@@ -167,7 +170,19 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       return;
     }
 
-    const searchResults = await fetchSearXNG(query, limit);
+    // Try to get the search results from Redis
+    let searchResults = await redis.get(query);
+
+    if (searchResults) {
+      // If the search results are cached in Redis, parse them and return
+      searchResults = JSON.parse(searchResults);
+    } else {
+      // If the search results are not cached in Redis, make the search request
+      searchResults = await fetchSearXNG(query, limit);
+
+      // Cache the search results in Redis
+      await redis.set(query, JSON.stringify(searchResults));
+    }
 
     searchesSinceLastRestart++;
 
