@@ -43,7 +43,7 @@ export const Footer = ({
     <FooterContainer $isEmpty={searchResults.length === 0}>
       <Slogan>
         <em>
-          Simplest. Reliable. AI <FaBrain />
+          Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
         </em>{" "}
         – Brought with <FaHeart /> by{" "}
         <a href={`${GitHubInfo.AUTHOR_GITHUB_URL}`}>
