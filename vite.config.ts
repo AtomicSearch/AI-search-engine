@@ -178,8 +178,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     // Try to get the search results from Redis
     let searchResults = await redisClient.get(query);
 
-    if (searchResults) {
-      // If the search results are cached in Redis, parse them and return
+  ults are cached in Redis, parse them and return
       searchResults = JSON.parse(searchResults);
     } else {
       // Pass the redisClient instance to fetchSearXNG
@@ -196,7 +195,10 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     try {
-      const rankedResults = await rankSearchResults(query, JSON.parse(searchResults));
+      const rankedResults = await rankSearchResults(
+        query,
+        JSON.parse(searchResults),
+      );
       response.end(JSON.stringify(rankedResults));
     } catch (error) {
       console.error("Error ranking search results:", error);
@@ -303,9 +305,8 @@ function getQuerySuggestions(limit?: number) {
 let embeddingModelInstance: EmbeddingsModel | undefined;
 
 async function getSimilarityScores(query: string, documents: string[]) {
-  if (!embeddingModelInstance) {
+  if (!embeddingModelInstance)
     embeddingModelInstance = await initModel(embeddingModel);
-  }
 
   const [queryEmbedding] = await embeddingModelInstance.embed([query]);
 
