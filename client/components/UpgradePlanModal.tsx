@@ -47,7 +47,7 @@ const Button = styled.button`
 
 export const UpgradePlanModal = () => {
   const handleButtonClick = () => {
-    window.location.href = "/pricing";
+    window.location.href = "/pricing?from=homepage_modal";
   };
 
   return (
