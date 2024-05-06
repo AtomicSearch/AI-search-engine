@@ -2,7 +2,10 @@ import { convert as convertHtmlToPlainText } from "html-to-text";
 
 export type SearchResults = [title: string, snippet: string, url: string][];
 
-export async function search(query: string, limit?: number) {
+export async function search(
+  query: string,
+  limit?: number,
+): Promise<SearchResults> {
   const searchUrl = new URL("/search", self.location.origin);
 
   searchUrl.searchParams.set("q", query);

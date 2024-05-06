@@ -6,7 +6,6 @@ import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
 import toast from "react-hot-toast";
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
-import { SettingsButton } from "./SettingsButton";
 
 import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
@@ -17,6 +16,7 @@ import { I18n } from "../constants/appInfo.constant";
 interface SearchFormProps {
   query: string;
   updateQuery: (query: string) => void;
+  clearResponses: () => void;
 }
 
 const SearchContainer = styled.div`
@@ -53,7 +53,7 @@ const MicrophoneButton = styled.button`
   }
 `;
 
-export function SearchForm({ query, updateQuery }: SearchFormProps) {
+export function SearchForm({ query, updateQuery, clearResponses }: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
@@ -76,6 +76,7 @@ export function SearchForm({ query, updateQuery }: SearchFormProps) {
 
   const clearSearchResults = () => {
     startSearching("");
+    clearResponses();
   };
 
   const navigateToHomePage = () => {

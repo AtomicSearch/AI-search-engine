@@ -8,7 +8,6 @@ import {
 } from "../../modules/pubSub";
 import { SearchForm } from "../../components/SearchForm";
 import { Toaster } from "react-hot-toast";
-import { SettingButton } from "../../components/SettingButton";
 import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
@@ -34,12 +33,16 @@ const LoadingText = styled.span`
 
 export const SearchPage = () => {
   const [query, setQuery] = usePubSub(promptPubSub);
-  const [response] = usePubSub(responsePubSub);
+  const [response, setResponse] = usePubSub(responsePubSub);
   const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
 
   const location = useLocation();
+
+  const clearResponses = () => {
+    setResponse("");
+  };
 
   useEffect(() => {
     AcademicNiche.prepareTextGeneration();
@@ -66,7 +69,7 @@ export const SearchPage = () => {
 
   return (
     <>
-      <SearchForm query={query} updateQuery={setQuery} />
+      <SearchForm query={query} updateQuery={setQuery} clearResponses={clearResponses} />
       {isLoading && (
         <LoadingContainer>
           <LoadingSpinner />
