@@ -102,15 +102,15 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
-      formData.append("entry.PHONE_NUMBER_FIELD_ID", phoneNumber);
+      formData.append("phoneNumber", phoneNumber);
 
-      const response = await fetch(AppInfo.GOOGLE_FORM_WAITING_LIST_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await fetch(
+        "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk",
+        {
+          method: "POST",
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       if (!response.ok) {
         throw new Error(
