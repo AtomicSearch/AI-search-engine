@@ -120,10 +120,12 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
-  const rateLimiter = new RateLimiterMemory({
-    points: 2,
-    duration: 10,
-  });
+  // give an ideal options for the rate limiter
+  const rateLimiterOptions = {
+    points: 4, // allocate points
+    duration: 5, // per second
+  };
+  const rateLimiter = new RateLimiterMemory(rateLimiterOptions);
 
   server.middlewares.use(async (request, response, next) => {
     if (!request.url.startsWith("/search")) {
