@@ -26,6 +26,7 @@
     "create-pubsub": "^1.6.3",
     "html-to-text": "^9.0.5",
     "inter-ui": "^4.0.2",
+    "ioredis": "^5.4.1",
     "keyword-extractor": "^0.0.28",
     "markdown-to-jsx": "^7.3.2",
     "mobile-detect": "^1.4.5",
