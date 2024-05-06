@@ -3,28 +3,32 @@ import styled from "styled-components";
 import { I18n } from "../constants/appInfo.constant";
 
 const HeaderContainer = styled.header`
-  background-color: #282c34;
-  padding: 20px;
+  background-color: #f0f0f0;
+  padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
+  border-radius: 30px;
+  margin: 20px;
 `;
 
 const Logo = styled.h1`
   margin: 0;
-  font-size: 32px;
-  color: #61dafb;
+  font-size: 24px;
+  color: #333;
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 15px 25px;
-  border-radius: 20px;
-  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  padding: 10px 20px;
+  border-radius: 30px;
+  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 
   &:hover {
-    background-color: #20232a;
+    background-color: #f5f5f5;
     transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   span {
