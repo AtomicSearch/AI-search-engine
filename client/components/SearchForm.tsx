@@ -63,7 +63,7 @@ export function SearchForm({ query, updateQuery, clearResponses }: SearchFormPro
     getRandomQuerySuggestion(),
   );
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [modalShown, setModalShown] = useState<boolean>(false);
+  const [notificationShown, setNotificationShown] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -91,8 +91,8 @@ export function SearchForm({ query, updateQuery, clearResponses }: SearchFormPro
 
   const debouncedStartSearching = debounce(startSearching, 500);
 
-  const showUpgradeModal = () => {
-    setModalShown(true); // Prevent showing the modal multiple times
+  const showUpgradeNotification = () => {
+    setNotificationShown(true); // Prevent showing the modal multiple times
 
     toast.custom(
       <div
@@ -138,8 +138,8 @@ export function SearchForm({ query, updateQuery, clearResponses }: SearchFormPro
     const userQuery = event.target.value.trim();
     const wordCount = userQuery.split(/\s+/).length;
     const needToUpgradeSubscription = wordCount > 10;
-    if (needToUpgradeSubscription && !modalShown) {
-      showUpgradeModal();
+    if (needToUpgradeSubscription && !notificationShown) {
+      showUpgradeNotification();
       return;
     }
 
