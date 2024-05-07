@@ -22,7 +22,7 @@ USER ${USERNAME}
 WORKDIR /home/${USERNAME}/app
 
 COPY --chown=${USERNAME}:${USERNAME} package*.json ./
-RUN npm ci
+RUN npm ci --verbose
 
 COPY --chown=${USERNAME}:${USERNAME} . .
 RUN npm run build
