@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { SearchPage } from "../pages/search/SearchPage";
 import { ComparisonPage } from "../pages/static/ComparisonPage";
 import { PricingPage } from "../pages/static/PricingPage";
+import { AboutMissionPage } from "../pages/static/AboutMissionPage";
 
 const AppContainer = styled.div`
   display: flex;
@@ -21,7 +22,7 @@ function InnerApp() {
         <Routes>
           <Route path="/" element={<SearchPage />} />
           <Route path="/comparison-google" element={<ComparisonPage />} />
-          <Route path="/mission" element={<MissionPage />} />
+          <Route path="/mission" element={<AboutMissionPage />} />
           <Route path="/pricing" element={<PricingPage />} />
         </Routes>
       </Main>

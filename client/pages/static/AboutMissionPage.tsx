@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ComparisonPage = () => {
+export const AboutComparisonPage = () => {
   return (
     <div>
       <h1>Mission Page</h1>
