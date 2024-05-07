@@ -1,6 +1,5 @@
 import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
-import { SearchResults } from "../modules/search";
 import { AppInfo, GitHubInfo } from "../constants/appInfo.constant";
 
 interface FooterContainerProps {
