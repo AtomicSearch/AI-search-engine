@@ -26,7 +26,7 @@ export namespace Gossip {
 
     updatePrompt(query);
 
-    updateLoadingToast("Browsing the Web... 🔍");
+    updateLoadingToast("...Browsing the Web...");
 
     let searchResults = await search(query, 30);
 
