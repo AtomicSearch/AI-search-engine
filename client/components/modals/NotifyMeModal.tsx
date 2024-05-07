@@ -101,12 +101,12 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const formData = new FormData();
+      const formData = new URLSearchParams();
       formData.append("phoneNumber", phoneNumber);
 
       const response = await fetch(AppInfo.NOTIFY_ME_FORM_API_URL, {
         method: "POST",
-        body: formData,
+        body: formData.toString(),
       });
 
       if (!response.ok) {
