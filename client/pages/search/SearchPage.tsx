@@ -95,7 +95,7 @@ export const SearchPage = () => {
       )}
       <UpgradePlanModal />
       <Toaster />
-      <Footer areSearchResults={searchResults.length === 0} />
+      <Footer hasEmptyResults={searchResults.length === 0} />
     </>
   );
 };
