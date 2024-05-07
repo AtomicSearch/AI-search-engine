@@ -243,7 +243,6 @@ export namespace Gossip {
         | "desktopDefault"
         | "desktopLarger"]: {
         url: string;
-        systemPrefix: string;
         userPrefix: string;
         assistantPrefix: string;
         messageSuffix: string;
@@ -252,7 +251,6 @@ export namespace Gossip {
     } = {
       mobileDefault: {
         url: "https://huggingface.co/Felladrin/gguf-vicuna-160m/resolve/main/vicuna-160m.Q8_0.gguf",
-        systemPrefix: "",
         userPrefix: "USER:",
         assistantPrefix: "ASSISTANT:",
         messageSuffix: "</s> ",
@@ -260,7 +258,6 @@ export namespace Gossip {
       },
       mobileLarger: {
         url: "https://huggingface.co/Felladrin/gguf-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.gguf",
-        systemPrefix: "<|system|>\n",
         userPrefix: "<|user|>\n",
         assistantPrefix: "<|assistant|>\n",
         messageSuffix: "</s>\n",
@@ -268,7 +265,6 @@ export namespace Gossip {
       },
       desktopDefault: {
         url: "https://huggingface.co/Felladrin/gguf-Qwen1.5-0.5B-Chat/resolve/main/Qwen1.5-0.5B-Chat.Q8_0.gguf",
-        systemPrefix: "<|im_start|>system\n",
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
@@ -276,7 +272,6 @@ export namespace Gossip {
       },
       desktopLarger: {
         url: "https://huggingface.co/Felladrin/gguf-TinyLlama-1.1B-1T-OpenOrca/resolve/main/tinyllama-1.1b-1t-openorca.Q8_0.gguf",
-        systemPrefix: "<|im_start|>system\n",
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
@@ -305,21 +300,22 @@ export namespace Gossip {
 
     if (!getDisableAiResponseSetting()) {
       const prompt = [
-        selectedModel.systemPrefix,
         [
-          "You are a highly knowledgeable gossip journalist who is addicted to gossips and speak in a friendly tone. Your goal is to understand and respond clearly to user inquiries like their are 5.",
-          "If the information below is useful, you can use it to complement your response. Otherwise, ignore it.",
+          "Take a look at this info:",
           getSearchResults()
-            .slice(0, isRunningOnMobile ? 5 : 10)
+            .slice(0, 6)
             .map(([title, snippet]) => `- ${title}: ${snippet}`)
             .join("\n"),
         ].join("\n\n"),
         selectedModel.messageSuffix,
+        selectedModel.assistantPrefix,
+        "Alright!",
+        selectedModel.messageSuffix,
         selectedModel.userPrefix,
-        "Hello!",
+        "Now, I'm going to write my question, and if this info is useful you can use them in your answer. Ready?",
         selectedModel.messageSuffix,
         selectedModel.assistantPrefix,
-        "Hi! How can I help you today?",
+        "I'm ready to answer!",
         selectedModel.messageSuffix,
         selectedModel.userPrefix,
         query,
@@ -348,14 +344,11 @@ export namespace Gossip {
 
       for (const [title, snippet, url] of getSearchResults()) {
         const prompt = [
-          selectedModel.systemPrefix,
-          "You are a highly knowledgeable gossip journalist who is addicted to gossips and speak in a very friendly tone. Your goal is to understand and respond clearly to user inquiries like their are 5",
-          selectedModel.messageSuffix,
           selectedModel.userPrefix,
           "Hello!",
           selectedModel.messageSuffix,
           selectedModel.assistantPrefix,
-          "Hi! How can I help you today?",
+          "Hi! How can I help you?",
           selectedModel.messageSuffix,
           selectedModel.userPrefix,
           ["Context:", `${title}: ${snippet}`].join("\n"),
@@ -363,7 +356,7 @@ export namespace Gossip {
           ["Question:", "What is this text about?"].join("\n"),
           selectedModel.messageSuffix,
           selectedModel.assistantPrefix,
-          "This text is about",
+          ["Answer:", "This text is about"].join("\n"),
         ].join("");
 
         const completion = await runCompletion({
