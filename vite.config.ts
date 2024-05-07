@@ -124,7 +124,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
   const rateLimiterOptions = {
-    points: 4, // allocate points
+    points: 10, // allocate points
     duration: 5, // per second
   };
   const rateLimiter = new RateLimiterMemory(rateLimiterOptions);
@@ -240,8 +240,8 @@ async function fetchSearXNG(
       language: "auto",
       safesearch: "0",
       format: "json",
-      engine: "all", // Exclude the Wikidata engine
-      timeout: "5000", // Set a timeout of 5 seconds
+      engine: "all", // All engines
+      timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
 
     const response = await fetch(url);
