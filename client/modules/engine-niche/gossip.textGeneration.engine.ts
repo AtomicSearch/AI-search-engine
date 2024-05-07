@@ -26,7 +26,7 @@ export namespace Gossip {
 
     updatePrompt(query);
 
-    updateLoadingToast("...Browsing the Web...");
+    updateLoadingToast(messages.browseInternet);
 
     let searchResults = await search(query, 30);
 
@@ -63,7 +63,7 @@ export namespace Gossip {
 
     if (debug) console.time("Response Generation Time");
 
-    updateLoadingToast("Loading AI model...");
+    updateLoadingToast(messages.loadingAiModel);
 
     try {
       try {
@@ -136,7 +136,7 @@ export namespace Gossip {
       | undefined;
 
     if (isModelCached) {
-      updateLoadingToast("Generating response...");
+      updateLoadingToast(messages.generatingResponse);
     } else {
       initProgressCallback = (report) => {
         updateLoadingToast(
@@ -156,7 +156,7 @@ export namespace Gossip {
       : await CreateEngine(selectedModel, { initProgressCallback });
 
     if (!getDisableAiResponseSetting()) {
-      updateLoadingToast("Generating response...");
+      updateLoadingToast(messages.generatingResponse);
 
       const completion = await engine.chat.completions.create({
         stream: true,
@@ -178,7 +178,7 @@ export namespace Gossip {
     await engine.resetChat();
 
     if (getSummarizeLinksSetting()) {
-      updateLoadingToast("Summarizing links...");
+      updateLoadingToast(messages.summarizeLinks);
 
       for (const [title, snippet, url] of getSearchResults()) {
         const completion = await engine.chat.completions.create({
@@ -329,7 +329,7 @@ export namespace Gossip {
 
       if (!query) throw Error("Query is empty.");
 
-      updateLoadingToast("Generating response...");
+      updateLoadingToast(messages.generatingResponse);
 
       const completion = await runCompletion({
         prompt,
@@ -344,7 +344,7 @@ export namespace Gossip {
     }
 
     if (getSummarizeLinksSetting()) {
-      updateLoadingToast("Summarizing links...");
+      updateLoadingToast(messages.summarizeLinks);
 
       for (const [title, snippet, url] of getSearchResults()) {
         const prompt = [
@@ -400,7 +400,7 @@ export namespace Gossip {
     if (!getDisableAiResponseSetting()) {
       if (!query) throw Error("Query is empty.");
 
-      updateLoadingToast("Generating response...");
+      updateLoadingToast(messages.generatingResponse);
 
       let response = "";
 
@@ -416,7 +416,7 @@ export namespace Gossip {
     }
 
     if (getSummarizeLinksSetting()) {
-      updateLoadingToast("Summarizing links...");
+      updateLoadingToast(messages.summarizeLinks);
 
       for (const [title, snippet, url] of getSearchResults()) {
         let response = "";
