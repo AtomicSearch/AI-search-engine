@@ -1,6 +1,5 @@
-// deploy.yml
-
 name: Service build
+
 on:   
   push:
     branches:

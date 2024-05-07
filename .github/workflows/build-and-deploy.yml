@@ -15,8 +15,8 @@ on:
         required: true
 # Step 2
 env:
-  REGISTRY: "your-digitalocean-registry-container-url"
-  IMAGE_NAME: "your-docker-image-name"
+  REGISTRY: "registry.digitalocean.com/massiveprediction"
+  IMAGE_NAME: "atomicsearch"
 
 # Step 3
 jobs:
