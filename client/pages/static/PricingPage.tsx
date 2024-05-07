@@ -286,7 +286,7 @@ export const PricingPage: React.FC = () => {
         </BenefitsList>
       </PricingContainer>
 
-      <Footer />
+      <Footer hasEmptyResults={false} />
 
       <NotifyMeModal
         isOpen={showModal}

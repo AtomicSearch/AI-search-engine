@@ -9,7 +9,6 @@ const HeaderContainer = styled.header`
   display: flex;
   justify-content: center;
   border-radius: 30px;
-  margin: 20px;
 `;
 
 const Logo = styled.h1`
@@ -19,7 +18,7 @@ const Logo = styled.h1`
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 10px 20px;
+  padding-bottom: 10px;
   border-radius: 30px;
   transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

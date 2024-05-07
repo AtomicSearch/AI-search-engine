@@ -35,12 +35,12 @@ const Slogan = styled.div`
 `;
 
 export const Footer = ({
-  searchResults = [],
+  hasEmptyResults = true,
 }: {
-  searchResults?: SearchResults;
+  hasEmptyResults?: boolean;
 }) => {
   return (
-    <FooterContainer $isEmpty={searchResults.length === 0}>
+    <FooterContainer $isEmpty={hasEmptyResults}>
       <Slogan>
         <em>
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
