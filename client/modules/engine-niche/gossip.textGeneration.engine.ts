@@ -92,10 +92,7 @@ export namespace Gossip {
     } catch (error) {
       console.error("Error while generating response with wllama:", error);
 
-      toast.error(
-        "Could not generate response. The browser may be out of memory. Please close this tab and run this search again in a new one.",
-        { duration: 10000 },
-      );
+      toast.error(messages.cannotGenerateResponse, { duration: 5000 });
     } finally {
       dismissLoadingToast();
     }
