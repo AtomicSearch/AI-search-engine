@@ -9,10 +9,10 @@ import {
   FaClock,
   FaShieldAlt,
   FaSearchengin,
+  FaRegLightbulb,
   FaRegPaperPlane,
   FaLockOpen,
 } from "react-icons/fa";
-import { FaRegLightbulb, } from "react-icons/fa6";
 import {
   TbInfinity,
   TbInfinityOff,

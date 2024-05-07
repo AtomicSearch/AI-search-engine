@@ -1,4 +1,5 @@
 import React from "react";
+import { FaSketch } from "react-icons/fa";
 import styled from "styled-components";
 
 const ModalWrapper = styled.div`
@@ -53,7 +54,7 @@ export const UpgradePlanModal = () => {
   return (
     <ModalWrapper>
       <ModalHeader>
-        <Logo>🚀</Logo>
+        <Logo><FaSketch /></Logo>
         <Title>Upgrade to Pro</Title>
       </ModalHeader>
       <Description>
