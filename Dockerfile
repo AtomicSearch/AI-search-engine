@@ -1,6 +1,7 @@
 FROM searxng/searxng:2024.4.29-e45a7cc06
 
 ENV PORT ${PORT:-7860}
+
 EXPOSE ${PORT}
 
 RUN apk add --update --no-cache \
@@ -13,19 +14,16 @@ RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
   && mkdir -p /etc/searxng \
   && chmod 777 /etc/searxng
 
-ARG USERNAME=user
-RUN adduser -D -u 1000 ${USERNAME} \
-  && mkdir -p /home/${USERNAME}/app \
-  && chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}
+WORKDIR /app
 
-USER ${USERNAME}
-WORKDIR /home/${USERNAME}/app
+COPY package*.json ./
 
-COPY --chown=${USERNAME}:${USERNAME} package*.json ./
 RUN npm ci --verbose
 
-COPY --chown=${USERNAME}:${USERNAME} . .
+COPY . .
+
 RUN npm run build
 
 ENTRYPOINT ["/bin/sh", "-c"]
+
 CMD ["/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & npm start -- --host"]
