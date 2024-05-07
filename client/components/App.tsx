@@ -12,7 +12,6 @@ const AppContainer = styled.div`
 
 const Main = styled.main`
   flex: 1;
-
 `;
 
 function InnerApp() {

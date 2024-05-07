@@ -393,7 +393,7 @@ export namespace Gossip {
 
   async function generateTextWithRatchet() {
     const { initializeRatchet, runCompletion, exitRatchet } = await import(
-      "./ratchet"
+      "../ratchet"
     );
 
     await initializeRatchet((loadingProgressPercentage) =>
