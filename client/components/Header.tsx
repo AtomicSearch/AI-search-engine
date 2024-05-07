@@ -1,14 +1,16 @@
 import styled from "styled-components";
 
 import { AppInfo } from "../constants/appInfo.constant";
+import { FaBrain } from "react-icons/fa";
 
 const HeaderContainer = styled.header`
   background-color: #f0f0f0;
-  padding: 10px;
+  padding: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
-  border-radius: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
 `;
 
 const Logo = styled.h1`
@@ -18,9 +20,11 @@ const Logo = styled.h1`
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding-bottom: 10px;
+  padding: 10px 20px 10px 20px;
   border-radius: 30px;
-  transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    transform 0.3s ease-in-out;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
 
@@ -40,7 +44,7 @@ export const Header = ({ goTo }: { goTo: () => void }) => {
     <HeaderContainer>
       <Logo onClick={goTo}>
         <span role="img" aria-label="rocket">
-          🚀
+          <FaBrain />
         </span>
         <span>{AppInfo.APP_NAME}</span>
       </Logo>

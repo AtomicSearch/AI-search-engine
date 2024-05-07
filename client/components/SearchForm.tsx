@@ -24,7 +24,8 @@ const SearchContainer = styled.div`
   align-items: center;
   position: relative;
   background-color: #ffffff;
-  border-radius: 8px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
