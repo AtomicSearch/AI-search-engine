@@ -1,10 +1,10 @@
-title: MiniSearch
+title: "MassivePrediction: AI Search Engine"
 emoji: 👌🔍
 colorFrom: yellow
 colorTo: yellow
 sdk: docker
 header: mini
-short_description: Minimalist web-searching app with browser-based AI assistant
+short_description: "A AI Search Engine built with TS, React, and TensorFlow.js."
 pinned: true
 custom_headers:
   cross-origin-embedder-policy: require-corp

@@ -221,7 +221,7 @@ export namespace Gossip {
 
   async function generateTextWithWllama() {
     const { initializeWllama, runCompletion, exitWllama } = await import(
-      "./wllama"
+      "../wllama"
     );
 
     const commonSamplingConfig: import("@wllama/wllama").SamplingConfig = {
