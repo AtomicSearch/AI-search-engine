@@ -12,6 +12,7 @@ import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
 import { I18n } from "../constants/appInfo.constant";
+import { Tagline } from "./atoms/Tagline";
 
 interface SearchFormProps {
   query: string;
@@ -251,17 +252,21 @@ export function SearchForm({
     };
   }, [startSearching]);
 
+  const isQueryEmpty = query.length === 0;
+
   return (
     <>
       <Header goTo={navigateToHomePage} />
+      {isQueryEmpty && <Tagline />}
+
       <div
         style={
-          query.length === 0
+          isQueryEmpty
             ? {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: windowInnerHeight * 0.8,
+                height: windowInnerHeight * 0.5,
               }
             : undefined
         }
