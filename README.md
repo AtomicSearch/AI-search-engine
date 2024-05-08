@@ -37,6 +37,14 @@ You can build and run it from the source if you don't want to use MiniSearch's D
 docker-compose -f docker-compose.production.yml up --build
 ```
 
+## Rebuild docker containers
+
+```console
+docker-compose down
+docker-compose build
+docker-compose up
+```
+
 ## Contributing
 
 MiniSearch is open-source and contributions are welcome!
