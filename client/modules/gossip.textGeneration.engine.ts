@@ -1,4 +1,4 @@
-import { isWebGPUAvailable } from "../webGpu";
+import { isWebGPUAvailable } from "./webGpu";
 import {
   updatePrompt,
   updateSearchResults,
@@ -10,13 +10,13 @@ import {
   updateUrlsDescriptions,
   getUrlsDescriptions,
   getDisableWebGpuUsageSetting,
-} from "../pubSub";
-import { SearchResults, search } from "../search";
-import { query, debug } from "../urlParams";
+} from "./pubSub";
+import { SearchResults, search } from "./search";
+import { query, debug } from "./urlParams";
 import toast from "react-hot-toast";
-import { isRunningOnMobile } from "../mobileDetection";
+import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./messages.constants";
-import { I18n } from "../../constants/appInfo.constant";
+import { I18n } from "../constants/appInfo.constant";
 
 export namespace Gossip {
   export async function prepareTextGeneration() {
@@ -218,7 +218,7 @@ export namespace Gossip {
 
   async function generateTextWithWllama() {
     const { initializeWllama, runCompletion, exitWllama } = await import(
-      "../wllama"
+      "./wllama"
     );
 
     const commonSamplingConfig: import("@wllama/wllama").SamplingConfig = {
@@ -383,7 +383,7 @@ export namespace Gossip {
 
   async function generateTextWithRatchet() {
     const { initializeRatchet, runCompletion, exitRatchet } = await import(
-      "../ratchet"
+      "./ratchet"
     );
 
     await initializeRatchet((loadingProgressPercentage) =>
