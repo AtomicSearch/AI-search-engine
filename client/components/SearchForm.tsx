@@ -67,7 +67,6 @@ export function SearchForm({
   const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
   const [notificationShown, setNotificationShown] = useState<boolean>(false);
-  const [isQueryEmpty, setIsQueryEmpty] = useState<boolean>(true);
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -86,18 +85,16 @@ export function SearchForm({
   );
 
   const clearSearchResults = () => {
-    setIsQueryEmpty(true);
-    startSearching("");
-    clearResponses();
+    if (textAreaRef.current) {
+      textAreaRef.current.value = ""; // needs to be first to clear the value
+      startSearching("");
+      clearResponses();
+    }
   };
 
   const navigateToHomePage = () => {
+    clearSearchResults();
     navigate("/");
-
-    if (textAreaRef.current) {
-      textAreaRef.current.value = "";
-      clearSearchResults();
-    }
   };
 
   const debouncedStartSearching = debounce(startSearching, 500);
@@ -239,10 +236,8 @@ export function SearchForm({
         }
       }
       if (event.code === "Escape") {
-        if (textAreaRef.current) {
-          textAreaRef.current.value = "";
-          clearSearchResults(); // Reset results if press Esc
-        }
+          // Reset results if press Esc
+          clearSearchResults();
       }
     };
 
@@ -254,9 +249,7 @@ export function SearchForm({
     };
   }, [startSearching]);
 
-  useEffect(() => {
-    setIsQueryEmpty(query.length === 0);
-  }, [query]);
+  const isQueryEmpty = query.length === 0;
 
   return (
     <>
