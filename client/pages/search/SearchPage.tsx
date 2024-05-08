@@ -18,6 +18,7 @@ import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading";
+import { Tagline } from "../../components/atoms/Tagline";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -69,6 +70,7 @@ export const SearchPage = () => {
 
   return (
     <>
+     <Tagline />
       <SearchForm query={query} updateQuery={setQuery} clearResponses={clearResponses} />
       {isLoading && (
         <LoadingContainer>
