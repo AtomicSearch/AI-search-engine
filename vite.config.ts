@@ -1,3 +1,4 @@
+import { supportedSearchEngines } from "./search-engines";
 import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -16,7 +17,7 @@ import {
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
 const redisClient = new Redis({
-  host: "redis", // service name from docker-compose.yml
+  host: "redis", // Use the service name from docker-compose.yml
   port: 6379,
 });
 
@@ -234,13 +235,14 @@ async function fetchSearXNG(
 ): Promise<[title: string, content: string, url: string][]> {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
+    const supportedEngines = supportedSearchEngines.join(",");
 
     url.search = new URLSearchParams({
       q: query,
       language: "auto",
       safesearch: "0",
       format: "json",
-      engine: "all", // All engines
+      engine: supportedEngines,
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
 

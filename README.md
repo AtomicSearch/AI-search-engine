@@ -1,4 +1,4 @@
-# MiniSearch
+# AtomicSearch
 
 A minimalist search engine with integrated browser-based AI.
 
