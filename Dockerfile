@@ -7,7 +7,8 @@ EXPOSE ${PORT}
 RUN apk add --update --no-cache \
   nodejs \
   npm \
-  git
+  git \
+  redis
 
 RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
   && sed -i 's/su-exec searxng:searxng //' /usr/local/searxng/dockerfiles/docker-entrypoint.sh \

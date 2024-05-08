@@ -9,3 +9,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
