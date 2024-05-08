@@ -28,6 +28,7 @@ const SearchContainer = styled.div`
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   padding: 16px;
+  margin-bottom: 25px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -156,18 +157,18 @@ export function SearchForm({
     const userQueryIsBlank = userQuery.length === 0;
     const suggestedQueryIsBlank = suggestedQuery.length === 0;
 
-    if (userQueryIsBlank && suggestedQueryIsBlank) {
-      setSuggestedQuery(await getRandomQuerySuggestion());
-    } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
-      setSuggestedQuery(""); // clear it
-    }
-
     // Start searching immediately when user types (with a debounce)
     if (!userQueryIsBlank) {
       debouncedStartSearching(userQuery);
     } else {
       // If the user deleted the input, reset the search results
       clearSearchResults();
+    }
+
+    if (userQueryIsBlank && suggestedQueryIsBlank) {
+      setSuggestedQuery(await getRandomQuerySuggestion());
+    } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
+      setSuggestedQuery(""); // clear it
     }
   };
 
