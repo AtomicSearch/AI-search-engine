@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PhoneInput, {
+  type Value,
   Country,
   getCountryCallingCode,
   getCountries,
@@ -82,7 +83,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
   onSubmitSuccess,
   onSubmitError,
 }) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("" as Value);
   const [countryCode, setCountryCode] = useState<Country>(
     I18n.DEFAULT_COUNTRY_CODE,
   );
@@ -116,7 +117,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       }
 
       onSubmitSuccess();
-      setPhoneNumber(""); // clear phone number after successful submission
+      setPhoneNumber("" as Value); // clear phone number after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
       onSubmitError();
@@ -156,7 +157,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
           <PhoneInput
             placeholder="Enter phone number"
             value={phoneNumber}
-            onChange={(value: string) => setPhoneNumber(value)}
+            onChange={(value: Value) => setPhoneNumber(value)}
             defaultCountry={countryCode || I18n.DEFAULT_COUNTRY_CODE}
             labels={labels}
             countrySelectComponent={({ value, onChange, labels, ...rest }) => (
