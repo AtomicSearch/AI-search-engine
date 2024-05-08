@@ -1,6 +1,6 @@
 # AtomicSearch
 
-A minimalist search engine with integrated browser-based AI.
+AI search engine that let you quickly search queries such as `is this place good` or `doctor nearby me`, etc.
 
 Live demo: https://felladrin-minisearch.hf.space
 
