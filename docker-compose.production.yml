@@ -9,6 +9,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    depends_on:
+      - redis
   redis:
     image: redis:alpine
     ports:
