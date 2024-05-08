@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { FaSearch } from "react-icons/fa";
+import { AppInfo } from "../../constants/appInfo.constant";
 
 const TaglineContainer = styled.div`
   display: flex;
@@ -24,7 +25,7 @@ export const Tagline = () => {
   return (
     <TaglineContainer>
       <TaglineIcon />
-      <TaglineText>MassivePrediction: Making search impactful in the AI era</TaglineText>
+      <TaglineText>{AppInfo.APP_TAGLINE}</TaglineText>
     </TaglineContainer>
   );
 };
