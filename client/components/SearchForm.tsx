@@ -264,7 +264,7 @@ export function SearchForm({
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                height: windowInnerHeight * 0.5,
+                height: windowInnerHeight * 0.3,
               }
             : undefined
         }
