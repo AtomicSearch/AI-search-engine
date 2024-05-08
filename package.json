@@ -1,5 +1,5 @@
 {
-  "name": "mini-search",
+  "name": "atomicsearch",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -9,8 +9,8 @@
     "build": "tsc && vite build",
     "dev": "vite",
     "prettier:lint": "prettier --check . && eslint --fix client",
-    "prettier:check": "prettier --check \"src/**/*.{ts,js,json}\" \"!package.json\"",
-    "prettier:fix": "prettier --write \"**/*.{ts,js,json}\" \"!package.json\""
+    "prettier:check": "prettier --check 'src/**/*.{ts,js,json}' '!package.json'",
+    "prettier:fix": "prettier --write '**/*.{ts,js,json}' '!package.json'"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
@@ -48,19 +48,18 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^6.0.0",
-    "@eslint/js": "^9.0.0",
     "@types/canvas-confetti": "^1.6.4",
     "@types/dom-speech-recognition": "^0.0.4",
     "@types/html-to-text": "^9.0.4",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
     "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^9.0.0",
-    "globals": "^15.0.0",
     "typescript": "^5.0.2",
-    "typescript-eslint": "^7.6.0",
     "vite": "^5.2.9"
   }
 }
