@@ -67,6 +67,8 @@ export const SearchPage = () => {
     performSearch();
   }, [query, setSearchResults]);
 
+  const shouldResultsBeShown = searchResults.length > 0 && query;
+
   return (
     <>
       <SearchForm query={query} updateQuery={setQuery} clearResponses={clearResponses} />
@@ -85,7 +87,7 @@ export const SearchPage = () => {
         </div>
       )}
 
-      {searchResults.length > 0 && (
+      {shouldResultsBeShown && (
         <div>
           <SearchResultsList
             searchResults={searchResults}
