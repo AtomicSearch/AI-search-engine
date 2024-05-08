@@ -247,12 +247,14 @@ async function fetchSearXNG(
     }
 
     const url = new URL("http://127.0.0.1:8080/search");
+    //const supportedEngines = supportedSearchEngines.join(",");
 
     url.search = new URLSearchParams({
       q: query,
       language: "auto",
       safesearch: "0",
       format: "json",
+      //engine: supportedEngines,
       engine: "bing,duckduckgo,google", // Exclude Wikidata engine
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
