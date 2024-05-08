@@ -159,7 +159,7 @@ export function SearchForm({
     if (userQueryIsBlank && suggestedQueryIsBlank) {
       setSuggestedQuery(await getRandomQuerySuggestion());
     } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
-      setSuggestedQuery("");
+      setSuggestedQuery(""); // clear it
     }
 
     // Start searching immediately when user types (with a debounce)
