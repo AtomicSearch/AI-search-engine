@@ -232,15 +232,28 @@ async function fetchSearXNG(
   redisClient?: RedisClient,
 ): Promise<[title: string, content: string, url: string][]> {
   try {
+    // Check if the search results are cached in Redis
+    let cachedResults = await redisClient?.get(`searxng:${query}`);
+
+    if (cachedResults) {
+      // If the search results are cached in Redis, parse and return them
+      try {
+        const parsedResults = JSON.parse(cachedResults);
+        return parsedResults;
+      } catch (error) {
+        console.error("Error parsing JSON data from Redis:", error);
+        // Continue with fetching from SearXNG if parsing fails
+      }
+    }
+
     const url = new URL("http://127.0.0.1:8080/search");
-    const supportedEngines = supportedSearchEngines.join(",");
 
     url.search = new URLSearchParams({
       q: query,
       language: "auto",
       safesearch: "0",
       format: "json",
-      engine: supportedEngines,
+      engine: "bing,duckduckgo,google", // Exclude Wikidata engine
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
 
@@ -277,6 +290,14 @@ async function fetchSearXNG(
         uniqueUrls.add(url);
       }
     }
+
+    // Cache the search results in Redis with an expiration time (e.g., 1 hour)
+    await redisClient?.set(
+      `searxng:${query}`,
+      JSON.stringify(searchResults),
+      "EX",
+      3600,
+    );
 
     return searchResults;
   } catch (e) {
