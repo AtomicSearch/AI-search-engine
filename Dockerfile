@@ -19,7 +19,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci || npm install --legacy-peer-deps
+RUN npm ci
 
 COPY . .
 
