@@ -1,6 +1,6 @@
 export enum AppInfo {
-  APP_NAME = "MassivePrediction",
-  APP_DESCRIPTION = "Massive Media - Making search impactful in the AI era",
+  APP_NAME = "Massive Prediction",
+  APP_DESCRIPTION = "Massive Prediction - Making search impactful in the AI era",
   APP_URL = "http://localhost:7860",
   NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }
@@ -26,6 +26,11 @@ export enum GitHubInfo {
   AUTHOR_GITHUB_URL = "https://github.com/pH-7",
   AUTHOR_GITHUB_HANDLE = "@pH-7",
   ORG_GITHUB_URL = "https://github.com/SucceedAI",
+}
+
+export enum XInfo {
+  AUTHOR_X_URL = "http://x.com/phenrysay",
+  AUTHOR_X_HANDLE = "@phenrysay",
 }
 
 export enum CheckoutInfo {
