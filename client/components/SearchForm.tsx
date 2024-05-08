@@ -54,16 +54,24 @@ const MicrophoneButton = styled.button`
   }
 `;
 
-export function SearchForm({ query, updateQuery, clearResponses }: SearchFormProps) {
+export function SearchForm({
+  query,
+  updateQuery,
+  clearResponses,
+}: SearchFormProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const windowInnerHeight = useWindowInnerHeight();
-  const [suggestedQuery, setSuggestedQuery] = useState<string>(
-    getRandomQuerySuggestion(),
-  );
+  const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
   const [notificationShown, setNotificationShown] = useState<boolean>(false);
+
+  useEffect(() => {
+    getRandomQuerySuggestion().then((querySuggestion) => {
+      setSuggestedQuery(querySuggestion);
+    });
+  }, []);
 
   const navigate = useNavigate();
 
@@ -134,7 +142,9 @@ export function SearchForm({ query, updateQuery, clearResponses }: SearchFormPro
     );
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInputChange = async (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     const userQuery = event.target.value.trim();
     const wordCount = userQuery.split(/\s+/).length;
     const needToUpgradeSubscription = wordCount > 10;
@@ -144,10 +154,10 @@ export function SearchForm({ query, updateQuery, clearResponses }: SearchFormPro
     }
 
     const userQueryIsBlank = userQuery.length === 0;
-    const suggestedQueryIsBlank = suggestedQuery.trim().length === 0;
+    const suggestedQueryIsBlank = suggestedQuery.length === 0;
 
     if (userQueryIsBlank && suggestedQueryIsBlank) {
-      setSuggestedQuery(getRandomQuerySuggestion());
+      setSuggestedQuery(await getRandomQuerySuggestion());
     } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
       setSuggestedQuery("");
     }

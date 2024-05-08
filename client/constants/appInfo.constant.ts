@@ -5,6 +5,10 @@ export enum AppInfo {
   NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }
 
+export enum Search {
+  DEFAULT_LIMIT_SUGGESTIONS = 25,
+}
+
 export enum I18n {
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE_COUNTRY_CODE = "en-US",
