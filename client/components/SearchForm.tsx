@@ -67,6 +67,7 @@ export function SearchForm({
   const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
   const [notificationShown, setNotificationShown] = useState<boolean>(false);
+  const [isQueryEmpty, setIsQueryEmpty] = useState<boolean>(true);
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -85,6 +86,7 @@ export function SearchForm({
   );
 
   const clearSearchResults = () => {
+    setIsQueryEmpty(true);
     startSearching("");
     clearResponses();
   };
@@ -252,7 +254,9 @@ export function SearchForm({
     };
   }, [startSearching]);
 
-  const isQueryEmpty = query.length === 0;
+  useEffect(() => {
+    setIsQueryEmpty(query.length === 0);
+  }, [query]);
 
   return (
     <>
