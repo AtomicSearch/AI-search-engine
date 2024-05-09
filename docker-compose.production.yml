@@ -14,8 +14,13 @@ services:
       context: .
     depends_on:
       - redis
+    networks:
+      - app-network
 
   redis:
     image: redis:alpine
     restart: unless-stopped
     command: ["redis-server", "--bind", "0.0.0.0", "--port", "6379"]
+networks:
+  app-network:
+    driver: bridge
