@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { AppInfo } from '../../constants/appInfo.constant';
+import styled from "styled-components";
+import { AppInfo } from "../../constants/appInfo.constant";
 
 const AboutPageWrapper = styled.div`
   max-width: 800px;
@@ -85,7 +85,10 @@ export const AboutMissionPage = () => {
     <AboutPageWrapper>
       <PageTitle>Our Mission</PageTitle>
       <MissionStatement>
-        At {AppInfo.APP_NAME}, we believe that search should be impactful in the AI era. Our mission is to empower individuals with instant access to the most relevant and high-quality information, enabling them to make informed decisions and expand their knowledge.
+        At {AppInfo.APP_NAME}, we believe that search should be impactful in the
+        AI era. Our mission is to empower individuals with instant access to the
+        most relevant and high-quality information, enabling them to make
+        informed decisions and expand their knowledge.
       </MissionStatement>
 
       <MissionPointsWrapper>
@@ -95,7 +98,12 @@ export const AboutMissionPage = () => {
           </MissionPointIcon>
           <MissionPointTitle>Choosing Your Source</MissionPointTitle>
           <MissionPointDescription>
-            We understand the importance of reliable and trustworthy information. Unlike traditional search engines that provide results without any control over sources, {AppInfo.APP_NAME} prioritizes content from reputable and authoritative sources. We believe that you should have the power to choose the sources that align with your values and information needs.
+            We understand the importance of reliable and trustworthy
+            information. Unlike traditional search engines that provide results
+            without any control over sources, {AppInfo.APP_NAME} prioritizes
+            content from reputable and authoritative sources. We believe that
+            you should have the power to choose the sources that align with your
+            values and information needs.
           </MissionPointDescription>
         </MissionPoint>
 
@@ -103,9 +111,15 @@ export const AboutMissionPage = () => {
           <MissionPointIcon>
             <i className="fas fa-search"></i>
           </MissionPointIcon>
-          <MissionPointTitle>Instant Results with Full-Text Search AI</MissionPointTitle>
+          <MissionPointTitle>
+            Instant Results with Full-Text Search AI
+          </MissionPointTitle>
           <MissionPointDescription>
-            {AppInfo.APP_NAME} leverages advanced full-text search AI technology to deliver instant results. Our intelligent algorithms analyze and understand the content of web pages, ensuring that you receive the most relevant information quickly and efficiently. Say goodbye to endless scrolling and irrelevant results.
+            {AppInfo.APP_NAME} leverages advanced full-text search AI technology
+            to deliver instant results. Our intelligent algorithms analyze and
+            understand the content of web pages, ensuring that you receive the
+            most relevant information quickly and efficiently. Say goodbye to
+            endless scrolling and irrelevant results.
           </MissionPointDescription>
         </MissionPoint>
 
@@ -115,21 +129,36 @@ export const AboutMissionPage = () => {
           </MissionPointIcon>
           <MissionPointTitle>Prioritizing Great Content</MissionPointTitle>
           <MissionPointDescription>
-            We believe that exposure to great content not only satisfies your search queries but also enriches your mind. {AppInfo.APP_NAME} prioritizes high-quality content that is informative, well-researched, and thought-provoking. By using our search engine, you can be confident that you are accessing the best resources available, helping you become smarter and more knowledgeable with every search.
+            We believe that exposure to great content not only satisfies your
+            search queries but also enriches your mind. {AppInfo.APP_NAME}{" "}
+            prioritizes high-quality content that is informative,
+            well-researched, and thought-provoking. By using our search engine,
+            you can be confident that you are accessing the best resources
+            available, helping you become smarter and more knowledgeable with
+            every search.
           </MissionPointDescription>
         </MissionPoint>
       </MissionPointsWrapper>
 
       <MassivePredictionWrapper>
-        <MassivePredictionTitle>{AppInfo.APP_NAME} - Making Search Impactful in the AI Era</MassivePredictionTitle>
+        <MassivePredictionTitle>
+          {AppInfo.APP_NAME} - Making Search Impactful in the AI Era
+        </MassivePredictionTitle>
         <MassivePredictionDescription>
-          {AppInfo.APP_NAME} is proudly developed by {AppInfo.APP_NAME}, a company dedicated to revolutionizing search in the AI era. We are committed to harnessing the power of artificial intelligence to enhance the search experience and deliver meaningful results that have a positive impact on people's lives.
+          {AppInfo.APP_NAME} is proudly developed by {AppInfo.APP_NAME}, a
+          company dedicated to revolutionizing search in the AI era. We are
+          committed to harnessing the power of artificial intelligence to
+          enhance the search experience and deliver meaningful results that have
+          a positive impact on people's lives.
         </MassivePredictionDescription>
       </MassivePredictionWrapper>
 
       <ClosingStatement>
         <p>
-          Join us on this exciting journey as we redefine search and empower individuals with the knowledge they need to thrive in the AI era. With {AppInfo.APP_NAME}, you can trust that every search will be a step towards personal growth and discovery.
+          Join us on this exciting journey as we redefine search and empower
+          individuals with the knowledge they need to thrive in the AI era. With{" "}
+          {AppInfo.APP_NAME}, you can trust that every search will be a step
+          towards personal growth and discovery.
         </p>
       </ClosingStatement>
     </AboutPageWrapper>

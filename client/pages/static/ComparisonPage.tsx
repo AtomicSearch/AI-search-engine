@@ -50,7 +50,9 @@ const ComparisonPointDescription = styled.p`
 export const ComparisonPage = () => {
   return (
     <ComparisonPageWrapper>
-      <ComparisonPageTitle>MassivePrediction vs. Google Search</ComparisonPageTitle>
+      <ComparisonPageTitle>
+        MassivePrediction vs. Google Search
+      </ComparisonPageTitle>
       <ComparisonPointsWrapper>
         <ComparisonPoint>
           <ComparisonPointIcon>
@@ -58,7 +60,8 @@ export const ComparisonPage = () => {
           </ComparisonPointIcon>
           <ComparisonPointTitle>AI-Powered Search</ComparisonPointTitle>
           <ComparisonPointDescription>
-            MassivePrediction leverages cutting-edge AI technologies to provide accurate and contextually relevant search results.
+            MassivePrediction leverages cutting-edge AI technologies to provide
+            accurate and contextually relevant search results.
           </ComparisonPointDescription>
         </ComparisonPoint>
         <ComparisonPoint>
@@ -67,7 +70,9 @@ export const ComparisonPage = () => {
           </ComparisonPointIcon>
           <ComparisonPointTitle>Predictive Analytics</ComparisonPointTitle>
           <ComparisonPointDescription>
-            Our search engine goes beyond simple keyword matching, utilizing predictive analytics to anticipate user needs and deliver proactive insights.
+            Our search engine goes beyond simple keyword matching, utilizing
+            predictive analytics to anticipate user needs and deliver proactive
+            insights.
           </ComparisonPointDescription>
         </ComparisonPoint>
         <ComparisonPoint>
@@ -76,7 +81,9 @@ export const ComparisonPage = () => {
           </ComparisonPointIcon>
           <ComparisonPointTitle>Impactful Search</ComparisonPointTitle>
           <ComparisonPointDescription>
-            With MassivePrediction, your search experience is not only efficient but also impactful, empowering you to make informed decisions and drive meaningful change.
+            With MassivePrediction, your search experience is not only efficient
+            but also impactful, empowering you to make informed decisions and
+            drive meaningful change.
           </ComparisonPointDescription>
         </ComparisonPoint>
       </ComparisonPointsWrapper>
@@ -108,15 +115,22 @@ export const ComparisonPage = () => {
       </table>
       <h2>Pros of MassivePrediction</h2>
       <ul>
-        <li>Harnesses the power of AI for enhanced search accuracy and relevance</li>
-        <li>Provides predictive insights to help users make informed decisions</li>
+        <li>
+          Harnesses the power of AI for enhanced search accuracy and relevance
+        </li>
+        <li>
+          Provides predictive insights to help users make informed decisions
+        </li>
         <li>Delivers impactful search results that drive meaningful change</li>
       </ul>
       <h2>Cons of Google Search</h2>
       <ul>
         <li>Relies primarily on traditional keyword matching techniques</li>
         <li>Limited predictive capabilities compared to MassivePrediction</li>
-        <li>Search results may not always have a significant impact on user actions</li>
+        <li>
+          Search results may not always have a significant impact on user
+          actions
+        </li>
       </ul>
     </ComparisonPageWrapper>
   );

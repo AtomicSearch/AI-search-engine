@@ -19,19 +19,19 @@ export const SettingsButton = () => {
   return (
     <SettingsButtonWrapper>
       <Button
-      style={{ fontSize: "small", marginRight: 0 }}
-      onClick={(event) => {
-        event.preventDefault();
+        style={{ fontSize: "small", marginRight: 0 }}
+        onClick={(event) => {
+          event.preventDefault();
 
-        toast(
+          toast(
             <div>
               <SettingsForm />
               <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "8px",
-              }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "8px",
+                }}
               >
                 <Button
                   style={{ fontSize: "small" }}
@@ -41,17 +41,17 @@ export const SettingsButton = () => {
                 </Button>
               </div>
             </div>,
-          {
-            id: toastId,
-            duration: Infinity,
-            position: "bottom-center",
-            style: {
-              borderRadius: "10px",
-              background: "var(--background)",
-              color: "var(--text-main)",
+            {
+              id: toastId,
+              duration: Infinity,
+              position: "bottom-center",
+              style: {
+                borderRadius: "10px",
+                background: "var(--background)",
+                color: "var(--text-main)",
+              },
             },
-            },
-          )
+          );
         }}
       >
         Options

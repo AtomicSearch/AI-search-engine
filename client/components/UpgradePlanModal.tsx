@@ -53,7 +53,9 @@ export const UpgradePlanModal = () => {
   return (
     <ModalWrapper>
       <ModalHeader>
-        <Logo><FaSketch /></Logo>
+        <Logo>
+          <FaSketch />
+        </Logo>
         <Title>Upgrade to Pro</Title>
       </ModalHeader>
       <Description>

@@ -50,7 +50,8 @@ export const Footer = ({
     </a>,
   ];
 
-  const randomAuthorLink = authorLink[Math.floor(Math.random() * authorLink.length)];
+  const randomAuthorLink =
+    authorLink[Math.floor(Math.random() * authorLink.length)];
 
   return (
     <FooterContainer $isEmpty={hasEmptyResults}>
@@ -59,8 +60,7 @@ export const Footer = ({
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
         </em>
         <br />
-        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by{" "}
-        {randomAuthorLink}
+        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by {randomAuthorLink}
       </Slogan>
     </FooterContainer>
   );
