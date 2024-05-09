@@ -37,7 +37,6 @@ export namespace Gossip {
 
     if (searchResults.length === 0) {
       const queryKeywords = await getKeywords(query, 10);
-
       searchResults = await search(queryKeywords.join(" "), 30);
     }
 
@@ -252,9 +251,9 @@ export namespace Gossip {
     } = {
       mobileDefault: {
         url: "https://huggingface.co/Felladrin/gguf-vicuna-160m/resolve/main/vicuna-160m.Q8_0.gguf",
-        userPrefix: "USER:",
-        assistantPrefix: "ASSISTANT:",
-        messageSuffix: "</s> ",
+        userPrefix: "USER:\n",
+        assistantPrefix: "ASSISTANT:\n",
+        messageSuffix: "</s>\n",
         sampling: commonSamplingConfig,
       },
       mobileLarger: {
@@ -301,13 +300,16 @@ export namespace Gossip {
 
     if (!getDisableAiResponseSetting()) {
       const prompt = [
-        [
-          "Take a look at this info:",
-          getSearchResults()
-            .slice(0, 6)
-            .map(([title, snippet]) => `- ${title}: ${snippet}`)
-            .join("\n"),
-        ].join("\n\n"),
+        selectedModel.userPrefix,
+        "Hello!",
+        selectedModel.messageSuffix,
+        selectedModel.assistantPrefix,
+        "Hi! How can I help you?",
+        selectedModel.messageSuffix,
+        selectedModel.userPrefix,
+        ["Take a look at this info:", getFormattedSearchResults(5)].join(
+          "\n\n",
+        ),
         selectedModel.messageSuffix,
         selectedModel.assistantPrefix,
         "Alright!",
@@ -462,17 +464,14 @@ export namespace Gossip {
     return text.endsWith(".") || text.endsWith("!") || text.endsWith("?");
   }
 
-  function getMainPrompt() {
+  function getMainPrompt(): string {
     return [
       "Provide a concise response to the request below.",
       "If the information from the Web Search Results below is useful, you can use it to complement your response. Otherwise, ignore it.",
       "",
       "Web Search Results:",
       "",
-      getSearchResults()
-        .slice(0, isRunningOnMobile ? 5 : 10)
-        .map(([title, snippet]) => `- ${title}: ${snippet}`)
-        .join("\n"),
+      getFormattedSearchResults(5),
       "",
       "Request:",
       "",
@@ -516,6 +515,13 @@ export namespace Gossip {
     }
 
     return prompt;
+  }
+
+  function getFormattedSearchResults(limit?: number): string {
+    return getSearchResults()
+      .slice(0, limit)
+      .map(([title, snippet, url]) => `${title}\n${url}\n${snippet}`)
+      .join("\n\n");
   }
 
   async function getKeywords(text: string, limit?: number) {
