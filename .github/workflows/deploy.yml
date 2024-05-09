@@ -42,4 +42,4 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             docker pull ${{ env.DOCKER_REPO }}:latest
-            docker service update --image ${{ env.DOCKER_REPO }}:latest ${{ env.SERVICE_NAME }}
+            docker-compose up --build --detach
