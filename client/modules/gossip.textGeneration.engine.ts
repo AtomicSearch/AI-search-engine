@@ -16,7 +16,7 @@ import { query, debug } from "./urlParams";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./messages.constants";
-import { I18n } from "../constants/appInfo.constant";
+import { AppInfo, I18n, Search } from "../constants/appInfo.constant";
 
 export namespace Gossip {
   export async function prepareTextGeneration() {
@@ -488,7 +488,7 @@ export namespace Gossip {
 
     try {
       const pageContent = await fetchPageContent(url, {
-        maxLength: isRunningOnMobile ? 1750 : 3500,
+        maxLength: Search.SUMMARIZE_LINKS_MAX_LENGTH,
       });
 
       prompt = [

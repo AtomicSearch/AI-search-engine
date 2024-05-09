@@ -7,6 +7,7 @@ export enum AppInfo {
 
 export enum Search {
   DEFAULT_LIMIT_SUGGESTIONS = 25,
+  SUMMARIZE_LINKS_MAX_LENGTH = 2500,
 }
 
 export enum I18n {
