@@ -17,15 +17,20 @@ export async function getRandomQuerySuggestion() {
   return randomQuerySuggestion;
 }
 
-async function refillQuerySuggestions(limit?: number) {
+async function refillQuerySuggestions(limit?: number): Promise<void> {
   const querySuggestionsFileUrl = new URL(
     "/gossip.query-suggestions.json",
     self.location.origin,
   );
 
-  const fetchResponse = await fetch(querySuggestionsFileUrl.toString());
+  let querySuggestionsList: string[];
+  try {
+    const fetchResponse = await fetch(querySuggestionsFileUrl.toString());
 
-  const querySuggestionsList: string[] = await fetchResponse.json();
+    querySuggestionsList = await fetchResponse.json();
+  } catch (e) {
+    querySuggestionsList = [];
+  }
 
   updateQuerySuggestions(
     querySuggestionsList.sort(() => Math.random() - 0.5).slice(0, limit),

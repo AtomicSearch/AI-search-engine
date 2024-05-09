@@ -237,8 +237,8 @@ export function SearchForm({
         }
       }
       if (event.code === "Escape") {
-          // Reset results if press Esc
-          clearSearchResults();
+        // Reset results if press Esc
+        clearSearchResults();
       }
     };
 

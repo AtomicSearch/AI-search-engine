@@ -59,19 +59,25 @@ export const SearchPage = () => {
   // Add a new useEffect hook to call the search function when query changes
   useEffect(() => {
     async function performSearch() {
-      setIsLoading(true);
-      const results = await search(query);
-      setSearchResults(results);
+      if (query.length) {
+        setIsLoading(true);
+        const results = await search(query);
+        setSearchResults(results);
+      }
       setIsLoading(false);
     }
     performSearch();
   }, [query, setSearchResults]);
 
-  const shouldResultsBeShown = searchResults.length > 0 && query;
+  const shouldResultsBeShown = searchResults.length > 0 && query.length > 0;
 
   return (
     <>
-      <SearchForm query={query} updateQuery={setQuery} clearResponses={clearResponses} />
+      <SearchForm
+        query={query}
+        updateQuery={setQuery}
+        clearResponses={clearResponses}
+      />
       {isLoading && (
         <LoadingContainer>
           <LoadingSpinner />
