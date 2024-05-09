@@ -15,7 +15,7 @@ on:
 # Step 2
 env:
   REGISTRY: "registry.digitalocean.com/massiveprediction"
-  IMAGE_NAME: "atomicsearch"
+  IMAGE_NAME: "production-server"
 
 # Step 3
 jobs:
