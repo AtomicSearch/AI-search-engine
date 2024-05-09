@@ -155,7 +155,7 @@ export function SearchForm({
     }
 
     const userQueryIsBlank = userQuery.length === 0;
-    const suggestedQueryIsBlank = suggestedQuery.length === 0;
+    const suggestedQueryIsBlank = suggestedQuery?.length === 0;
 
     // Start searching immediately when user types (with a debounce)
     if (!userQueryIsBlank) {

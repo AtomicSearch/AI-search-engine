@@ -25,10 +25,16 @@ async function refillQuerySuggestions(limit?: number): Promise<void> {
 
   let querySuggestionsList: string[];
   try {
-    const fetchResponse = await fetch(querySuggestionsFileUrl.toString());
+    const suggestionsUrl = querySuggestionsFileUrl.toString();
+    const fetchResponse = await fetch(suggestionsUrl, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     querySuggestionsList = await fetchResponse.json();
   } catch (e) {
+    console.error("Couldn't fetch the suggestions file", JSON.stringify(e));
     querySuggestionsList = [];
   }
 
