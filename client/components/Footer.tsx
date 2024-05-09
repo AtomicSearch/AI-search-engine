@@ -40,15 +40,15 @@ export const Footer = ({
 }) => {
 
   const authorLink = [
-    `<a href=${GitHubInfo.AUTHOR_GITHUB_URL}>
+    `<a href="${GitHubInfo.AUTHOR_GITHUB_URL}">
     ${GitHubInfo.AUTHOR_GITHUB_HANDLE}
   </a>`,
-  `<a href=${XInfo.AUTHOR_X_URL}>
+  `<a href="${XInfo.AUTHOR_X_URL}">
   ${XInfo.AUTHOR_X_HANDLE}
 </a>`
   ];
 
-  const author = authorLink[Math.floor(Math.random() * authorLink.length)];
+  const randomAuthorLink = authorLink[Math.floor(Math.random() * authorLink.length)];
 
   return (
     <FooterContainer $isEmpty={hasEmptyResults}>
@@ -57,7 +57,7 @@ export const Footer = ({
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
         </em><br />
         {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by{" "}
-        {author}
+        {randomAuthorLink}
       </Slogan>
     </FooterContainer>
   );
