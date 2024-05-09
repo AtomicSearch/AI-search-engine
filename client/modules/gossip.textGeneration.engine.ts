@@ -16,7 +16,7 @@ import { query, debug } from "./urlParams";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./messages.constants";
-import { AppInfo, I18n, Search } from "../constants/appInfo.constant";
+import { I18n, Search } from "../constants/appInfo.constant";
 
 export namespace Gossip {
   export async function prepareTextGeneration() {
