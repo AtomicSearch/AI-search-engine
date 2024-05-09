@@ -1,5 +1,6 @@
-import { toast } from "react-hot-toast";
+import { useState } from "react";
 import styled from "styled-components";
+import { toast } from "react-hot-toast";
 
 import { SettingsForm } from "./SettingsForm";
 import { Button } from "./atoms/Button";
