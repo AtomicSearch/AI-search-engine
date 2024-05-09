@@ -1,16 +1,12 @@
-version: '3'
-services:
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
+version: "3"
 
+services:
   production-server:
     environment:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-7860}
       - BASIC_SSL=${BASIC_SSL:-false}
+      - IS_CACHE_ENABLED=false
     ports:
       - "${PORT:-7860}:${PORT:-7860}"
     build:
@@ -18,3 +14,8 @@ services:
       context: .
     depends_on:
       - redis
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    command: ["redis-server", "--bind", "0.0.0.0", "--port", "6379"]

@@ -12,6 +12,7 @@ services:
       - PORT=${PORT:-7860}
       - BASIC_SSL=${BASIC_SSL:-false}
       - HMR_PORT=${HMR_PORT:-7861}
+      - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-true}
     ports:
       - "${PORT:-7860}:7860"
       - "${HMR_PORT:-7861}:7861"

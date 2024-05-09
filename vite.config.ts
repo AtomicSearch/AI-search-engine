@@ -15,10 +15,13 @@ import {
 } from "@energetic-ai/embeddings";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-const redisClient = new Redis({
-  host: "redis", // Use the service name from docker-compose.yml
-  port: 6379,
-});
+const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
+const redisClient = isCacheEnabled
+  ? new Redis({
+      host: "redis", // Use the service name from docker-compose.yml
+      port: 6379,
+    })
+  : undefined;
 
 const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
@@ -232,8 +235,10 @@ async function fetchSearXNG(
   redisClient?: RedisClient,
 ): Promise<[title: string, content: string, url: string][]> {
   try {
-    // Check if the search results are cached in Redis
-    let cachedResults = await redisClient?.get(`searxng:${query}`);
+    // Check if the search results are cached in Redis (if cache is enabled)
+    let cachedResults = isCacheEnabled
+      ? await redisClient?.get(`searxng:${query}`)
+      : undefined;
 
     if (cachedResults) {
       // If the search results are cached in Redis, parse and return them
@@ -293,13 +298,15 @@ async function fetchSearXNG(
       }
     }
 
-    // Cache the search results in Redis with an expiration time (e.g., 1 hour)
-    await redisClient?.set(
-      `searxng:${query}`,
-      JSON.stringify(searchResults),
-      "EX",
-      3600,
-    );
+    // Cache the search results in Redis with an expiration time (e.g., 1 hour) (if cache is enabled)
+    if (isCacheEnabled) {
+      await redisClient?.set(
+        `searxng:${query}`,
+        JSON.stringify(searchResults),
+        "EX",
+        3600,
+      );
+    }
 
     return searchResults;
   } catch (e) {
