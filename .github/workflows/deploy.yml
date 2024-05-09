@@ -42,4 +42,4 @@ jobs:
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             docker pull ${{ env.DOCKER_REPO }}:latest
-            docker-compose up --build --detach
+            docker-compose -f docker-compose.production.yml up --build -d
