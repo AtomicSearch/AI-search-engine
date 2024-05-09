@@ -8,9 +8,9 @@
     "start": "vite preview",
     "build": "tsc && vite build",
     "dev": "vite",
-    "prettier:lint": "prettier --check . && eslint --fix client",
-    "prettier:check": "prettier --check 'src/**/*.{ts,js,json}' '!package.json'",
-    "prettier:fix": "prettier --write '**/*.{ts,js,json}' '!package.json'"
+    "prettier:lint": "prettier --check . --ignore-path .gitignore && eslint --fix client --ignore-pattern 'ios/' --ignore-pattern 'android/'",
+    "prettier:check": "prettier --check 'src/**/*.{ts,js,json}' '!package.json' '!ios/**' '!android/**'",
+    "prettier:fix": "prettier --write '**/*.{ts,js,json}' '!package.json' '!ios/**' '!android/**'"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
