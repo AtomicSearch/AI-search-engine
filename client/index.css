@@ -21,7 +21,9 @@ body {
     font-family: InterVariable, sans-serif;
   }
 }
-
+a {
+  color: #3291cd;
+}
 button:hover {
   color: #007bff;
   background-color: transparent;

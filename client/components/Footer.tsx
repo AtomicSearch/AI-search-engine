@@ -20,7 +20,6 @@ const FooterContainer = styled.footer<FooterContainerProps>`
       bottom: 0;
       left: 0;
       right: 0;
-
       background-color: #ffffff;
       padding: 20px;
       box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
@@ -38,14 +37,17 @@ export const Footer = ({
 }: {
   hasEmptyResults?: boolean;
 }) => {
-
   const authorLink = [
-    `<a href="${GitHubInfo.AUTHOR_GITHUB_URL}">
-    ${GitHubInfo.AUTHOR_GITHUB_HANDLE}
-  </a>`,
-  `<a href="${XInfo.AUTHOR_X_URL}">
-  ${XInfo.AUTHOR_X_HANDLE}
-</a>`
+    <a
+      href={GitHubInfo.AUTHOR_GITHUB_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {GitHubInfo.AUTHOR_GITHUB_HANDLE}
+    </a>,
+    <a href={XInfo.AUTHOR_X_URL} target="_blank" rel="noopener noreferrer">
+      {XInfo.AUTHOR_X_HANDLE}
+    </a>,
   ];
 
   const randomAuthorLink = authorLink[Math.floor(Math.random() * authorLink.length)];
@@ -55,7 +57,8 @@ export const Footer = ({
       <Slogan>
         <em>
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
-        </em><br />
+        </em>
+        <br />
         {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by{" "}
         {randomAuthorLink}
       </Slogan>
