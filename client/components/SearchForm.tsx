@@ -85,17 +85,19 @@ export function SearchForm({
     [updateQuery, navigate],
   );
 
-  const clearSearchResults = () => {
+  const clearSearchResultsAndUrl = () => {
     if (textAreaRef.current) {
-      textAreaRef.current.value = ""; // needs to be first to clear the value
+      textAreaRef.current.value = "";
       startSearching("");
       clearResponses();
     }
+
+    // reset the URL to index
+    navigate("/");
   };
 
   const navigateToHomePage = () => {
-    clearSearchResults();
-    navigate("/");
+    clearSearchResultsAndUrl();
   };
 
   const debouncedStartSearching = debounce(startSearching, 500);
@@ -162,13 +164,13 @@ export function SearchForm({
       debouncedStartSearching(userQuery);
     } else {
       // If the user deleted the input, reset the search results
-      clearSearchResults();
+      clearSearchResultsAndUrl();
     }
 
     if (userQueryIsBlank && suggestedQueryIsBlank) {
       setSuggestedQuery(await getRandomQuerySuggestion());
     } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
-      setSuggestedQuery(""); // clear it
+      setSuggestedQuery(""); // clear the suggested queries
     }
   };
 
@@ -238,7 +240,7 @@ export function SearchForm({
       }
       if (event.code === "Escape") {
         // Reset results if press Esc
-        clearSearchResults();
+        clearSearchResultsAndUrl();
       }
     };
 
