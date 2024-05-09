@@ -14,7 +14,47 @@ const SettingsButtonWrapper = styled.div`
 `;
 
 export const SettingsButton = () => {
+  const [isToastOpen, setToastOpen] = useState(false);
   const toastId = "settings-toast";
+
+  const openToast = () => {
+    setToastOpen(true);
+
+    toast(
+      <div>
+        <SettingsForm />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "8px",
+          }}
+        >
+          <Button
+            style={{ fontSize: "small" }}
+            onClick={() => toast.dismiss(toastId)}
+          >
+            ✅
+          </Button>
+        </div>
+      </div>,
+      {
+        id: toastId,
+        duration: Infinity,
+        position: "bottom-center",
+        style: {
+          borderRadius: "10px",
+          background: "var(--background)",
+          color: "var(--text-main)",
+        },
+      },
+    );
+  };
+
+  const closeToast = () => {
+    setToastOpen(false);
+    toast.dismiss(toastId);
+  };
 
   return (
     <SettingsButtonWrapper>
@@ -23,35 +63,7 @@ export const SettingsButton = () => {
         onClick={(event) => {
           event.preventDefault();
 
-          toast(
-            <div>
-              <SettingsForm />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "8px",
-                }}
-              >
-                <Button
-                  style={{ fontSize: "small" }}
-                  onClick={() => toast.dismiss(toastId)}
-                >
-                  ✅
-                </Button>
-              </div>
-            </div>,
-            {
-              id: toastId,
-              duration: Infinity,
-              position: "bottom-center",
-              style: {
-                borderRadius: "10px",
-                background: "var(--background)",
-                color: "var(--text-main)",
-              },
-            },
-          );
+          isToastOpen ? closeToast() : openToast();
         }}
       >
         Options
