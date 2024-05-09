@@ -28,14 +28,15 @@ export namespace Gossip {
 
     updateLoadingToast(messages.browseInternet);
 
-    let searchResults = await search(query, 30);
+    let searchResults = await search(
+      query.length > Search.SEARCH_QUERY_LIMIT_LENGTH
+        ? (await getKeywords(query, 20)).join(" ")
+        : query,
+      30,
+    );
 
     if (searchResults.length === 0) {
-      const queryKeywords = (await import("keyword-extractor")).default
-        .extract(query, {
-          language: I18n.DEFAULT_LANGUAGE,
-        })
-        .slice(0, 10);
+      const queryKeywords = await getKeywords(query, 10);
 
       searchResults = await search(queryKeywords.join(" "), 30);
     }
@@ -488,7 +489,7 @@ export namespace Gossip {
 
     try {
       const pageContent = await fetchPageContent(url, {
-        maxLength: Search.SUMMARIZE_LINKS_MAX_LENGTH,
+        maxLength: Search.SUMMARIZE_LINKS_LIMIT_LENGTH,
       });
 
       prompt = [
@@ -515,5 +516,11 @@ export namespace Gossip {
     }
 
     return prompt;
+  }
+
+  async function getKeywords(text: string, limit?: number) {
+    return (await import("keyword-extractor")).default
+      .extract(text, { language: I18n.DEFAULT_LANGUAGE })
+      .slice(0, limit);
   }
 }
