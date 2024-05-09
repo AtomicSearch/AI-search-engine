@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 env:
-  SERVICE_NAME: atomicsearch
+  SERVICE_NAME: production-server
   DOCKER_REPO: atomicsearch/massiveprediction
 
 jobs:
