@@ -33,6 +33,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout files
+        uses: actions/checkout@v4
+
       - name: Deploy to DigitalOcean
         uses: appleboy/ssh-action@v1.0.3
         with:
