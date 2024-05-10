@@ -59,7 +59,7 @@ export const UpgradePlanModal = () => {
         <Title>Upgrade to Pro</Title>
       </ModalHeader>
       <Description>
-        Unlock unlimited searches with advanced models and more
+        Dive deep into the answers you seek with unlimited latest AI models
       </Description>
       <Button onClick={handleButtonClick}>Try Now</Button>
     </ModalWrapper>
