@@ -21,6 +21,7 @@
     "@energetic-ai/model-embeddings-en": "^0.2.0",
     "@mlc-ai/web-llm": "0.2.35",
     "@ratchet-ml/ratchet-web": "^0.4.0",
+    "@stripe/stripe-js": "^3.4.0",
     "@wllama/wllama": "^1.4.2",
     "canvas-confetti": "^1.9.3",
     "create-pubsub": "^1.6.3",
