@@ -1,5 +1,5 @@
 {
   "paymentGateway": {
-    "enabled": true
+    "enabled": false
   }
 }
