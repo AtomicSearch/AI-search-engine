@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
@@ -31,8 +31,29 @@ export const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   onSubmitSuccess,
   onSubmitError,
 }) => {
+  const [stripeLoaded, setStripeLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadStripelibrary = async () => {
+      try {
+        await stripePromise;
+        setStripeLoaded(true);
+      } catch (error) {
+        console.error("Failed to load Stripe.js. Retrying in 3 seconds...");
+        setTimeout(loadStripeLibrary, 3000); // Retry after 3 seconds
+      }
+    };
+
+    loadStripeLibrary();
+  }, []);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!stripeLoaded) {
+      onSubmitError();
+      return;
+    }
 
     const stripe = await stripePromise;
 
@@ -61,7 +82,9 @@ export const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <PurchaseButton type="submit">Upgrade to Smarter Plan</PurchaseButton>
+      <PurchaseButton type="submit" disabled={!stripeLoaded}>
+        {stripeLoaded ? "Upgrade to Smarter Plan" : "Loading..."}
+      </PurchaseButton>
     </form>
   );
 };
