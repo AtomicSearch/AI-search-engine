@@ -1,4 +1,4 @@
-name: Service build
+name: Build and Deploy to DigitalOcean
 
 on:
   push:
