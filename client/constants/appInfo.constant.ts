@@ -5,6 +5,12 @@ export enum AppInfo {
   NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }
 
+export enum SubscriptionPlan {
+  PRICE_ID = "price_1J4J9zLz1c1a3J4J",
+  PRICE_DISPLAYED = "$17",
+  PLAN_NAME = "Smarter Plan",
+}
+
 export enum Search {
   DEFAULT_LIMIT_SUGGESTIONS = 25,
   SEARCH_QUERY_LIMIT_LENGTH = 2000,

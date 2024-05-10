@@ -18,6 +18,8 @@ import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading";
+import { SettingsButton } from "../../components/SettingsButton";
+import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -37,6 +39,8 @@ export const SearchPage = () => {
   const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isUserSubscribed = useSubscriptionStatus();
 
   const location = useLocation();
 
@@ -101,7 +105,7 @@ export const SearchPage = () => {
           />
         </div>
       )}
-      <UpgradePlanModal />
+      {isUserSubscribed ? <SettingsButton /> : <UpgradePlanModal />}
       <Toaster />
       <Footer hasEmptyResults={searchResults.length === 0} />
     </>

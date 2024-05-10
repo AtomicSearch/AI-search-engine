@@ -1,0 +1,5 @@
+{
+  "paymentGateway": {
+    "enabled": true
+  }
+}

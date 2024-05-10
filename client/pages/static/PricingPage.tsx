@@ -25,6 +25,9 @@ import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 import { confettiOptions } from "../../constants/confettiOptions.constant";
+import { loadFeatureFlags } from "../../utils/loadFeatureFlags";
+import { PaymentGateway } from "../../components/PaymentGateway";
+import { SubscriptionPlan } from "../../constants/appInfo.constant";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -173,6 +176,12 @@ export const PricingPage: React.FC = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const confettiRef = useRef<HTMLDivElement | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isPaymentGatewayEnabled, setIsPaymentGatewayEnabled] = useState(false);
+
+  useEffect(() => {
+    const featureFlags = loadFeatureFlags();
+    setIsPaymentGatewayEnabled(featureFlags.paymentGateway.enabled);
+  }, []);
 
   useEffect(() => {
     const visited = localStorage.getItem(LocalStorageKeys.PRICING_VISITED);
@@ -191,9 +200,19 @@ export const PricingPage: React.FC = () => {
     setShowModal(false);
   };
 
-  const handleSubmitSuccess = () => {
+  const handleSubmitWaitingListSuccess = () => {
     setShowModal(false);
     toast("Amazing! We'll notify you when the Smart plan is available.", {
+      position: "top-right",
+      duration: 5000,
+      icon: "🎉",
+    });
+  };
+
+  const handleSubmitSubscriptionSuccess = () => {
+    setShowModal(false);
+    localStorage.setItem("subscriptionStatus", "active");
+    toast("Congratulations! You are now subscribed to the Smarter plan.", {
       position: "top-right",
       duration: 5000,
       icon: "🎉",
@@ -235,7 +254,7 @@ export const PricingPage: React.FC = () => {
             <PlanName>
               <FaRegLightbulb /> Smarter
             </PlanName>
-            <Price>$17/mo</Price>
+            <Price>{SubscriptionPlan.PRICE_DISPLAYED}</Price>
             <FeatureList>
               <Feature>
                 <TbInfinity />
@@ -255,9 +274,16 @@ export const PricingPage: React.FC = () => {
                 experience
               </Feature>
             </FeatureList>
-            <PurchaseButton onClick={handleNotifyMeClick}>
-              Get Notified. Upgrade when ready.
-            </PurchaseButton>
+            {isPaymentGatewayEnabled ? (
+              <PaymentGateway
+                onSubmitSuccess={handleSubmitSubscriptionSuccess}
+                onSubmitError={handleSubmitError}
+              />
+            ) : (
+              <PurchaseButton onClick={handleNotifyMeClick}>
+                Get Notified. Upgrade when ready.
+              </PurchaseButton>
+            )}
             {showConfetti && confettiRef.current && (
               <Confetti
                 numberOfPieces={200}
@@ -290,7 +316,7 @@ export const PricingPage: React.FC = () => {
       <NotifyMeModal
         isOpen={showModal}
         onClose={handleModalClose}
-        onSubmitSuccess={handleSubmitSuccess}
+        onSubmitSuccess={handleSubmitWaitingListSuccess}
         onSubmitError={handleSubmitError}
       />
       <Toaster />
