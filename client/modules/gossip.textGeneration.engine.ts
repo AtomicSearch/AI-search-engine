@@ -291,10 +291,31 @@ export namespace Gossip {
       ? largerModel
       : defaultModel;
 
+    let loadingPercentage = 0;
+
     await initializeWllama({
       modelUrl: selectedModel.url,
       modelConfig: {
         n_ctx: 2048,
+        progressCallback: ({
+          loaded,
+          total,
+        }: {
+          loaded: number;
+          total: number;
+        }) => {
+          const progressPercentage = Math.round((loaded / total) * 100);
+
+          if (loadingPercentage !== progressPercentage) {
+            loadingPercentage = progressPercentage;
+
+            if (loadingPercentage === 100) {
+              updateLoadingToast(`AI model loaded.`);
+            } else {
+              updateLoadingToast(`Loading: ${loadingPercentage}%`);
+            }
+          }
+        },
       },
     });
 
