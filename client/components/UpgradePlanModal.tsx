@@ -46,7 +46,7 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
-export const UpgradePlanModal = () => {
+export const UpgradePlanModal: React.FC = () => {
   const handleButtonClick = () => {
     window.location.href = "/pricing?from=homepage_modal";
   };
