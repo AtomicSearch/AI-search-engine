@@ -36,26 +36,6 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@v4
 
-      - name: Install Docker and Docker Compose on Droplet
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            # Check if Docker is installed, if not, install it
-            if ! command -v docker &> /dev/null; then
-              curl -fsSL https://get.docker.com -o get-docker.sh
-              sh get-docker.sh
-            fi
-
-            # Check if Docker Compose is installed, if not, install it
-            if ! command -v docker-compose &> /dev/null; then
-              sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-            fi
-
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -64,22 +44,31 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            # Check if Docker is installed, if not, install it
+            if ! command -v docker &> /dev/null
+            then
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sh get-docker.sh
+            fi
+
+            # Check if Docker Compose is installed, if not, install it
+            if ! command -v docker-compose &> /dev/null
+            then
+                sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+            fi
+
             # Login to Docker Hub
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-            # Initialize Docker Swarm (if not already initialized)
-            if ! docker node ls > /dev/null 2>&1; then
-              docker swarm init
-            fi
+            # Pull the latest image
+            docker pull ${{ env.DOCKER_REPO }}:latest
 
-            # Check if the stack is already deployed
-            if ! docker stack ls | grep -q ${{ env.SERVICE_NAME }}; then
-              # Deploy the stack using Docker Compose
-              docker stack deploy --with-registry-auth --compose-file docker-compose.production.yml ${{ env.SERVICE_NAME }}
-            else
-              # Update the existing stack
-              docker service update --with-registry-auth --image ${{ env.DOCKER_REPO }}:latest ${{ env.SERVICE_NAME }}_web
-            fi
+            # Stop and remove the existing containers (if any)
+            docker-compose -f docker-compose.production.yml down
+
+            # Deploy the updated containers
+            docker-compose -f docker-compose.production.yml up -d
 
             # Prune unused Docker resources
             docker system prune -f
