@@ -68,7 +68,7 @@ export const SettingsButton = () => {
           isToastOpen ? closeToast() : openToast();
         }}
       >
-        Your smarter options <FaAtom />
+        Your Smarter Options <FaAtom />
       </Button>
     </SettingsButtonWrapper>
   );
