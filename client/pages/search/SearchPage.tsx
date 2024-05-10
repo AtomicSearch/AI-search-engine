@@ -44,6 +44,7 @@ export const SearchPage = () => {
   const location = useLocation();
 
   const clearResponses = () => {
+    setSearchResults([]);
     setResponse("");
   };
 
