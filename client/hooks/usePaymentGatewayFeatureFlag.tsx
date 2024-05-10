@@ -1,14 +1,7 @@
-import { useState, useEffect } from "react";
 import { loadFeatureFlags } from "../utils/loadFeatureFlags";
 
 export const usePaymentGatewayFeatureFlag = (): boolean => {
-  const [isPaymentGatewayEnabled, setIsPaymentGatewayEnabled] =
-    useState<boolean>(false);
+  const featureFlags = loadFeatureFlags();
 
-  useEffect(() => {
-    const featureFlags = loadFeatureFlags();
-    setIsPaymentGatewayEnabled(featureFlags.paymentGateway.enabled);
-  }, []);
-
-  return isPaymentGatewayEnabled;
+  return featureFlags.paymentGateway.enabled;
 };
