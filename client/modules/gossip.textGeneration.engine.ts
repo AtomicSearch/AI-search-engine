@@ -468,15 +468,15 @@ export namespace Gossip {
       maxLength?: number;
     },
   ) {
-    const response = await fetch(`https://r.jina.ai/${url}`);
+    const jinaResponse = await fetch(`https://r.jina.ai/${url}`);
 
-    if (!response) {
+    if (!jinaResponse) {
       throw new Error("No response from server");
-    } else if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    } else if (!jinaResponse.ok) {
+      throw new Error(`HTTP error! status: ${jinaResponse.status}`);
     }
 
-    const text = await response.text();
+    const text = await jinaResponse.text();
 
     return text.trim().substring(0, options?.maxLength);
   }
