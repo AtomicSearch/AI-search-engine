@@ -10,6 +10,8 @@ export enum SubscriptionPlan {
   PRICE_ID = "price_1J4J9zLz1c1a3J4J",
   PRICE_DISPLAYED = "$17",
   PLAN_NAME = "Smarter Plan",
+  ACTIVE_STATUS = "active",
+  DEACTIVATED_STATUS = "deactivated",
 }
 
 export enum Search {
