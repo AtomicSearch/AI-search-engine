@@ -260,7 +260,7 @@ async function fetchSearXNG(
       safesearch: "0",
       format: "json",
       //engine: supportedEngines,
-      engine: "google,bing,youtube,github,duckduckgo,", // Exclude Wikidata engine
+      engine: "google,bing,youtube,github,duckduckgo,", // Excluding Wikidata engine
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
 
