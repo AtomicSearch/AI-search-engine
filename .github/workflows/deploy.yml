@@ -41,6 +41,9 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            # Copy docker-compose.production.yml to the server
+            scp -r docker-compose.production.yml ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/
+
             # Install Docker
             curl -fsSL https://get.docker.com -o get-docker.sh
             sh get-docker.sh
