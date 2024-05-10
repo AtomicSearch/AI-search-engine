@@ -25,7 +25,7 @@ import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 import { confettiOptions } from "../../constants/confettiOptions.constant";
-import { PaymentGateway } from "../../components/PaymentGateway";
+import { PaymentGateway, PurchaseButton } from "../../components/PaymentGateway";
 import { SubscriptionPlan } from "../../constants/appInfo.constant";
 import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
 
@@ -127,23 +127,6 @@ const Feature = styled.li`
 
   @media (max-width: 600px) {
     font-size: 16px;
-  }
-`;
-
-const PurchaseButton = styled.button`
-  display: inline-block;
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-
-  @media (max-width: 600px) {
-    padding: 8px 16px;
-    font-size: 14px;
   }
 `;
 
