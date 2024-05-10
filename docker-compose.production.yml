@@ -2,16 +2,14 @@ version: "3"
 
 services:
   production-server:
+    image: atomicsearch/massiveprediction:latest
     environment:
-      - HOST=${HOST:-0.0.0.0}
-      - PORT=${PORT:-7860}
+      - HOST=0.0.0.0
+      - PORT=80
       - BASIC_SSL=${BASIC_SSL:-false}
       - IS_CACHE_ENABLED=false
     ports:
-      - "${PORT:-7860}:${PORT:-7860}"
-    build:
-      dockerfile: Dockerfile
-      context: .
+      - "80:80"
     depends_on:
       - redis
     networks:
@@ -21,6 +19,9 @@ services:
     image: redis:alpine
     restart: unless-stopped
     command: ["redis-server", "--bind", "0.0.0.0", "--port", "6379"]
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
