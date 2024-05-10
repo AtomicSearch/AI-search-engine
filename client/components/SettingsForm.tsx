@@ -8,6 +8,7 @@ import {
 import { Tooltip } from "react-tooltip";
 import { isWebGPUAvailable } from "../modules/webGpu";
 import type { ChangeEventHandler } from "react";
+import { FaAtom } from "react-icons/fa";
 
 export function SettingsForm() {
   const [disableAiResponse, setDisableAiResponse] = usePubSub(
@@ -33,7 +34,7 @@ export function SettingsForm() {
           margin: "10px",
         }}
       >
-        Settings
+        Smart Settings <FaAtom />
       </div>
       <div>
         <SettingCheckbox

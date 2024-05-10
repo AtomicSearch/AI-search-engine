@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 
 import { SettingsForm } from "./SettingsForm";
 import { Button } from "./atoms/Button";
-import { FaAtom } from "react-icons/fa";
 
 const SettingsButtonWrapper = styled.div`
   display: flex;
@@ -68,7 +67,7 @@ export const SettingsButton = () => {
           isToastOpen ? closeToast() : openToast();
         }}
       >
-        Your Smarter Options <FaAtom />
+        Smarter Options
       </Button>
     </SettingsButtonWrapper>
   );
