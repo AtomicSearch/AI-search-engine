@@ -6,6 +6,7 @@ export enum AppInfo {
 }
 
 export enum SubscriptionPlan {
+  PAYMENT_GATEWAY_PUBLIC_KEY = "pk_test_51J4J9zLz1c1a3J4J",
   PRICE_ID = "price_1J4J9zLz1c1a3J4J",
   PRICE_DISPLAYED = "$17",
   PLAN_NAME = "Smarter Plan",

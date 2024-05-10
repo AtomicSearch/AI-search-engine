@@ -2,7 +2,7 @@ import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
 
-const stripePromise = loadStripe("YOUR_STRIPE_PUBLIC_KEY");
+const stripePromise = loadStripe(SubscriptionPlan.PAYMENT_GATEWAY_PUBLIC_KEY);
 
 interface PaymentGatewayProps {
   onSubmitSuccess: () => void;
