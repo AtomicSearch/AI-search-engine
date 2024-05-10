@@ -4,7 +4,7 @@ services:
   production-server:
     image: atomicsearch/massiveprediction:latest
     environment:
-      - HOST=0.0.0.0
+      - HOST=${HOST:-true}
       - PORT=80
       - BASIC_SSL=${BASIC_SSL:-false}
       - IS_CACHE_ENABLED=false
