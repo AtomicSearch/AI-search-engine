@@ -11,6 +11,9 @@ services:
       - IS_CACHE_ENABLED=false
     ports:
       - "80:80"
+    build:
+      dockerfile: Dockerfile
+      context: .
     depends_on:
       - redis
     networks:
