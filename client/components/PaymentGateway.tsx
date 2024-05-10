@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
+import toast, { Toaster } from "react-hot-toast";
 
 const stripePromise = loadStripe(SubscriptionPlan.PAYMENT_GATEWAY_PUBLIC_KEY);
 
@@ -20,6 +21,16 @@ export const PurchaseButton = styled.button`
   font-weight: bold;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 
   @media (max-width: 600px) {
     padding: 8px 16px;
@@ -34,13 +45,13 @@ export const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const [stripeLoaded, setStripeLoaded] = useState(false);
 
   useEffect(() => {
-    const loadStripelibrary = async () => {
+    const loadStripeLibrary = async () => {
       try {
         await stripePromise;
         setStripeLoaded(true);
       } catch (error) {
-        console.error("Failed to load Stripe.js. Retrying in 3 seconds...");
-        setTimeout(loadStripeLibrary, 3000); // Retry after 3 seconds
+        console.error("Failed to load Stripe.js:", error);
+        toast.error("Failed to load Stripe. Please try again later.");
       }
     };
 
@@ -51,13 +62,14 @@ export const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     event.preventDefault();
 
     if (!stripeLoaded) {
-      onSubmitError();
+      toast.error("Stripe is still loading. Please wait a moment.");
       return;
     }
 
     const stripe = await stripePromise;
 
     if (!stripe) {
+      toast.error("Failed to initialize Stripe. Please try again.");
       onSubmitError();
       return;
     }
@@ -71,20 +83,25 @@ export const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       });
 
       if (error) {
+        toast.error(`Error: ${error.message}`);
         onSubmitError();
       } else {
         onSubmitSuccess();
       }
     } catch (error) {
+      toast.error("An error occurred. Please try again.");
       onSubmitError();
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <PurchaseButton type="submit" disabled={!stripeLoaded}>
-        {stripeLoaded ? "Upgrade to Smarter Plan" : "Loading..."}
-      </PurchaseButton>
-    </form>
+    <>
+      <Toaster position="top-right" />
+      <form onSubmit={handleSubmit}>
+        <PurchaseButton type="submit" disabled={!stripeLoaded}>
+          {stripeLoaded ? "Upgrade to Smarter Plan" : "Loading..."}
+        </PurchaseButton>
+      </form>
+    </>
   );
 };
