@@ -6,6 +6,7 @@ services:
     environment:
       - HOST=${HOST:-true}
       - PORT=80
+      - REDIS_PORT=6379
       - BASIC_SSL=${BASIC_SSL:-false}
       - IS_CACHE_ENABLED=false
     ports:

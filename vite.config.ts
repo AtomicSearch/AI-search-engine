@@ -19,7 +19,7 @@ const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
 const redisClient = isCacheEnabled
   ? new Redis({
       host: "redis", // Use the service name from docker-compose.yml
-      port: 6379,
+      port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
     })
   : undefined;
 

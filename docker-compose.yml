@@ -10,6 +10,7 @@ services:
     environment:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-7860}
+      - REDIS_PORT=6379
       - BASIC_SSL=${BASIC_SSL:-false}
       - HMR_PORT=${HMR_PORT:-7861}
       - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-true}
