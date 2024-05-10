@@ -41,7 +41,6 @@ export const SearchPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const isUserSubscribed = useSubscriptionStatus();
-
   const location = useLocation();
 
   const clearResponses = () => {

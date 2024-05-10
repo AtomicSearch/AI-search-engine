@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-export const useSubscriptionStatus = () => {
-  const [isUserSubscribed, setIsUserSubscribed] = useState(false);
+export const useSubscriptionStatus = (): boolean => {
+  const [isUserSubscribed, setIsUserSubscribed] = useState<boolean>(false);
 
   useEffect(() => {
     const subscriptionStatus = localStorage.getItem("subscriptionStatus");

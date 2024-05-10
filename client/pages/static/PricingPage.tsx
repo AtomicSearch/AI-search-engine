@@ -25,9 +25,9 @@ import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 import { confettiOptions } from "../../constants/confettiOptions.constant";
-import { loadFeatureFlags } from "../../utils/loadFeatureFlags";
 import { PaymentGateway } from "../../components/PaymentGateway";
 import { SubscriptionPlan } from "../../constants/appInfo.constant";
+import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -176,12 +176,7 @@ export const PricingPage: React.FC = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const confettiRef = useRef<HTMLDivElement | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [isPaymentGatewayEnabled, setIsPaymentGatewayEnabled] = useState(false);
-
-  useEffect(() => {
-    const featureFlags = loadFeatureFlags();
-    setIsPaymentGatewayEnabled(featureFlags.paymentGateway.enabled);
-  }, []);
+  const isPaymentGatewayEnabled = usePaymentGatewayFeatureFlag();
 
   useEffect(() => {
     const visited = localStorage.getItem(LocalStorageKeys.PRICING_VISITED);
