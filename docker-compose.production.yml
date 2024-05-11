@@ -5,13 +5,13 @@ services:
     image: atomicsearch/massiveprediction:latest
     environment:
       - HOST=${HOST:-0.0.0.0}
-      - PORT=443
+      - PORT=${PORT:-443}
       - REDIS_PORT=6379
       - BASIC_SSL=${BASIC_SSL:-true}
       - IS_CACHE_ENABLED=false
     ports:
-      - "80:7860"
-      - "443:7860"
+      - "${PORT:-80}:80"
+      - "${PORT:-443}:443"
     build:
       dockerfile: Dockerfile
       context: .
