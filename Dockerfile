@@ -1,4 +1,4 @@
-FROM searxng/searxng:2024.4.29-e45a7cc06
+FROM searxng/searxng:2024.5.10-901819359
 
 ENV PORT ${PORT:-7860}
 
