@@ -43,6 +43,7 @@ const taglines = [
   "Grab the information you need on the go",
   "AI-first knowledge engine",
   "Fast. Reliable. Naturally Smart",
+  "Time-saver for all your inquiries",
 ];
 
 const pickedUpTagline = random(taglines);
