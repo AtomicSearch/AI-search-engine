@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./messages.constants";
 import { I18n, Models, Search } from "../constants/appInfo.constant";
+import { Millisecond } from "../constants/time.constant";
 
 export namespace Gossip {
   export async function prepareTextGeneration() {
@@ -43,8 +44,8 @@ export namespace Gossip {
     if (searchResults.length === 0) {
       toast(messages.researchReturnedNothing, {
         position: "bottom-center",
-        duration: 10000,
-        icon: "💡",
+        duration: Millisecond.TWO_SECOND,
+        icon: "🔎",
       });
     }
 
@@ -92,7 +93,9 @@ export namespace Gossip {
     } catch (error) {
       console.error("Error while generating response with wllama:", error);
 
-      toast.error(messages.cannotGenerateResponse, { duration: 5000 });
+      toast.error(messages.cannotGenerateResponse, {
+        duration: Millisecond.THREE_SECOND,
+      });
     } finally {
       dismissLoadingToast();
     }

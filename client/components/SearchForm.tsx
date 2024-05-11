@@ -13,6 +13,7 @@ import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
 import { I18n } from "../constants/appInfo.constant";
 import { Tagline } from "./atoms/Tagline";
+import { Millisecond } from "../constants/time.constant";
 
 interface SearchFormProps {
   query: string;
@@ -135,7 +136,7 @@ export function SearchForm({
         </button>
       </div>,
       {
-        duration: 5000,
+        duration: Millisecond.FIVE_SECOND,
         position: "top-center",
         style: {
           background: "transparent",
