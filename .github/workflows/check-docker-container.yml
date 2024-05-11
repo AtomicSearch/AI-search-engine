@@ -1,9 +1,11 @@
 name: Check Docker Container
+
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+
 jobs:
   docker:
     name: Check Docker Container
@@ -12,5 +14,17 @@ jobs:
       - uses: actions/checkout@v4
       - run: docker-compose -f docker-compose.production.yml up -d
       - name: Check if main page is available
-        run: until curl -s -o /dev/null -w "%{http_code}" localhost:7860 | grep 200; do sleep 1; done
+        run: |
+          attempt_counter=0
+          max_attempts=10
+          until $(curl --output /dev/null --silent --head --fail http://localhost:7860); do
+            if [ ${attempt_counter} -eq ${max_attempts} ]; then
+              echo "Max attempts reached. The main page is not available."
+              exit 1
+            fi
+            printf '.'
+            attempt_counter=$(($attempt_counter+1))
+            sleep 5
+          done
+          echo "The main page is available!"
       - run: docker-compose -f docker-compose.production.yml down
