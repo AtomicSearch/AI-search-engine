@@ -1,19 +1,21 @@
-import { supportedSearchEngines } from "./search-engines";
-import Redis, { Redis as RedisClient } from "ioredis";
-import { PreviewServer, ViteDevServer, defineConfig } from "vite";
+import path from "node:path";
+import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
+
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
-import fetch from "node-fetch";
+
 import { RateLimiterMemory } from "rate-limiter-flexible";
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
-import temporaryDirectory from "temp-dir";
-import path from "node:path";
 import {
   initModel,
   distance as calculateSimilarity,
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
+import temporaryDirectory from "temp-dir";
+import Redis, { Redis as RedisClient } from "ioredis";
+import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+
+import { supportedSearchEngines } from "./search-engines";
 
 const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
 const redisClient = isCacheEnabled
@@ -27,7 +29,11 @@ const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
 
 export default defineConfig(({ command }) => {
-  if (command === "build") regenerateSearchToken();
+  if (command === "build") {
+    regenerateSearchToken();
+  }
+
+  updateWllamaPThreadPoolSize();
 
   return {
     root: "./client",
@@ -378,4 +384,21 @@ async function rankSearchResults(
     console.error("Error ranking search results:", error);
     return searchResults;
   }
+}
+
+function updateWllamaPThreadPoolSize() {
+  const multiThreadWllamaJsPath = path.resolve(
+    __dirname,
+    "node_modules/@wllama/wllama/esm/multi-thread/wllama.js",
+  );
+
+  fs.writeFileSync(
+    multiThreadWllamaJsPath,
+    fs
+      .readFileSync(multiThreadWllamaJsPath, "utf8")
+      .replace(
+        /pthreadPoolSize=[0-9]+;/g,
+        "pthreadPoolSize=Math.max(navigator.hardwareConcurrency - 2, 2);",
+      ),
+  );
 }
