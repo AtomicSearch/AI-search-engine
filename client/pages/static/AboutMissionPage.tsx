@@ -142,7 +142,7 @@ export const AboutMissionPage = () => {
 
       <MassivePredictionWrapper>
         <MassivePredictionTitle>
-          {AppInfo.APP_NAME} - Making Search Impactful in the AI Era
+          {AppInfo.APP_NAME} – {AppInfo.APP_TAGLINE}
         </MassivePredictionTitle>
         <MassivePredictionDescription>
           {AppInfo.APP_NAME} is proudly developed by {AppInfo.APP_NAME}, a
