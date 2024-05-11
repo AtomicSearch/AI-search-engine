@@ -61,6 +61,11 @@ const PricingSubHeader = styled.h2`
   }
 `;
 
+const LockOpenIcon = styled(FaLockOpen)`
+  font-size: 18px;
+  margin-right: 8px;
+`;
+
 const PricingCardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -94,6 +99,16 @@ const PlanName = styled.h3`
   @media (max-width: 600px) {
     font-size: 18px;
   }
+`;
+
+const PaperPlaneIcon = styled(FaRegPaperPlane)`
+  font-size: 18px;
+  margin-right: 8px;
+`;
+
+const LightbulbIcon = styled(FaRegLightbulb)`
+  font-size: 18px;
+  margin-right: 8px;
 `;
 
 const Price = styled.p`
@@ -134,6 +149,30 @@ const Feature = styled.li`
   }
 `;
 
+const InfinityOffIcon = styled(TbInfinityOff)`
+  font-size: 18px;
+`;
+
+const RocketOffIcon = styled(TbRocketOff)`
+  font-size: 18px;
+`;
+
+const InfinityIcon = styled(TbInfinity)`
+  font-size: 18px;
+`;
+
+const SearchenginIcon = styled(FaSearchengin)`
+  font-size: 18px;
+`;
+
+const RocketIcon = styled(TbRocket)`
+  font-size: 18px;
+`;
+
+const ShieldIcon = styled(FaShieldAlt)`
+  font-size: 18px;
+`;
+
 const BenefitsList = styled.ul`
   list-style-type: none;
   padding: 0;
@@ -157,6 +196,14 @@ const Benefit = styled.li`
     font-size: 16px;
     margin-bottom: 12px;
   }
+`;
+
+const SearchIcon = styled(FaSearch)`
+  font-size: 18px;
+`;
+
+const ClockIcon = styled(FaClock)`
+  font-size: 18px;
 `;
 
 export const PricingPage: React.FC = () => {
@@ -213,45 +260,45 @@ export const PricingPage: React.FC = () => {
       <PricingContainer>
         <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
         <PricingSubHeader>
-          <FaLockOpen /> Unlock Full Knowledge with Smarter Plan
+          <LockOpenIcon /> Unlock Full Knowledge with Smarter Plan
         </PricingSubHeader>
         <PricingCardContainer>
           <PricingCard>
             <PlanName>
-              <FaRegPaperPlane /> Basic
+              <PaperPlaneIcon /> Basic
             </PlanName>
             <Price>$0</Price>
             <FeatureList>
               <Feature>
-                <TbInfinityOff />
+                <InfinityOffIcon />
                 Limited words per query
               </Feature>
               <Feature>
-                <TbRocketOff />
+                <RocketOffIcon />
                 Access to basic AI models
               </Feature>
             </FeatureList>
           </PricingCard>
           <PricingCard ref={confettiRef}>
             <PlanName>
-              <FaRegLightbulb /> Smarter
+              <LightbulbIcon /> Smarter
             </PlanName>
             <Price>{SubscriptionPlan.PRICE_DISPLAYED}</Price>
             <FeatureList>
               <Feature>
-                <TbInfinity />
+                <InfinityIcon />
                 Fuel your growth with unlimited searches
               </Feature>
               <Feature>
-                <FaSearchengin />
+                <SearchenginIcon />
                 Get string accuracy rate for every query
               </Feature>
               <Feature>
-                <TbRocket />
+                <RocketIcon />
                 Take advantage of the most advanced AI models
               </Feature>
               <Feature>
-                <FaShieldAlt />
+                <ShieldIcon />
                 Enjoy a distraction-free, fully secure, and private search
                 experience
               </Feature>
@@ -279,15 +326,15 @@ export const PricingPage: React.FC = () => {
         </PricingCardContainer>
         <BenefitsList>
           <Benefit>
-            <FaSearch />
+            <SearchIcon />
             Stay ahead of the curve with predictive insights
           </Benefit>
           <Benefit>
-            <FaClock />
+            <ClockIcon />
             Accelerate your workflow and achieve more in less time
           </Benefit>
           <Benefit>
-            <FaShieldAlt />
+            <ShieldIcon />
             Gain a competitive edge while maintaining complete privacy
           </Benefit>
         </BenefitsList>
