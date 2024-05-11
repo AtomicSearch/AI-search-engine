@@ -6,7 +6,7 @@ on:
 
 env:
   DOCKER_REPO: atomicsearch/massiveprediction
-  SERVICE_NAME: production-server
+  #SERVICE_NAME: production-server
 
 jobs:
   build:
