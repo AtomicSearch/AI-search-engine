@@ -31,7 +31,6 @@
     "keyword-extractor": "^0.0.28",
     "markdown-to-jsx": "^7.3.2",
     "mobile-detect": "^1.4.5",
-    "node-fetch": "^3.3.2",
     "rate-limiter-flexible": "^5.0.2",
     "react": "^18.2.0",
     "react-confetti": "^6.1.0",
