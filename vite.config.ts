@@ -323,7 +323,7 @@ async function fetchSearXNG(
 }
 
 function getSearchTokenFilePath() {
-  return path.resolve(temporaryDirectory, "minisearch-token");
+  return path.resolve(temporaryDirectory, "atomicsearch-token");
 }
 
 function regenerateSearchToken() {
