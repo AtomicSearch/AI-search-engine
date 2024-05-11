@@ -25,7 +25,10 @@ import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
 import { confettiOptions } from "../../constants/confettiOptions.constant";
-import { PaymentGateway, PurchaseButton } from "../../components/PaymentGateway";
+import {
+  PaymentGateway,
+  PurchaseButton,
+} from "../../components/PaymentGateway";
 import { SubscriptionPlan } from "../../constants/appInfo.constant";
 import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
 import { Millisecond } from "../../constants/time.constant";
@@ -116,7 +119,7 @@ const FeatureList = styled.ul`
 
 const Feature = styled.li`
   font-size: 18px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
