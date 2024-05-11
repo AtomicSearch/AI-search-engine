@@ -12,8 +12,8 @@ export const taglines = [
   "Grab the information you need on the go",
   "AI-first knowledge engine",
   "Fast. Reliable. Naturally Smart",
-  "Time-saver for all your inquiries",
-  "Stop to generic results. Receive domain-specific answers",
+  "Fast answer. Time-saver for all inquiries",
+  "Stop generic results. Receive domain-specific answers",
   "Reinventing how knowledge is distributed",
   "Retrieve the relevant findings. AI knowledge-based search",
 ];
