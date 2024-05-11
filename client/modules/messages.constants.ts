@@ -5,6 +5,5 @@ export const messages = {
   summarizeLinks: "Summarizing links for you...",
   browseInternet: "Browsing the Web for you...",
   loadingAiModel: "Loading AI models...",
-  researchReturnedNothing:
-    "Current search did't return any results. Try refining your search",
+  researchReturnedNothing: "The query has no results. Try refining your search",
 };
