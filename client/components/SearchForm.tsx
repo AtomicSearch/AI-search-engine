@@ -104,8 +104,6 @@ export function SearchForm({
   const debouncedStartSearching = debounce(startSearching, 500);
 
   const showUpgradeNotification = () => {
-    setNotificationShown(true); // Prevent showing the modal multiple times
-
     toast.custom(
       <div
         style={{
@@ -117,7 +115,7 @@ export function SearchForm({
         }}
       >
         <p style={{ marginBottom: "8px" }}>
-          Upgrade your subscription for longer queries?
+          Upgrade your subscription for leveling up queries
         </p>
         <button
           style={{
@@ -132,7 +130,7 @@ export function SearchForm({
             window.location.href = "/pricing";
           }}
         >
-          Upgrade Now 🚀
+          Level Up Now 🚀
         </button>
       </div>,
       {
@@ -153,6 +151,7 @@ export function SearchForm({
     const wordCount = userQuery.split(/\s+/).length;
     const needToUpgradeSubscription = wordCount > 10;
     if (needToUpgradeSubscription && !notificationShown) {
+      setNotificationShown(true); // Prevent showing the modal multiple times
       showUpgradeNotification();
       return;
     }
