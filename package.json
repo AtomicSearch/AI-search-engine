@@ -10,8 +10,7 @@
     "dev": "vite",
     "eslint:fix": "eslint --fix client",
     "prettier:check": "prettier --check 'client/**/*.{ts,js,jsx,tsx,json}'",
-    "prettier:fix": "prettier --write 'client/**/*.{ts,js,jsx,tsx,json}'",
-    "prepare": "postcss src/index.css -o src/tailwind.css"
+    "prettier:fix": "prettier --write 'client/**/*.{ts,js,jsx,tsx,json}'"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
