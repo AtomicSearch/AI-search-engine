@@ -1,6 +1,8 @@
 import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
+
 import { AppInfo, XInfo, GitHubInfo } from "../constants/appInfo.constant";
+import { random } from "../utils/random";
 
 interface FooterContainerProps {
   $isEmpty: boolean;
@@ -37,7 +39,7 @@ export const Footer = ({
 }: {
   hasEmptyResults?: boolean;
 }) => {
-  const authorLink = [
+  const authorLinks = [
     <a
       href={GitHubInfo.AUTHOR_GITHUB_URL}
       target="_blank"
@@ -50,8 +52,7 @@ export const Footer = ({
     </a>,
   ];
 
-  const randomAuthorLink =
-    authorLink[Math.floor(Math.random() * authorLink.length)];
+  const pickedUpAuthorLink = random(authorLinks);
 
   return (
     <FooterContainer $isEmpty={hasEmptyResults}>
@@ -60,7 +61,7 @@ export const Footer = ({
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
         </em>
         <br />
-        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by {randomAuthorLink}
+        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by {pickedUpAuthorLink}
       </Slogan>
     </FooterContainer>
   );
