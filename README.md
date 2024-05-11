@@ -1,8 +1,10 @@
-# AtomicSearch
+# Massive Prediction (AtomicSearch Engine)
 
 AI search engine that let you quickly search queries such as `is this place good` or `doctor nearby me`, etc.
 
-Live demo: https://felladrin-minisearch.hf.space
+## History
+
+This project is a fork Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as payment gateway and specific configurations for the specific need of Atomic Search's specifications. The core project is currently still strongly based on the wonderful Victor Nogueira's project as a way to bootstrap quicker the project. Although this might change in the future when Massive Prediction will take a different path in the way the project wants to deliver the information.
 
 ## Features
 
@@ -18,14 +20,6 @@ Live demo: https://felladrin-minisearch.hf.space
 ## Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/)
-
-## Getting started
-
-The easiest way to get started is by using [MiniSearch's Docker Image](https://github.com/felladrin/MiniSearch/pkgs/container/minisearch) by running the following command:
-
-```bash
-docker run -p 7860:7860 ghcr.io/felladrin/minisearch:main
-```
 
 Then, open http://localhost:7860 in your browser and start searching!
 
@@ -45,14 +39,12 @@ docker-compose build
 docker-compose up
 ```
 
-## Contributing
+## Testing / Running project on your machine (through Docker Image)
 
-MiniSearch is open-source and contributions are welcome!
-
-Fork this repository and clone it. Then, start the development server by running the following command:
-
-```bash
-docker-compose up
+```console
+docker pull ghcr.io/atomicsearch/ai-search-engine:main
 ```
 
-Make your changes, push them to your fork, and open a pull request!
+## Shoutouts
+
+The foundation of the search engine is based on Victor Nogueira's open-source project, MiniSearch.
