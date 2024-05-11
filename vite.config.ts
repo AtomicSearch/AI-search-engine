@@ -1,3 +1,4 @@
+import { CategoryEngine } from "./client/constants/appInfo.constant";
 import path from "node:path";
 import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
 
@@ -15,7 +16,7 @@ import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-import { supportedSearchEngines } from "./search-engines";
+//import { supportedSearchEngines } from "./client/config/search-engines";
 
 const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
 const redisClient = isCacheEnabled
@@ -266,7 +267,7 @@ async function fetchSearXNG(
       safesearch: "0",
       format: "json",
       //engine: supportedEngines,
-      engine: "google,bing,youtube,github,duckduckgo,", // Excluding Wikidata engine
+      engine: CategoryEngine.RESEARCH,
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
 
