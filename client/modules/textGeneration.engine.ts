@@ -19,7 +19,7 @@ import { messages } from "./messages.constants";
 import { I18n, Model, Search } from "../constants/appInfo.constant";
 import { Millisecond } from "../constants/time.constant";
 
-export namespace Engines {
+export namespace Engine {
   export async function prepareTextGeneration() {
     if (query === null) return;
 
