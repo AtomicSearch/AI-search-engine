@@ -242,7 +242,7 @@ export namespace Gossip {
         | "mobileLarger"
         | "desktopDefault"
         | "desktopLarger"]: {
-        url: string;
+        url: string | string[];
         userPrefix: string;
         assistantPrefix: string;
         messageSuffix: string;
@@ -264,14 +264,30 @@ export namespace Gossip {
         sampling: commonSamplingConfig,
       },
       desktopDefault: {
-        url: "https://huggingface.co/Felladrin/gguf-Qwen1.5-0.5B-Chat/resolve/main/Qwen1.5-0.5B-Chat.Q8_0.gguf",
+        url: Array.from(
+          { length: 19 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-TinyLlama-1.1B-1T-OpenOrca/resolve/main/tinyllama-1.1b-1t-openorca.Q8_0.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00019.gguf`,
+        ),
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
         sampling: commonSamplingConfig,
       },
       desktopLarger: {
-        url: "https://huggingface.co/Felladrin/gguf-TinyLlama-1.1B-1T-OpenOrca/resolve/main/tinyllama-1.1b-1t-openorca.Q8_0.gguf",
+        url: Array.from(
+          { length: 7 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-stablelm-2-1_6b-chat/resolve/main/stablelm-2-1_6b-chat.Q8_0.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00007.gguf`,
+        ),
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
@@ -360,7 +376,9 @@ export namespace Gossip {
         },
       });
 
-      updateResponse(completion);
+      updateResponse(
+        completion.replace(selectedModel.messageSuffix.trim(), ""),
+      );
     }
 
     if (getSummarizeLinksSetting()) {
@@ -397,7 +415,7 @@ export namespace Gossip {
 
         updateUrlsDescriptions({
           ...getUrlsDescriptions(),
-          [url]: `This link is about ${completion}`,
+          [url]: `This link is about ${completion.replace(selectedModel.messageSuffix.trim(), "")}`,
         });
       }
     }
