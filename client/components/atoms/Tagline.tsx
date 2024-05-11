@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FaSearch } from "react-icons/fa";
+import { FaSearchengin } from "react-icons/fa";
 import { AppInfo } from "../../constants/appInfo.constant";
 
 const TaglineContainer = styled.div`
@@ -9,9 +9,9 @@ const TaglineContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-const TaglineIcon = styled(FaSearch)`
+const TaglineIcon = styled(FaSearchengin)`
   font-size: 24px;
-  margin-right: 10px;
+  margin-left: 8px;
   color: #0066cc;
 `;
 
@@ -24,8 +24,7 @@ const TaglineText = styled.h2`
 export const Tagline = () => {
   return (
     <TaglineContainer>
-      <TaglineIcon />
-      <TaglineText>{AppInfo.APP_TAGLINE}</TaglineText>
+      <TaglineText>{AppInfo.APP_TAGLINE}</TaglineText> <TaglineIcon />
     </TaglineContainer>
   );
 };
