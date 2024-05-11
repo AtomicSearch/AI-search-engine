@@ -1,5 +1,11 @@
 import featureFlags from "../config/feature-flags.json";
 
-export const loadFeatureFlags = () => {
+type FeatureFlagProps = {
+  [key: string]: {
+    [key: string]: boolean;
+  };
+};
+
+export const loadFeatureFlags = (): FeatureFlagProps => {
   return featureFlags;
 };
