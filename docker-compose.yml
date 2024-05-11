@@ -10,13 +10,13 @@ services:
   development-server:
     environment:
       - HOST=${HOST:-0.0.0.0}
-      - PORT=${PORT:-80}
+      - PORT=${PORT:-7860}
       - REDIS_PORT=6379
       - BASIC_SSL=${BASIC_SSL:-false}
       - HMR_PORT=${HMR_PORT:-7861}
       - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-true}
     ports:
-      - "${PORT:-80}:7860"
+      - "${PORT:-7860}:7860"
       - "${HMR_PORT:-7861}:7861"
     build:
       dockerfile: Dockerfile
@@ -25,15 +25,7 @@ services:
       - .:/home/user/app/
     command:
       [
-        "/usr/local/searxng/dockerfiles/docker-entrypoint.sh",
-        "-f",
-        "&",
-        "npm",
-        "install",
-        "&&",
-        "npm",
-        "run",
-        "dev",
+        "/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & npm install && npm run dev",
       ]
     depends_on:
       - redis
