@@ -93,9 +93,10 @@ export namespace Gossip {
     } catch (error) {
       console.error("Error while generating response with wllama:", error);
 
-      toast.error(messages.cannotGenerateResponse, {
+      toast(messages.cannotGenerateResponse, {
         position: "bottom-right",
         duration: Millisecond.THREE_SECOND,
+        icon: "♨️",
       });
     } finally {
       dismissLoadingToast();
