@@ -20,7 +20,13 @@ export enum Search {
   SUMMARIZE_LINKS_LIMIT_LENGTH = 2500,
 }
 
-export enum Models {
+// SearXNG engines
+export enum CategoryEngine {
+  EVERYDAY = "google,bing,youtube,duckduckgo", // generic everyday queries
+  RESEARCH = "arxiv,google scholar,semantic scholar,papers with code,ai-writer,pubmed,openairedatasets,wikipedia", // AI and Machine Learning Research
+}
+
+export enum Model {
   LLAMA = "Llama-3-8B-Instruct-q4f16_1",
   TINY_LLAM = "TinyLlama-1.1B-Chat-v0.4-q0f16",
   MISTRA = "Mistral-7B-Instruct-v0.2-q4f16_1",
@@ -35,7 +41,7 @@ export enum I18n {
   DEFAULT_LANGUAGE = "english",
 }
 
-export enum AppLegalLinks {
+export enum AppLegalLink {
   TERMS = "https://your-terms-url", // Your terms URL
   PRIVACY = "https://your-privacy-url", // Your privacy URL
   CONTACT_EMAIL = "contact@ph7.me",
