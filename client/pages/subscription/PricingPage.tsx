@@ -28,6 +28,7 @@ import { confettiOptions } from "../../constants/confettiOptions.constant";
 import { PaymentGateway, PurchaseButton } from "../../components/PaymentGateway";
 import { SubscriptionPlan } from "../../constants/appInfo.constant";
 import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
+import { Millisecond } from "../../constants/time.constant";
 
 const PricingContainer = styled.div`
   max-width: 800px;
@@ -182,7 +183,7 @@ export const PricingPage: React.FC = () => {
     setShowModal(false);
     toast("Amazing! We'll notify you when the Smart plan is available.", {
       position: "top-right",
-      duration: 5000,
+      duration: Millisecond.FIVE_SECOND,
       icon: "🎉",
     });
   };
@@ -192,7 +193,7 @@ export const PricingPage: React.FC = () => {
     localStorage.setItem("subscriptionStatus", "active");
     toast("Congratulations! You are now subscribed to the Smarter plan.", {
       position: "top-right",
-      duration: 5000,
+      duration: Millisecond.FIVE_SECOND,
       icon: "🎉",
     });
   };
@@ -200,7 +201,7 @@ export const PricingPage: React.FC = () => {
   const handleSubmitError = () => {
     toast.error("Oops! Something went wrong. Please try again later.", {
       position: "top-right",
-      duration: 5000,
+      duration: Millisecond.FIVE_SECOND,
     });
   };
 

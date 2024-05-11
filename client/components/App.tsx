@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { SearchPage } from "../pages/search/SearchPage";
 import { ComparisonPage } from "../pages/static/ComparisonPage";
-import { PricingPage } from "../pages/static/PricingPage";
+import { PricingPage } from "../pages/subscription/PricingPage";
 import { AboutMissionPage } from "../pages/static/AboutMissionPage";
 
 const AppContainer = styled.div`
