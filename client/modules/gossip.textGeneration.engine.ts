@@ -16,7 +16,7 @@ import { query, debug } from "./urlParams";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./messages.constants";
-import { I18n, Search } from "../constants/appInfo.constant";
+import { I18n, Models, Search } from "../constants/appInfo.constant";
 
 export namespace Gossip {
   export async function prepareTextGeneration() {
@@ -117,17 +117,9 @@ export namespace Gossip {
     const { CreateWebWorkerEngine, CreateEngine, hasModelInCache } =
       await import("@mlc-ai/web-llm");
 
-    const availableModels = {
-      Llama: "Llama-3-8B-Instruct-q4f16_1",
-      Mistral: "Mistral-7B-Instruct-v0.2-q4f16_1",
-      Gemma: "gemma-2b-it-q4f16_1",
-      Phi: "Phi2-q4f16_1",
-      TinyLlama: "TinyLlama-1.1B-Chat-v0.4-q0f16",
-    };
-
     const selectedModel = getUseLargerModelSetting()
-      ? availableModels.Llama
-      : availableModels.Gemma;
+      ? Models.LLAMA
+      : Models.GEMMA;
 
     const isModelCached = await hasModelInCache(selectedModel);
 

@@ -20,6 +20,14 @@ export enum Search {
   SUMMARIZE_LINKS_LIMIT_LENGTH = 2500,
 }
 
+export enum Models {
+  LLAMA = "Llama-3-8B-Instruct-q4f16_1",
+  TINY_LLAM = "TinyLlama-1.1B-Chat-v0.4-q0f16",
+  MISTRA = "Mistral-7B-Instruct-v0.2-q4f16_1",
+  GEMMA = "gemma-2b-it-q4f16_1",
+  PHI = "Phi2-q4f16_1",
+}
+
 export enum I18n {
   DEFAULT_COUNTRY_CODE = "US",
   DEFAULT_LANGUAGE_COUNTRY_CODE = "en-US",
