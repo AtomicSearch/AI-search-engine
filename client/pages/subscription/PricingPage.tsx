@@ -18,6 +18,7 @@ import {
   TbInfinityOff,
   TbRocket,
   TbRocketOff,
+  TbSpyOff
 } from "react-icons/tb";
 import toast from "react-hot-toast";
 
@@ -29,7 +30,7 @@ import {
   PaymentGateway,
   PurchaseButton,
 } from "../../components/PaymentGateway";
-import { SubscriptionPlan } from "../../constants/appInfo.constant";
+import { AppInfo, SubscriptionPlan } from "../../constants/appInfo.constant";
 import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
 import { Millisecond } from "../../constants/time.constant";
 
@@ -166,6 +167,10 @@ const SearchenginIcon = styled(FaSearchengin)`
 `;
 
 const RocketIcon = styled(TbRocket)`
+  font-size: 18px;
+`;
+
+const SpyOffIcon = styled(TbSpyOff)`
   font-size: 18px;
 `;
 
@@ -336,6 +341,10 @@ export const PricingPage: React.FC = () => {
           <Benefit>
             <ShieldIcon />
             Gain a competitive edge while maintaining complete privacy
+          </Benefit>
+          <Benefit>
+            <SpyOffIcon />
+            Ad-free and privacy-focused. {AppInfo.APP_NAME} works on subscription-based model
           </Benefit>
         </BenefitsList>
       </PricingContainer>
