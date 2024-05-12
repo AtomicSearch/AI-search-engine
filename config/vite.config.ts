@@ -1,4 +1,4 @@
-import { CategoryEngine } from "./client/constants/appInfo.constant";
+import { CategoryEngine } from "../client/constants/appInfo.constant";
 import path from "node:path";
 import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
 
