@@ -12,6 +12,8 @@ import {
   FaRegLightbulb,
   FaRegPaperPlane,
   FaLockOpen,
+  FaDatabase,
+  FaRegDotCircle,
 } from "react-icons/fa";
 import {
   TbInfinity,
@@ -175,6 +177,14 @@ const SpyOffIcon = styled(TbSpyOff)`
 `;
 
 const ShieldIcon = styled(FaShieldAlt)`
+  font-size: 18px;
+`;
+
+const DatabaseIcon = styled(FaDatabase)`
+  font-size: 18px;
+`;
+
+const DartIcon = styled(FaRegDotCircle)`
   font-size: 18px;
 `;
 
@@ -345,6 +355,14 @@ export const PricingPage: React.FC = () => {
           <Benefit>
             <SpyOffIcon />
             Ad-free and privacy-focused. {AppInfo.APP_NAME} works on subscription-based model
+          </Benefit>
+        <Benefit>
+            <DatabaseIcon />
+            Gives the sources to all your queries. Ideal for academic papers and thesis
+          </Benefit>
+          <Benefit>
+            <DartIcon />
+            <strong>{AppInfo.APP_NAME} is all about accuracy</strong>. Fewer results. Better accuracy.
           </Benefit>
         </BenefitsList>
       </PricingContainer>
