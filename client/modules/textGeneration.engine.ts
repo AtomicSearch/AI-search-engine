@@ -88,6 +88,11 @@ export namespace Engine {
           }
         }
       } catch (error) {
+        try {
+          await generateTextWithWllama();
+        } catch (error) {
+          await generateTextWithWllama({ forceSingleThread: true });
+        }
         await generateTextWithWllama();
       }
     } catch (error) {
@@ -155,6 +160,8 @@ export namespace Engine {
     if (!getDisableAiResponseSetting()) {
       updateLoadingToast(messages.generatingResponse);
 
+      let isAnswering = false;
+
       const completion = await engine.chat.completions.create({
         stream: true,
         messages: [{ role: "user", content: getMainPrompt() }],
@@ -167,6 +174,11 @@ export namespace Engine {
         const deltaContent = chunk.choices[0].delta.content;
 
         if (deltaContent) streamedMessage += deltaContent;
+
+        if (!isAnswering) {
+          isAnswering = true;
+          updateLoadingToast(messages.givingAnswer);
+        }
 
         updateResponse(streamedMessage);
       }
@@ -213,7 +225,9 @@ export namespace Engine {
     engine.unload();
   }
 
-  async function generateTextWithWllama() {
+  async function generateTextWithWllama(options?: {
+    forceSingleThread?: boolean;
+  }) {
     const { initializeWllama, runCompletion, exitWllama } = await import(
       "./wllama"
     );
@@ -292,6 +306,38 @@ export namespace Engine {
       },
     };
 
+    const threadsToUse =
+      !options?.forceSingleThread && (navigator.hardwareConcurrency ?? 1) > 1
+        ? Math.max(navigator.hardwareConcurrency - 2, 2)
+        : 1;
+
+    if (threadsToUse === 1) {
+      availableModels.desktopDefault = availableModels.mobileDefault;
+      availableModels.desktopLarger = availableModels.mobileLarger;
+      availableModels.mobileDefault = {
+        url: "https://huggingface.co/Felladrin/gguf-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.gguf",
+        userPrefix: "<|user|>\n",
+        assistantPrefix: "<|assistant|>\n",
+        messageSuffix: "</s>\n",
+        sampling: commonSamplingConfig,
+      };
+      availableModels.mobileLarger = {
+        url: Array.from(
+          { length: 7 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-vicuna-160m/resolve/main/vicuna-160m.F16.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00007.gguf`,
+        ),
+        userPrefix: "USER:",
+        assistantPrefix: "ASSISTANT:",
+        messageSuffix: "</s>",
+        sampling: commonSamplingConfig,
+      };
+    }
+
     const defaultModel = isRunningOnMobile
       ? availableModels.mobileDefault
       : availableModels.desktopDefault;
@@ -310,10 +356,7 @@ export namespace Engine {
       modelUrl: selectedModel.url,
       modelConfig: {
         n_ctx: 2048,
-        n_threads:
-          !isRunningOnMobile && (navigator.hardwareConcurrency ?? 1) > 1
-            ? Math.max(navigator.hardwareConcurrency - 2, 2)
-            : 1,
+        n_threads: threadsToUse,
         progressCallback: ({
           loaded,
           total,
@@ -368,11 +411,17 @@ export namespace Engine {
 
       updateLoadingToast(messages.generatingResponse);
 
+      let isAnswering = false;
+
       const completion = await runCompletion({
         prompt,
         nPredict: 768,
         sampling: selectedModel.sampling,
         onNewToken: (_token, _piece, currentText) => {
+          if (!isAnswering) {
+            isAnswering = true;
+            updateLoadingToast(messages.givingAnswer);
+          }
           updateResponse(currentText);
         },
       });
@@ -434,13 +483,21 @@ export namespace Engine {
     );
 
     if (!getDisableAiResponseSetting()) {
-      if (!query) throw Error("Query is empty.");
+      if (!query) {
+        throw Error("Query is empty.");
+      }
 
       updateLoadingToast(messages.generatingResponse);
 
+      let isAnswering = false;
       let response = "";
 
       await runCompletion(getMainPrompt(), (completionChunk) => {
+        if (!isAnswering) {
+          isAnswering = true;
+          updateLoadingToast(messages.givingAnswer);
+        }
+
         response += completionChunk;
         updateResponse(response);
       });

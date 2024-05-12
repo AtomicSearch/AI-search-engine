@@ -1,5 +1,6 @@
 export const messages = {
-  generatingResponse: "Generating response for you...",
+  givingAnswer: "Answering...",
+  generatingResponse: "Generating a response for you...",
   cannotGenerateResponse:
     "Web browser may be out of memory. Close & Re-open the browser tab",
   summarizeLinks: "Summarizing links for you...",
