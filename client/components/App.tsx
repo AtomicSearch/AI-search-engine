@@ -23,7 +23,7 @@ function InnerApp() {
           <Route path="/" element={<SearchPage />} />
           <Route path="/comparison-google" element={<ComparisonPage />} />
           <Route path="/mission" element={<AboutMissionPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/subscription" element={<PricingPage />} />
         </Routes>
       </Main>
     </>
