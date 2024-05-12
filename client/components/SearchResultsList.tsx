@@ -5,22 +5,7 @@ import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { BlurredText } from "./atoms/Blurr";
 import styled from "styled-components";
-
-const UpgradeContainer = styled.div`
-  background-color: #f8f8f8;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const UpgradeMessage = styled.p`
-  margin: 0;
-  font-size: 14px;
-  color: #555;
-`;
+import toast from "react-hot-toast";
 
 const UpgradeButton = styled.button`
   background-color: #007bff;
@@ -60,6 +45,26 @@ export function SearchResultsList({
   }, []);
 
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
+
+  const showUpgradeMessage = () => {
+    toast(
+      (t) => (
+        <div>
+          <p>Unlock full URLs and enhanced search results with a premium account.</p>
+          <UpgradeButton onClick={() => toast.dismiss(t.id)}>Upgrade Now</UpgradeButton>
+        </div>
+      ),
+      {
+        duration: Infinity,
+        style: {
+          background: "#f8f8f8",
+          color: "#555",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      }
+    );
+  };
 
   return (
     <ul>
@@ -105,7 +110,7 @@ export function SearchResultsList({
                 </cite>
               </a>
             ) : (
-              <BlurredText>
+              <BlurredText onClick={showUpgradeMessage}>
                 <cite
                   style={{
                     fontSize: "small",
@@ -118,14 +123,6 @@ export function SearchResultsList({
               </BlurredText>
             )}
           </div>
-          {!isUserSubscribed && (
-            <UpgradeContainer>
-              <UpgradeMessage>
-                Unlock full URLs and enhanced search results with a premium account.
-              </UpgradeMessage>
-              <UpgradeButton>Upgrade Now</UpgradeButton>
-            </UpgradeContainer>
-          )}
           {urlsDescriptions[url] && (
             <Markdown>{urlsDescriptions[url]}</Markdown>
           )}
