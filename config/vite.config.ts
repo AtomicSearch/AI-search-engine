@@ -184,7 +184,9 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     // Try to get the search results from Redis
-    let searchResults = await redisClient.get(query);
+    let searchResults = isCacheEnabled
+      ? await redisClient.get(query)
+      : undefined;
 
     if (searchResults) {
       // If the search results are cached in Redis, parse them and return
@@ -200,7 +202,10 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       // Pass the redisClient instance to fetchSearXNG
       const fetchedResults = await fetchSearXNG(query, limit, redisClient);
       searchResults = JSON.stringify(fetchedResults);
-      await redisClient.set(query, searchResults);
+
+      if (isCacheEnabled) {
+        await redisClient.set(query, searchResults);
+      }
     }
 
     searchesSinceLastRestart++;
