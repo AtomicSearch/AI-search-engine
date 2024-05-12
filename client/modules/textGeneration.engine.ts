@@ -261,35 +261,36 @@ export namespace Engine {
       };
     } = {
       mobileDefault: {
-        url: "https://huggingface.co/Felladrin/gguf-vicuna-160m/resolve/main/vicuna-160m.Q8_0.gguf",
-        userPrefix: "USER:\n",
-        assistantPrefix: "ASSISTANT:\n",
-        messageSuffix: "</s>\n",
-        sampling: commonSamplingConfig,
-      },
-      mobileLarger: {
-        url: "https://huggingface.co/Felladrin/gguf-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.gguf",
-        userPrefix: "<|user|>\n",
-        assistantPrefix: "<|assistant|>\n",
-        messageSuffix: "</s>\n",
-        sampling: commonSamplingConfig,
-      },
-      desktopDefault: {
         url: Array.from(
-          { length: 19 },
+          { length: 7 },
           (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-TinyLlama-1.1B-1T-OpenOrca/resolve/main/tinyllama-1.1b-1t-openorca.Q8_0.shard-${(
+            `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.F16.shard-${(
               i + 1
             )
               .toString()
-              .padStart(5, "0")}-of-00019.gguf`,
+              .padStart(5, "0")}-of-00007.gguf`,
         ),
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
         sampling: commonSamplingConfig,
       },
-      desktopLarger: {
+      mobileLarger: {
+        url: Array.from(
+          { length: 10 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-TinyLlama-1.1B-1T-OpenOrca/resolve/main/tinyllama-1.1b-1t-openorca.Q3_K_S.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00010.gguf`,
+        ),
+        userPrefix: "<|im_start|>user\n",
+        assistantPrefix: "<|im_start|>assistant\n",
+        messageSuffix: "<|im_end|>\n",
+        sampling: commonSamplingConfig,
+      },
+      desktopDefault: {
         url: Array.from(
           { length: 7 },
           (_, i) =>
@@ -304,6 +305,21 @@ export namespace Engine {
         messageSuffix: "<|im_end|>\n",
         sampling: commonSamplingConfig,
       },
+      desktopLarger: {
+        url: Array.from(
+          { length: 51 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-Phi-3-mini-4k-instruct-iMat/resolve/main/phi-3-mini-4k-instruct-imat-Q5_K_M.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00051.gguf`,
+        ),
+        userPrefix: "<|user|>\n",
+        assistantPrefix: "<|assistant|>\n",
+        messageSuffix: "<|end|>\n",
+        sampling: commonSamplingConfig,
+      },
     };
 
     const threadsToUse =
@@ -315,25 +331,33 @@ export namespace Engine {
       availableModels.desktopDefault = availableModels.mobileDefault;
       availableModels.desktopLarger = availableModels.mobileLarger;
       availableModels.mobileDefault = {
-        url: "https://huggingface.co/Felladrin/gguf-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.gguf",
-        userPrefix: "<|user|>\n",
-        assistantPrefix: "<|assistant|>\n",
-        messageSuffix: "</s>\n",
+        url: Array.from(
+          { length: 7 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00007.gguf`,
+        ),
+        userPrefix: "<|im_start|>user\n",
+        assistantPrefix: "<|im_start|>assistant\n",
+        messageSuffix: "<|im_end|>\n",
         sampling: commonSamplingConfig,
       };
       availableModels.mobileLarger = {
         url: Array.from(
           { length: 7 },
           (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-vicuna-160m/resolve/main/vicuna-160m.F16.shard-${(
+            `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.F16.shard-${(
               i + 1
             )
               .toString()
               .padStart(5, "0")}-of-00007.gguf`,
         ),
-        userPrefix: "USER:",
-        assistantPrefix: "ASSISTANT:",
-        messageSuffix: "</s>",
+        userPrefix: "<|im_start|>user\n",
+        assistantPrefix: "<|im_start|>assistant\n",
+        messageSuffix: "<|im_end|>\n",
         sampling: commonSamplingConfig,
       };
     }
@@ -357,13 +381,7 @@ export namespace Engine {
       modelConfig: {
         n_ctx: 2048,
         n_threads: threadsToUse,
-        progressCallback: ({
-          loaded,
-          total,
-        }: {
-          loaded: number;
-          total: number;
-        }) => {
+        progressCallback: ({ loaded, total }) => {
           const progressPercentage = Math.round((loaded / total) * 100);
 
           if (loadingPercentage !== progressPercentage) {
@@ -396,7 +414,7 @@ export namespace Engine {
         "Alright!",
         selectedModel.messageSuffix,
         selectedModel.userPrefix,
-        "Now, I'm going to write my question, and if this info is useful you can use them in your answer. Ready?",
+        "Now I'm going to write my question, and if this info is useful you can use them in your answer. Ready?",
         selectedModel.messageSuffix,
         selectedModel.assistantPrefix,
         "I'm ready to answer!",
