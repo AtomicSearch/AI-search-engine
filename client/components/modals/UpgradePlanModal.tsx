@@ -1,6 +1,8 @@
 import { FaSketch } from "react-icons/fa";
 import styled from "styled-components";
+
 import { BlueButton } from "../atoms/Button.atom";
+import { SubscriptionPlan } from "../../constants/appInfo.constant";
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -37,7 +39,7 @@ const Description = styled.p`
 
 export const UpgradePlanModal: React.FC = () => {
   const handleButtonClick = () => {
-    window.location.href = "/pricing?from=homepage_modal";
+    window.location.href = `/${SubscriptionPlan.PRICING_PAGE_URL}?from=homepage_modal`;
   };
 
   return (
