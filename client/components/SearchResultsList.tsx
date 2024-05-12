@@ -9,6 +9,7 @@ import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { BlurredText } from "./atoms/Blur";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
+import { ToastModal } from "./styles/ToastModel.style";
 
 const UpgradeButton = styled.button`
   background-color: #007bff;
@@ -50,10 +51,8 @@ export function SearchResultsList({
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
 
   const showUpgradeMessage = () => {
-    const toastId = "upgrade-subscription-toast";
-
     toast.custom(
-      <div>
+      <ToastModal>
         <p>
           Unlock full URLs and enhanced search results with a premium account.
         </p>
@@ -65,15 +64,12 @@ export function SearchResultsList({
         >
           Upgrade Now
         </UpgradeButton>
-      </div>,
+      </ToastModal>,
       {
-        id: toastId,
         duration: Infinity,
         style: {
-          background: "#fff",
-          color: "#333",
-          padding: "16px",
-          borderRadius: "8px",
+          background: "transparent",
+          boxShadow: "none",
         },
       },
     );
