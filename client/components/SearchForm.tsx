@@ -5,8 +5,8 @@ import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
 import toast from "react-hot-toast";
-import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 
+import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
@@ -16,6 +16,7 @@ import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
+import { messages } from "../modules/messages.constants";
 
 interface SearchFormProps {
   query: string;
@@ -118,7 +119,7 @@ export function SearchForm({
             (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
           }
         >
-          Level Up Now 🚀
+          {messages.levelUp}
         </BlueButton>
       </ToastModal>,
       {

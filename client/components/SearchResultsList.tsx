@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
-
 import toast from "react-hot-toast";
 
 import { SearchResults } from "../modules/search";
@@ -11,6 +10,7 @@ import { SubscriptionPlan } from "../constants/appInfo.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { Millisecond } from "../constants/time.constant";
+import { messages } from "../modules/messages.constants";
 
 export function SearchResultsList({
   searchResults,
@@ -52,7 +52,7 @@ export function SearchResultsList({
             (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
           }
         >
-          Upgrade Now
+          {messages.upgrade}
         </BlueButton>
       </ToastModal>,
       {
