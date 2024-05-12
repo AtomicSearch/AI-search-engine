@@ -11,10 +11,11 @@ import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
-import { I18n, SubscriptionPlan } from "../constants/appInfo.constant";
+import { I18n, Search, SubscriptionPlan } from "../constants/appInfo.constant";
 import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
-import { ToastModal } from "./styles/ToastModel.style";
+import { ToastModal } from "./atoms/ToastModel.atom";
+import { BlueButton } from "./atoms/Button.atom";
 
 interface SearchFormProps {
   query: string;
@@ -105,26 +106,20 @@ export function SearchForm({
   const debouncedStartSearching = debounce(startSearching, 500);
 
   const showUpgradeNotification = () => {
+    setNotificationShown(true); // Prevent showing the modal multiple times
+
     toast.custom(
       <ToastModal>
         <p style={{ marginBottom: "8px" }}>
           Upgrade your subscription for leveling up queries
         </p>
-        <button
-          style={{
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
+        <BlueButton
           onClick={() =>
             (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
           }
         >
           Level Up Now 🚀
-        </button>
+        </BlueButton>
       </ToastModal>,
       {
         duration: Millisecond.FIVE_SECOND,
@@ -141,10 +136,11 @@ export function SearchForm({
     event: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const userQuery = event.target.value.trim();
+
     const wordCount = userQuery.split(/\s+/).length;
-    const needToUpgradeSubscription = wordCount > 10;
-    if (needToUpgradeSubscription && !notificationShown) {
-      setNotificationShown(true); // Prevent showing the modal multiple times
+    const needToUpgradeSubscription = wordCount > Search.MAXIMUM_FREE_QUERY_WORDS;
+    const isEligibleToUpgradeModal = needToUpgradeSubscription && !notificationShown;
+    if (isEligibleToUpgradeModal) {
       showUpgradeNotification();
       return;
     }

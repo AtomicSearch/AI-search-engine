@@ -2,29 +2,14 @@ import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
 
-import styled from "styled-components";
 import toast from "react-hot-toast";
 
 import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { BlurredText } from "./atoms/Blur.atom";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
-import { ToastModal } from "./styles/ToastModel.style";
-
-const UpgradeButton = styled.button`
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
+import { ToastModal } from "./atoms/ToastModel.atom";
+import { BlueButton } from "./atoms/Button.atom";
 
 export function SearchResultsList({
   searchResults,
@@ -34,6 +19,8 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
+  const [notificationShown, setNotificationShown] = useState<boolean>(false);
+
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
@@ -51,19 +38,21 @@ export function SearchResultsList({
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
 
   const showUpgradeMessage = () => {
+    setNotificationShown(true); // Prevent showing the modal multiple times
+
     toast.custom(
       <ToastModal>
         <p>
           Unlock full URLs and enhanced search results with a premium account.
         </p>
 
-        <UpgradeButton
+        <BlueButton
           onClick={() =>
             (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
           }
         >
           Upgrade Now
-        </UpgradeButton>
+        </BlueButton>
       </ToastModal>,
       {
         duration: Infinity,
@@ -120,7 +109,7 @@ export function SearchResultsList({
               </a>
             ) : (
               <cite
-                onClick={showUpgradeMessage}
+                onClick={!notificationShown && showUpgradeMessage}
                 style={{
                   fontSize: "small",
                   color: "gray",

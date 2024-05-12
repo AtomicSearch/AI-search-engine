@@ -15,7 +15,7 @@ import { Engine } from "../../modules/textGeneration.engine";
 import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
-import { UpgradePlanModal } from "../../components/UpgradePlanModal";
+import { UpgradePlanModal } from "../../components/modals/UpgradePlanModal";
 import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading.atom";
 import { SettingsButton } from "../../components/SettingsButton";
