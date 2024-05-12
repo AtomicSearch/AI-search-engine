@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
-import styled from "styled-components";
-
 import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { BlurredText } from "./atoms/Blurr";
+import styled from "styled-components";
 
-const UpgradeMessage = styled.div`
+const UpgradeContainer = styled.div`
   background-color: #f8f8f8;
   border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const UpgradeMessage = styled.p`
+  margin: 0;
+  font-size: 14px;
+  color: #555;
 `;
 
 const UpgradeButton = styled.button`
@@ -23,7 +30,11 @@ const UpgradeButton = styled.button`
   padding: 8px 16px;
   font-size: 14px;
   cursor: pointer;
-  margin-top: 8px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 export function SearchResultsList({
@@ -108,11 +119,12 @@ export function SearchResultsList({
             )}
           </div>
           {!isUserSubscribed && (
-            <UpgradeMessage>
-              Upgrade to a premium account to unlock access to full URLs and enhanced search results.
-              <br />
+            <UpgradeContainer>
+              <UpgradeMessage>
+                Unlock full URLs and enhanced search results with a premium account.
+              </UpgradeMessage>
               <UpgradeButton>Upgrade Now</UpgradeButton>
-            </UpgradeMessage>
+            </UpgradeContainer>
           )}
           {urlsDescriptions[url] && (
             <Markdown>{urlsDescriptions[url]}</Markdown>
