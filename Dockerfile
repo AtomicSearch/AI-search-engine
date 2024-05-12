@@ -26,4 +26,4 @@ RUN npm run build
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/usr/local/searxng/dockerfiles/docker-entrypoint.sh", "-f", "&", "npm", "start", "--", "--host"]
+CMD [ "/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & touch /etc/searxng/limiter.toml & npm start -- --host" ]
