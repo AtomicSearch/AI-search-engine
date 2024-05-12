@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
-import { SearchResults } from "../modules/search";
-import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
-import { BlurredText } from "./atoms/Blurr";
+
 import styled from "styled-components";
 import toast from "react-hot-toast";
+
+import { SearchResults } from "../modules/search";
+import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { BlurredText } from "./atoms/Blur";
+import { SubscriptionPlan } from "../constants/appInfo.constant";
 
 const UpgradeButton = styled.button`
   background-color: #007bff;
@@ -47,22 +50,32 @@ export function SearchResultsList({
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
 
   const showUpgradeMessage = () => {
-    toast(
-      (t) => (
-        <div>
-          <p>Unlock full URLs and enhanced search results with a premium account.</p>
-          <UpgradeButton onClick={() => toast.dismiss(t.id)}>Upgrade Now</UpgradeButton>
-        </div>
-      ),
+    const toastId = "upgrade-subscription-toast";
+
+    toast.custom(
+      <div>
+        <p>
+          Unlock full URLs and enhanced search results with a premium account.
+        </p>
+
+        <UpgradeButton
+          onClick={() =>
+            (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
+          }
+        >
+          Upgrade Now
+        </UpgradeButton>
+      </div>,
       {
+        id: toastId,
         duration: Infinity,
         style: {
-          background: "#f8f8f8",
-          color: "#555",
-          borderRadius: "8px",
+          background: "#fff",
+          color: "#333",
           padding: "16px",
+          borderRadius: "8px",
         },
-      }
+      },
     );
   };
 
@@ -110,17 +123,19 @@ export function SearchResultsList({
                 </cite>
               </a>
             ) : (
-              <BlurredText onClick={showUpgradeMessage}>
-                <cite
-                  style={{
-                    fontSize: "small",
-                    color: "gray",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+              <cite
+                onClick={showUpgradeMessage}
+                style={{
+                  fontSize: "small",
+                  color: "gray",
+                  whiteSpace: "nowrap",
+                  cursor: "pointer",
+                }}
+              >
+                <BlurredText>
                   {new URL(url).hostname.replace("www.", "")}
-                </cite>
-              </BlurredText>
+                </BlurredText>
+              </cite>
             )}
           </div>
           {urlsDescriptions[url] && (

@@ -11,7 +11,7 @@ import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
-import { I18n } from "../constants/appInfo.constant";
+import { I18n, SubscriptionPlan } from "../constants/appInfo.constant";
 import { Tagline } from "./atoms/Tagline";
 import { Millisecond } from "../constants/time.constant";
 
@@ -126,9 +126,7 @@ export function SearchForm({
             borderRadius: "4px",
             cursor: "pointer",
           }}
-          onClick={() => {
-            window.location.href = "/pricing";
-          }}
+          onClick={() => window.location.href = SubscriptionPlan.PRICING_PAGE_URL}
         >
           Level Up Now 🚀
         </button>
