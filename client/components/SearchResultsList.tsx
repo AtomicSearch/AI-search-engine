@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
-import { BlurredText } from "./atoms/Blur";
+import { BlurredText } from "./atoms/Blur.atom";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
 import { ToastModal } from "./styles/ToastModel.style";
 

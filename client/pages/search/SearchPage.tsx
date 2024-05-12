@@ -17,7 +17,7 @@ import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/UpgradePlanModal";
 import styled from "styled-components";
-import { LoadingSpinner } from "../../components/atoms/Loading";
+import { LoadingSpinner } from "../../components/atoms/Loading.atom";
 import { SettingsButton } from "../../components/SettingsButton";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 

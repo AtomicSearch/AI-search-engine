@@ -12,7 +12,7 @@ import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../constants/confettiOptions.constant";
 import { Header } from "./Header";
 import { I18n, SubscriptionPlan } from "../constants/appInfo.constant";
-import { Tagline } from "./atoms/Tagline";
+import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./styles/ToastModel.style";
 
