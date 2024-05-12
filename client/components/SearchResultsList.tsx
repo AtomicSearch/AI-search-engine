@@ -1,7 +1,30 @@
 import { useEffect, useState } from "react";
-import { SearchResults } from "../modules/search";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
+import styled from "styled-components";
+
+import { SearchResults } from "../modules/search";
+import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { BlurredText } from "./atoms/Blurr";
+
+const UpgradeMessage = styled.div`
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  text-align: center;
+`;
+
+const UpgradeButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+`;
 
 export function SearchResultsList({
   searchResults,
@@ -11,6 +34,7 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
+  const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
     const handleResize = () => {
@@ -57,18 +81,39 @@ export function SearchResultsList({
             >
               {title}
             </a>
-            <a href={url} target="_blank">
-              <cite
-                style={{
-                  fontSize: "small",
-                  color: "gray",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {new URL(url).hostname.replace("www.", "")}
-              </cite>
-            </a>
+            {isUserSubscribed ? (
+              <a href={url} target="_blank">
+                <cite
+                  style={{
+                    fontSize: "small",
+                    color: "gray",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {new URL(url).hostname.replace("www.", "")}
+                </cite>
+              </a>
+            ) : (
+              <BlurredText>
+                <cite
+                  style={{
+                    fontSize: "small",
+                    color: "gray",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {new URL(url).hostname.replace("www.", "")}
+                </cite>
+              </BlurredText>
+            )}
           </div>
+          {!isUserSubscribed && (
+            <UpgradeMessage>
+              Upgrade to a premium account to unlock access to full URLs and enhanced search results.
+              <br />
+              <UpgradeButton>Upgrade Now</UpgradeButton>
+            </UpgradeMessage>
+          )}
           {urlsDescriptions[url] && (
             <Markdown>{urlsDescriptions[url]}</Markdown>
           )}
