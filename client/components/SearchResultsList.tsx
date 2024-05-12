@@ -10,7 +10,7 @@ import { SubscriptionPlan } from "../constants/appInfo.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { Millisecond } from "../constants/time.constant";
-import { messages } from "../modules/messages.constants";
+import { messages } from "../modules/en.messages.constants";
 
 export function SearchResultsList({
   searchResults,

@@ -16,7 +16,7 @@ import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
-import { messages } from "../modules/messages.constants";
+import { messages } from "../modules/en.messages.constants";
 
 interface SearchFormProps {
   query: string;
