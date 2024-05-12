@@ -10,6 +10,7 @@ import { BlurredText } from "./atoms/Blur.atom";
 import { SubscriptionPlan } from "../constants/appInfo.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
+import { Millisecond } from "../constants/time.constant";
 
 export function SearchResultsList({
   searchResults,
@@ -55,7 +56,7 @@ export function SearchResultsList({
         </BlueButton>
       </ToastModal>,
       {
-        duration: Infinity,
+        duration: Millisecond.FOUR_SECOND,
         style: {
           background: "transparent",
           boxShadow: "none",
@@ -109,7 +110,7 @@ export function SearchResultsList({
               </a>
             ) : (
               <cite
-                onClick={!notificationShown && showUpgradeMessage}
+                onClick={() => !notificationShown && showUpgradeMessage}
                 style={{
                   fontSize: "small",
                   color: "gray",
