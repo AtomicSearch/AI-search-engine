@@ -179,7 +179,7 @@ function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
       return;
     }
 
-    if (request.url.startsWith("/search")) {
+    if (request?.url?.startsWith("/search")) {
       const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
       const url = `https://${request.headers.host}`;
@@ -273,9 +273,9 @@ function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
     }
 
     if (
-      request.url === "/" ||
-      request.url.startsWith("/?") ||
-      request.url.endsWith(".html")
+      request?.url === "/" ||
+      request?.url?.startsWith("/?") ||
+      request?.url?.endsWith(".html")
     ) {
       response.setHeader("Cache-Control", "no-cache");
     } else {
