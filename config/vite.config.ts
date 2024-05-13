@@ -1,7 +1,6 @@
 import path from "node:path";
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import react from "@vitejs/plugin-react";
-import basicSSL from "@vitejs/plugin-basic-ssl";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import StatusCode from "http-status-codes";
 import {
@@ -10,7 +9,7 @@ import {
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
 import temporaryDirectory from "temp-dir";
-import Redis from "ioredis";
+import { Redis } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import { CategoryEngine } from "./appInfo.config";
@@ -30,11 +29,8 @@ interface SearchResult {
 class RedisAdapter {
   private redisClient: Redis;
 
-  constructor() {
-    this.redisClient = new Redis({
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-    });
+  constructor(redisOptions: Redis.RedisOptions) {
+    this.redisClient = new Redis(redisOptions);
   }
 
   /**
@@ -73,10 +69,20 @@ class RedisAdapter {
       console.error("Error storing data in Redis:", error);
     }
   }
+
+  async disconnect(): Promise<void> {
+    await this.redisClient.quit();
+  }
 }
 
 const isRedisCacheEnabled = process.env.IS_REDIS_CACHE_ENABLED === "true";
-const redisAdapter = isRedisCacheEnabled ? new RedisAdapter() : undefined;
+const redisOptions: Redis.RedisOptions = {
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
+};
+const redisAdapter = isRedisCacheEnabled
+  ? new RedisAdapter(redisOptions)
+  : undefined;
 
 const serverStartTime = new Date().getTime();
 let searchCountSinceLastRestart = 0;
@@ -93,8 +99,12 @@ export default defineConfig(({ command }) => {
     },
     server: {
       https: {
-        key: fs.readFileSync("./ssl/your-key.key"),
-        cert: fs.readFileSync("./ssl/your-cert.crt"),
+        key: process.env.SSL_KEY_PATH
+          ? readFileSync(process.env.SSL_KEY_PATH)
+          : undefined,
+        cert: process.env.SSL_CERT_PATH
+          ? readFileSync(process.env.SSL_CERT_PATH)
+          : undefined,
       },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
@@ -104,8 +114,12 @@ export default defineConfig(({ command }) => {
     },
     preview: {
       https: {
-        key: fs.readFileSync("./ssl/your-key.key"),
-        cert: fs.readFileSync("./ssl/your-cert.crt"),
+        key: process.env.SSL_KEY_PATH
+          ? readFileSync(process.env.SSL_KEY_PATH)
+          : undefined,
+        cert: process.env.SSL_CERT_PATH
+          ? readFileSync(process.env.SSL_CERT_PATH)
+          : undefined,
       },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
@@ -116,31 +130,15 @@ export default defineConfig(({ command }) => {
     plugins: [
       react(),
       {
-        name: "configure-server-cross-origin-isolation",
-        configureServer: configureServerCrossOriginIsolation,
-        configurePreviewServer: configureServerCrossOriginIsolation,
-      },
-      {
-        name: "configure-server-search-endpoint",
-        configureServer: configureServerSearchEndpoint,
-        configurePreviewServer: configureServerSearchEndpoint,
-      },
-      {
-        name: "configure-server-status-endpoint",
-        configureServer: configureServerStatusEndpoint,
-        configurePreviewServer: configureServerStatusEndpoint,
-      },
-      {
-        name: "configure-server-cache",
-        configurePreviewServer: configureServerCache,
+        name: "configure-server",
+        configureServer: configureServer,
+        configurePreviewServer: configureServer,
       },
     ],
   };
 });
 
-function configureServerCrossOriginIsolation<
-  T extends ViteDevServer | PreviewServer,
->(server: T) {
+function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
   server.middlewares.use((_, response, next) => {
     const crossOriginIsolationHeaders: { key: string; value: string }[] = [
       {
@@ -163,125 +161,117 @@ function configureServerCrossOriginIsolation<
 
     next();
   });
-}
-
-function configureServerStatusEndpoint<T extends ViteDevServer | PreviewServer>(
-  server: T,
-) {
-  server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/status")) return next();
-
-    const secondsSinceLastRestart = Math.floor(
-      (new Date().getTime() - serverStartTime) / 1000,
-    );
-
-    response.end(
-      JSON.stringify({
-        secondsSinceLastRestart,
-        searchCountSinceLastRestart,
-        searchesPerSecond:
-          searchCountSinceLastRestart / secondsSinceLastRestart,
-      }),
-    );
-  });
-}
-
-function configureServerSearchEndpoint<T extends ViteDevServer | PreviewServer>(
-  server: T,
-) {
-  const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
   server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/search")) {
-      return next();
-    }
+    if (request?.url?.startsWith("/status")) {
+      const secondsSinceLastRestart = Math.floor(
+        (new Date().getTime() - serverStartTime) / 1000,
+      );
 
-    const url = `https://${request.headers.host}`;
-    const { searchParams } = new URL(request.url, url);
-
-    const token = searchParams.get("token");
-
-    if (!token || token !== getSearchToken()) {
-      response.statusCode = StatusCode.UNAUTHORIZED;
-      response.end("Unauthorized.");
+      response.end(
+        JSON.stringify({
+          secondsSinceLastRestart,
+          searchCountSinceLastRestart,
+          searchesPerSecond:
+            searchCountSinceLastRestart / secondsSinceLastRestart,
+        }),
+      );
       return;
     }
 
-    const query = searchParams.get("q");
+    if (request.url.startsWith("/search")) {
+      const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
-    if (!query) {
-      response.statusCode = StatusCode.BAD_REQUEST;
-      response.end("Missing the query parameter.");
-      return;
-    }
+      const url = `https://${request.headers.host}`;
+      const { searchParams } = new URL(request.url, url);
 
-    const limitParam = searchParams.get("limit");
-    const limit =
-      limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
+      const token = searchParams.get("token");
 
-    try {
-      const remoteAddress = (
-        (request.headers["x-forwarded-for"] as string) ||
-        request.socket.remoteAddress ||
-        "unknown"
-      )
-        .split(",")[0]
-        .trim();
-
-      await rateLimiter.consume(remoteAddress);
-    } catch (error) {
-      response.statusCode = StatusCode.TOO_MANY_REQUESTS;
-      response.end("Too many requests.");
-      return;
-    }
-
-    let searchResults: SearchResult[] | null = null;
-
-    if (isRedisCacheEnabled) {
-      const cachedResults = await redisAdapter?.get(query);
-      if (cachedResults) {
-        try {
-          searchResults = JSON.parse(cachedResults);
-        } catch (error) {
-          console.error("Error parsing JSON data from Redis:", error);
-        }
+      if (!token || token !== getSearchToken()) {
+        response.statusCode = StatusCode.UNAUTHORIZED;
+        response.end("Unauthorized.");
+        return;
       }
-    }
 
-    if (!searchResults) {
-      const fetchedResults = await fetchSearXNG(query, limit);
-      searchResults = fetchedResults;
+      const query = searchParams.get("q");
+
+      if (!query) {
+        response.statusCode = StatusCode.BAD_REQUEST;
+        response.end("Missing the query parameter.");
+        return;
+      }
+
+      const limitParam = searchParams.get("limit");
+      const limit =
+        limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
+
+      try {
+        const remoteAddress = (
+          (request.headers["x-forwarded-for"] as string) ||
+          request.socket.remoteAddress ||
+          "unknown"
+        )
+          .split(",")[0]
+          .trim();
+
+        await rateLimiter.consume(remoteAddress);
+      } catch (error) {
+        response.statusCode = StatusCode.TOO_MANY_REQUESTS;
+        response.end("Too many requests.");
+        return;
+      }
+
+      let searchResults: SearchResult[] | null = null;
 
       if (isRedisCacheEnabled) {
-        await redisAdapter?.set(
-          query,
-          JSON.stringify(searchResults),
-          REDIS_CACHE_EXPIRATION_TIME_SECONDS,
-        );
+        const cachedResults = await redisAdapter?.get(query);
+        if (cachedResults) {
+          try {
+            searchResults = JSON.parse(cachedResults);
+          } catch (error) {
+            console.error("Error parsing JSON data from Redis:", error);
+          }
+        }
       }
-    }
 
-    searchCountSinceLastRestart++;
+      if (!searchResults) {
+        try {
+          const fetchedResults = await fetchSearXNG(query, limit);
+          searchResults = fetchedResults;
 
-    if (!Array.isArray(searchResults) || searchResults.length === 0) {
-      response.end(JSON.stringify([]));
+          if (isRedisCacheEnabled) {
+            await redisAdapter?.set(
+              query,
+              JSON.stringify(searchResults),
+              REDIS_CACHE_EXPIRATION_TIME_SECONDS,
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          response.statusCode = StatusCode.INTERNAL_SERVER_ERROR;
+          response.end("An error occurred while fetching search results.");
+          return;
+        }
+      }
+
+      searchCountSinceLastRestart++;
+
+      if (!Array.isArray(searchResults) || searchResults.length === 0) {
+        response.end(JSON.stringify([]));
+        return;
+      }
+
+      try {
+        const rankedResults = await rankSearchResults(query, searchResults);
+        response.end(JSON.stringify(rankedResults));
+      } catch (error) {
+        console.error("Error ranking search results:", error);
+        response.end(JSON.stringify(searchResults));
+      }
+
       return;
     }
 
-    try {
-      const rankedResults = await rankSearchResults(query, searchResults);
-      response.end(JSON.stringify(rankedResults));
-    } catch (error) {
-      console.error("Error ranking search results:", error);
-      response.end(JSON.stringify(searchResults));
-    }
-  });
-}
-
-function configureServerCache<T extends ViteDevServer | PreviewServer>(
-  server: T,
-) {
-  server.middlewares.use(async (request, response, next) => {
     if (
       request.url === "/" ||
       request.url.startsWith("/?") ||
@@ -354,7 +344,7 @@ async function fetchSearXNG(
     return searchResults;
   } catch (e) {
     console.error("Error fetching search results from SearXNG:", e);
-    return [];
+    throw e;
   }
 }
 

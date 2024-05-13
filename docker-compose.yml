@@ -13,7 +13,7 @@ services:
       - PORT=${PORT:-7860}
       - REDIS_PORT=6379
       - BASIC_SSL=${BASIC_SSL:-false}
-      - HMR_PORT=${HMR_PORT:-7861}
+      - HMR_PORT=${HMR_PORT:-7861} # Hot Module Replacement
       - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-true}
     ports:
       - "${PORT:-7860}:7860"
