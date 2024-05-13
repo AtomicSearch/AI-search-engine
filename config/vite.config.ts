@@ -1,6 +1,6 @@
 import { CategoryEngine } from "../client/constants/appInfo.constant";
 import path from "node:path";
-import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
 
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
@@ -33,8 +33,6 @@ export default defineConfig(({ command }) => {
   if (command === "build") {
     regenerateSearchToken();
   }
-
-  updateWllamaPThreadPoolSize();
 
   return {
     root: "./client",
@@ -390,21 +388,4 @@ async function rankSearchResults(
     console.error("Error ranking search results:", error);
     return searchResults;
   }
-}
-
-function updateWllamaPThreadPoolSize() {
-  const multiThreadWllamaJsPath = path.resolve(
-    __dirname,
-    "node_modules/@wllama/wllama/esm/multi-thread/wllama.js",
-  );
-
-  fs.writeFileSync(
-    multiThreadWllamaJsPath,
-    fs
-      .readFileSync(multiThreadWllamaJsPath, "utf8")
-      .replace(
-        /pthreadPoolSize=[0-9]+;/g,
-        "pthreadPoolSize=Math.max(navigator.hardwareConcurrency - 2, 2);",
-      ),
-  );
 }
