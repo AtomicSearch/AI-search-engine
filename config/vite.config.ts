@@ -9,7 +9,7 @@ import {
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
 import temporaryDirectory from "temp-dir";
-import { Redis } from "ioredis";
+import { Redis, RedisOptions } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import { CategoryEngine } from "./appInfo.config";
@@ -29,7 +29,7 @@ interface SearchResult {
 class RedisAdapter {
   private redisClient: Redis;
 
-  constructor(redisOptions: Redis.RedisOptions) {
+  constructor(redisOptions: RedisOptions) {
     this.redisClient = new Redis(redisOptions);
   }
 
@@ -76,7 +76,7 @@ class RedisAdapter {
 }
 
 const isRedisCacheEnabled = process.env.IS_REDIS_CACHE_ENABLED === "true";
-const redisOptions: Redis.RedisOptions = {
+const redisOptions: RedisOptions = {
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
 };
