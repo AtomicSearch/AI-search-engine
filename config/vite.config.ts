@@ -433,5 +433,6 @@ function getSearchToken() {
   if (!existsSync(getSearchTokenFilePath())) {
     regenerateSearchToken();
   }
+
   return readFileSync(getSearchTokenFilePath(), "utf8");
 }
