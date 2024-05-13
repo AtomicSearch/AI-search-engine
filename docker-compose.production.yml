@@ -6,12 +6,11 @@ services:
     environment:
       - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-443}
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - BASIC_SSL=${BASIC_SSL:-true}
-      - IS_CACHE_ENABLED=false
     ports:
-      - "${PORT:-80}:80"
       - "${PORT:-443}:443"
+    restart: always
     build:
       dockerfile: Dockerfile
       context: .

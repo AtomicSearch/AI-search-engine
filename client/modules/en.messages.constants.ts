@@ -7,4 +7,6 @@ export const messages = {
   browseInternet: "Browsing the Web for you...",
   loadingAiModel: "Loading AI models...",
   researchReturnedNothing: "The query has no results. Try refining it",
+  levelUp: "Level Up 🚀",
+  upgrade: "Upgrade Now ⚡️",
 };

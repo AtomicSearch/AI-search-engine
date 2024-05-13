@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { toast } from "react-hot-toast";
 
 import { SettingsForm } from "./SettingsForm";
-import { Button } from "./atoms/Button";
+import { Button } from "./atoms/Button.atom";
 
 const SettingsButtonWrapper = styled.div`
   display: flex;

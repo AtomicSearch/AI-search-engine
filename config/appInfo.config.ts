@@ -5,19 +5,12 @@ export enum AppInfo {
   NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }
 
-export enum SubscriptionPlan {
-  PAYMENT_GATEWAY_PUBLIC_KEY = "pk_test_51J4J9zLz1c1a3J4J",
-  PRICE_ID = "price_1J4J9zLz1c1a3J4J",
-  PRICE_DISPLAYED = "$17",
-  PLAN_NAME = "Smarter Plan",
-  ACTIVE_STATUS = "active",
-  DEACTIVATED_STATUS = "deactivated",
-}
-
 export enum Search {
-  DEFAULT_LIMIT_SUGGESTIONS = 25,
+  MAXIMUM_SUGGESTIONS = 25,
   SEARCH_QUERY_LIMIT_LENGTH = 2000,
   SUMMARIZE_LINKS_LIMIT_LENGTH = 2500,
+  MAXIMUM_FREE_QUERY_WORDS = 10,
+  MAXIMUM_FREE_QUERIES_PER_HOUR = 40,
 }
 
 // SearXNG engines
@@ -56,6 +49,16 @@ export enum GitHubInfo {
 export enum XInfo {
   AUTHOR_X_URL = "http://x.com/phenrysay",
   AUTHOR_X_HANDLE = "@phenrysay",
+}
+
+export enum SubscriptionPlan {
+  PRICING_PAGE_URL = "/subscription",
+  PRICE_DISPLAYED = "$2.95/w",
+  PLAN_NAME = "Smarter Plan",
+  ACTIVE_STATUS = "active",
+  DEACTIVATED_STATUS = "deactivated",
+  PAYMENT_GATEWAY_PUBLIC_KEY = "pk_test_51J4J9zLz1c1a3J4J",
+  PRICE_ID = "price_1J4J9zLz1c1a3J4J",
 }
 
 export enum CheckoutInfo {

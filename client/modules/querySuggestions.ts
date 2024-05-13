@@ -1,11 +1,11 @@
-import { Search } from "../constants/appInfo.constant";
+import { Search } from "../../config/appInfo.config";
 import { getQuerySuggestions, updateQuerySuggestions } from "./pubSub";
 
 export const querySuggestions: string[] = [];
 
 export async function getRandomQuerySuggestion() {
   if (getQuerySuggestions().length === 0) {
-    await refillQuerySuggestions(Search.DEFAULT_LIMIT_SUGGESTIONS);
+    await refillQuerySuggestions(Search.MAXIMUM_SUGGESTIONS);
   }
 
   const querySuggestions = getQuerySuggestions();

@@ -5,15 +5,25 @@ import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
 import toast from "react-hot-toast";
-import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 
+import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
-import { confettiOptions } from "../constants/confettiOptions.constant";
+import { confettiOptions } from "../../config/confettiOptions.config";
 import { Header } from "./Header";
-import { I18n } from "../constants/appInfo.constant";
-import { Tagline } from "./atoms/Tagline";
+import { I18n, Search, SubscriptionPlan } from "../../config/appInfo.config";
+import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
+import { ToastModal } from "./atoms/ToastModel.atom";
+import { BlueButton } from "./atoms/Button.atom";
+import { messages } from "../modules/en.messages.constants";
+import { useQueryCount } from "../hooks/useQueryCount";
+
+interface SearchFormProps {
+  query: string;
+  updateQuery: (query: string) => void;
+  clearResponses: () => void;
+}
 
 interface SearchFormProps {
   query: string;
@@ -68,7 +78,8 @@ export function SearchForm({
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
-  const [notificationShown, setNotificationShown] = useState<boolean>(false);
+  const { queryCount, incrementQueryCount, isQueryLimitReached } =
+    useQueryCount();
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -86,53 +97,49 @@ export function SearchForm({
     [updateQuery, navigate],
   );
 
-  const clearSearchResultsAndUrl = () => {
+  const clearSearchResultsAndUrl = useCallback(() => {
     if (textAreaRef.current) {
       textAreaRef.current.value = "";
       startSearching("");
       clearResponses();
     }
 
-    // reset the URL to index
+    // Reset the URL to index
     navigate("/");
-  };
+  }, [startSearching, clearResponses, navigate]);
 
-  const navigateToHomePage = () => {
+  const navigateToHomePage = useCallback(() => {
     clearSearchResultsAndUrl();
-  };
+  }, [clearSearchResultsAndUrl]);
 
-  const debouncedStartSearching = debounce(startSearching, 500);
+  const debouncedStartSearching = useCallback(debounce(startSearching, 500), [
+    startSearching,
+  ]);
 
-  const showUpgradeNotification = () => {
+  const showUpgradeNotification = useCallback(() => {
     toast.custom(
-      <div
-        style={{
-          background: "#fff",
-          color: "#333",
-          padding: "16px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+      <ToastModal>
         <p style={{ marginBottom: "8px" }}>
-          Upgrade your subscription for leveling up queries
+          Queries to latest AI models are quite costly. You can either
+          come back in 1 hour or subscribe to the unlimited search.
         </p>
-        <button
-          style={{
-            background: "#007bff",
-            color: "#fff",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            window.location.href = "/pricing";
-          }}
+        <p>
+          Enter your phone number if you wish us to notify you when you can
+          search again for free.
+        </p>
+        <input
+          type="tel"
+          placeholder="Enter your phone number"
+          onChange={(e) => localStorage.setItem("phoneNumber", e.target.value)}
+        />
+        <BlueButton
+          onClick={() =>
+            (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
+          }
         >
-          Level Up Now 🚀
-        </button>
-      </div>,
+          {messages.levelUp}
+        </BlueButton>
+      </ToastModal>,
       {
         duration: Millisecond.FIVE_SECOND,
         position: "top-center",
@@ -142,39 +149,46 @@ export function SearchForm({
         },
       },
     );
-  };
+  }, []);
 
-  const handleInputChange = async (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    const userQuery = event.target.value.trim();
-    const wordCount = userQuery.split(/\s+/).length;
-    const needToUpgradeSubscription = wordCount > 10;
-    if (needToUpgradeSubscription && !notificationShown) {
-      setNotificationShown(true); // Prevent showing the modal multiple times
-      showUpgradeNotification();
-      return;
-    }
+  const handleInputChange = useCallback(
+    async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const userQuery = event.target.value.trim();
 
-    const userQueryIsBlank = userQuery.length === 0;
-    const suggestedQueryIsBlank = suggestedQuery?.length === 0;
+      if (isQueryLimitReached) {
+        showUpgradeNotification();
+        return;
+      }
 
-    // Start searching immediately when user types (with a debounce)
-    if (!userQueryIsBlank) {
-      debouncedStartSearching(userQuery);
-    } else {
-      // If the user deleted the input, reset the search results
-      clearSearchResultsAndUrl();
-    }
+      const userQueryIsBlank = userQuery.length === 0;
+      const suggestedQueryIsBlank = suggestedQuery?.length === 0;
 
-    if (userQueryIsBlank && suggestedQueryIsBlank) {
-      setSuggestedQuery(await getRandomQuerySuggestion());
-    } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
-      setSuggestedQuery(""); // clear the suggested queries
-    }
-  };
+      // Start searching immediately when user types (with a debounce)
+      if (!userQueryIsBlank) {
+        debouncedStartSearching(userQuery);
+        incrementQueryCount();
+      } else {
+        // If the user deleted the input, reset the search results
+        clearSearchResultsAndUrl();
+      }
 
-  const handleVoiceInput = () => {
+      if (userQueryIsBlank && suggestedQueryIsBlank) {
+        setSuggestedQuery(await getRandomQuerySuggestion());
+      } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
+        setSuggestedQuery(""); // Clear the suggested queries
+      }
+    },
+    [
+      isQueryLimitReached,
+      showUpgradeNotification,
+      suggestedQuery,
+      debouncedStartSearching,
+      incrementQueryCount,
+      clearSearchResultsAndUrl,
+    ],
+  );
+
+  const handleVoiceInput = useCallback(() => {
     if (
       !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)
     ) {
@@ -212,7 +226,7 @@ export function SearchForm({
       recognitionRef.current.start();
       setIsListening(true);
     }
-  };
+  }, [isListening, startSearching]);
 
   useEffect(() => {
     const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
@@ -250,7 +264,7 @@ export function SearchForm({
     return () => {
       textArea?.removeEventListener("keypress", keyboardEventHandler);
     };
-  }, [startSearching]);
+  }, [startSearching, clearSearchResultsAndUrl]);
 
   const isQueryEmpty = query.length === 0;
 

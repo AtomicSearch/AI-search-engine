@@ -15,9 +15,9 @@ import { Engine } from "../../modules/textGeneration.engine";
 import { useLocation } from "react-router-dom";
 import { search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
-import { UpgradePlanModal } from "../../components/UpgradePlanModal";
+import { UpgradePlanModal } from "../../components/modals/UpgradePlanModal";
 import styled from "styled-components";
-import { LoadingSpinner } from "../../components/atoms/Loading";
+import { LoadingSpinner } from "../../components/atoms/Loading.atom";
 import { SettingsButton } from "../../components/SettingsButton";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 
@@ -39,8 +39,8 @@ export const SearchPage = () => {
   const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
-
   const isUserSubscribed = useSubscriptionStatus();
+
   const location = useLocation();
 
   const clearResponses = () => {
@@ -60,8 +60,8 @@ export const SearchPage = () => {
     }
   }, [location.search, setQuery]);
 
-  // Add a new useEffect hook to call the search function when query changes
   useEffect(() => {
+    // Call the search function when query changes
     async function performSearch() {
       if (query.length) {
         setIsLoading(true);
@@ -88,7 +88,6 @@ export const SearchPage = () => {
           <LoadingText>Answering...</LoadingText>
         </LoadingContainer>
       )}
-
       {!getDisableAiResponseSetting() && response.length > 0 && (
         <div className="mt-4">
           <div className="bg-gray-100 p-4 rounded-md mt-2">
@@ -96,7 +95,6 @@ export const SearchPage = () => {
           </div>
         </div>
       )}
-
       {shouldResultsBeShown && (
         <div>
           <SearchResultsList

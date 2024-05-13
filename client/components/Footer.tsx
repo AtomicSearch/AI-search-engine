@@ -1,7 +1,7 @@
 import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
 
-import { AppInfo, XInfo, GitHubInfo } from "../constants/appInfo.constant";
+import { AppInfo, XInfo, GitHubInfo } from "../../config/appInfo.config";
 import { random } from "../utils/random";
 
 interface FooterContainerProps {
@@ -61,7 +61,8 @@ export const Footer = ({
           Simplest. Reliable. Secure. Anonymous. Powered by AI <FaBrain />
         </em>
         <br />
-        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by {pickedUpAuthorLink}
+        {AppInfo.APP_NAME} &bull; Brought with <FaHeart /> by{" "}
+        {pickedUpAuthorLink}
       </Slogan>
     </FooterContainer>
   );

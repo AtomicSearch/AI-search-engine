@@ -12,25 +12,27 @@ import {
   FaRegLightbulb,
   FaRegPaperPlane,
   FaLockOpen,
+  FaDatabase,
+  FaRegDotCircle,
 } from "react-icons/fa";
 import {
   TbInfinity,
   TbInfinityOff,
   TbRocket,
   TbRocketOff,
-  TbSpyOff
+  TbSpyOff,
 } from "react-icons/tb";
 import toast from "react-hot-toast";
 
 import { LocalStorageKeys } from "../../constants/localStorages.constant";
 import { Footer } from "../../components/Footer";
 import { NotifyMeModal } from "../../components/modals/NotifyMeModal";
-import { confettiOptions } from "../../constants/confettiOptions.constant";
+import { confettiOptions } from "../../../config/confettiOptions.config";
 import {
   PaymentGateway,
   PurchaseButton,
 } from "../../components/PaymentGateway";
-import { AppInfo, SubscriptionPlan } from "../../constants/appInfo.constant";
+import { AppInfo, SubscriptionPlan } from "../../../config/appInfo.config";
 import { usePaymentGatewayFeatureFlag } from "../../hooks/usePaymentGatewayFeatureFlag";
 import { Millisecond } from "../../constants/time.constant";
 
@@ -56,6 +58,9 @@ const PricingHeader = styled.h1`
 const PricingSubHeader = styled.h2`
   font-size: 20px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media (max-width: 600px) {
     font-size: 18px;
@@ -63,7 +68,7 @@ const PricingSubHeader = styled.h2`
 `;
 
 const LockOpenIcon = styled(FaLockOpen)`
-  font-size: 18px;
+  font-size: 24px;
   margin-right: 8px;
 `;
 
@@ -86,6 +91,12 @@ const PricingCard = styled.div`
   flex: 1 1 300px;
   max-width: 400px;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
 
   @media (max-width: 600px) {
     padding: 15px;
@@ -94,36 +105,39 @@ const PricingCard = styled.div`
 `;
 
 const PlanName = styled.h3`
-  font-size: 20px;
-  margin-bottom: 10px;
-
-  @media (max-width: 600px) {
-    font-size: 18px;
-  }
-`;
-
-const PaperPlaneIcon = styled(FaRegPaperPlane)`
-  font-size: 18px;
-  margin-right: 8px;
-`;
-
-const LightbulbIcon = styled(FaRegLightbulb)`
-  font-size: 18px;
-  margin-right: 8px;
-`;
-
-const Price = styled.p`
   font-size: 24px;
-  font-weight: bold;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media (max-width: 600px) {
     font-size: 20px;
   }
 `;
 
+const PaperPlaneIcon = styled(FaRegPaperPlane)`
+  font-size: 24px;
+  margin-right: 8px;
+`;
+
+const LightbulbIcon = styled(FaRegLightbulb)`
+  font-size: 24px;
+  margin-right: 8px;
+`;
+
+const Price = styled.p`
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+
+  @media (max-width: 600px) {
+    font-size: 28px;
+  }
+`;
+
 const FeatureList = styled.ul`
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
   padding: 0;
   list-style-type: none;
@@ -138,7 +152,6 @@ const Feature = styled.li`
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
 
   svg {
     margin-right: 8px;
@@ -151,31 +164,39 @@ const Feature = styled.li`
 `;
 
 const InfinityOffIcon = styled(TbInfinityOff)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const RocketOffIcon = styled(TbRocketOff)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const InfinityIcon = styled(TbInfinity)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const SearchenginIcon = styled(FaSearchengin)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const RocketIcon = styled(TbRocket)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const SpyOffIcon = styled(TbSpyOff)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const ShieldIcon = styled(FaShieldAlt)`
-  font-size: 18px;
+  font-size: 24px;
+`;
+
+const DatabaseIcon = styled(FaDatabase)`
+  font-size: 24px;
+`;
+
+const DartIcon = styled(FaRegDotCircle)`
+  font-size: 24px;
 `;
 
 const BenefitsList = styled.ul`
@@ -191,6 +212,7 @@ const Benefit = styled.li`
   margin-bottom: 16px;
   display: flex;
   align-items: center;
+  text-align: left;
 
   svg {
     margin-right: 12px;
@@ -204,11 +226,11 @@ const Benefit = styled.li`
 `;
 
 const SearchIcon = styled(FaSearch)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 const ClockIcon = styled(FaClock)`
-  font-size: 18px;
+  font-size: 24px;
 `;
 
 export const PricingPage: React.FC = () => {
@@ -344,7 +366,18 @@ export const PricingPage: React.FC = () => {
           </Benefit>
           <Benefit>
             <SpyOffIcon />
-            Ad-free and privacy-focused. {AppInfo.APP_NAME} works on subscription-based model
+            Ad-free and privacy-focused. {AppInfo.APP_NAME} works on a
+            subscription-based model
+          </Benefit>
+          <Benefit>
+            <DatabaseIcon />
+            Provides the sources for all your queries. Ideal for academic papers
+            and theses
+          </Benefit>
+          <Benefit>
+            <DartIcon />
+            <strong>{AppInfo.APP_NAME} is all about accuracy</strong>. Fewer
+            results. Better accuracy.
           </Benefit>
         </BenefitsList>
       </PricingContainer>

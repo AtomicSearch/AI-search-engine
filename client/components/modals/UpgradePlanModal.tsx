@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
 import { FaSketch } from "react-icons/fa";
 import styled from "styled-components";
+
+import { BlueButton } from "../atoms/Button.atom";
+import { SubscriptionPlan } from "../../../config/appInfo.config";
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -35,20 +37,9 @@ const Description = styled.p`
   margin-bottom: 16px;
 `;
 
-const Button = styled.button`
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
 export const UpgradePlanModal: React.FC = () => {
   const handleButtonClick = () => {
-    window.location.href = "/pricing?from=homepage_modal";
+    window.location.href = `/${SubscriptionPlan.PRICING_PAGE_URL}?from=homepage_modal`;
   };
 
   return (
@@ -62,7 +53,7 @@ export const UpgradePlanModal: React.FC = () => {
       <Description>
         Dive deep into the answers you seek with unlimited latest AI models
       </Description>
-      <Button onClick={handleButtonClick}>Try Now</Button>
+      <BlueButton onClick={handleButtonClick}>Try Now</BlueButton>
     </ModalWrapper>
   );
 };

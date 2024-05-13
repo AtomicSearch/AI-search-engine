@@ -5,6 +5,7 @@ import { SearchPage } from "../pages/search/SearchPage";
 import { ComparisonPage } from "../pages/static/ComparisonPage";
 import { PricingPage } from "../pages/subscription/PricingPage";
 import { AboutMissionPage } from "../pages/static/AboutMissionPage";
+import { RoutePaths } from "../../config/routes.config";
 
 const AppContainer = styled.div`
   display: flex;
@@ -20,10 +21,10 @@ function InnerApp() {
     <>
       <Main>
         <Routes>
-          <Route path="/" element={<SearchPage />} />
-          <Route path="/comparison-google" element={<ComparisonPage />} />
-          <Route path="/mission" element={<AboutMissionPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
+          <Route path={RoutePaths.SEARCH} element={<SearchPage />} />
+          <Route path={RoutePaths.COMPARISON} element={<ComparisonPage />} />
+          <Route path={RoutePaths.MISSION} element={<AboutMissionPage />} />
+          <Route path={RoutePaths.SUBSCRIPTION} element={<PricingPage />} />
         </Routes>
       </Main>
     </>

@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
-import { SearchResults } from "../modules/search";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
+import toast from "react-hot-toast";
+
+import { SearchResults } from "../modules/search";
+import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { BlurredText } from "./atoms/Blur.atom";
+import { SubscriptionPlan } from "../../config/appInfo.config";
+import { ToastModal } from "./atoms/ToastModel.atom";
+import { BlueButton } from "./atoms/Button.atom";
+import { Millisecond } from "../constants/time.constant";
+import { messages } from "../modules/en.messages.constants";
 
 export function SearchResultsList({
   searchResults,
@@ -11,6 +20,9 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
+  const [notificationShown, setNotificationShown] = useState<boolean>(false);
+
+  const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,6 +37,33 @@ export function SearchResultsList({
   }, []);
 
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
+
+  const showUpgradeMessage = () => {
+    setNotificationShown(true); // Prevent showing the modal multiple times
+
+    toast.custom(
+      <ToastModal>
+        <p>
+          Unlock full URLs and enhanced search results with a premium account.
+        </p>
+
+        <BlueButton
+          onClick={() =>
+            (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
+          }
+        >
+          {messages.upgrade}
+        </BlueButton>
+      </ToastModal>,
+      {
+        duration: Millisecond.FOUR_SECOND,
+        style: {
+          background: "transparent",
+          boxShadow: "none",
+        },
+      },
+    );
+  };
 
   return (
     <ul>
@@ -57,17 +96,33 @@ export function SearchResultsList({
             >
               {title}
             </a>
-            <a href={url} target="_blank">
+            {isUserSubscribed ? (
+              <a href={url} target="_blank">
+                <cite
+                  style={{
+                    fontSize: "small",
+                    color: "gray",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {new URL(url).hostname.replace("www.", "")}
+                </cite>
+              </a>
+            ) : (
               <cite
+                onClick={() => !notificationShown && showUpgradeMessage}
                 style={{
                   fontSize: "small",
                   color: "gray",
                   whiteSpace: "nowrap",
+                  cursor: "pointer",
                 }}
               >
-                {new URL(url).hostname.replace("www.", "")}
+                <BlurredText>
+                  {new URL(url).hostname.replace("www.", "")}
+                </BlurredText>
               </cite>
-            </a>
+            )}
           </div>
           {urlsDescriptions[url] && (
             <Markdown>{urlsDescriptions[url]}</Markdown>

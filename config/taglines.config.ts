@@ -1,4 +1,4 @@
-import { AppInfo } from "../client/constants/appInfo.constant";
+import { AppInfo } from "./appInfo.config";
 
 export const taglines = [
   AppInfo.APP_TAGLINE, // default principal tagline

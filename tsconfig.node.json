@@ -6,5 +6,9 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "config/search-engines.ts"]
+  "include": [
+    "config/vite.config.ts",
+    "config/appInfo.config.ts",
+    "config/search-engines.config.ts"
+  ]
 }
