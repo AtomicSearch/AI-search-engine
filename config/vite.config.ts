@@ -1,10 +1,7 @@
-import { CategoryEngine } from "../client/constants/appInfo.constant";
 import path from "node:path";
 import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
-
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
-
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import {
   initModel,
@@ -12,22 +9,76 @@ import {
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
 import temporaryDirectory from "temp-dir";
-import Redis, { Redis as RedisClient } from "ioredis";
+import Redis from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+import { CategoryEngine } from "./appInfo.config";
 
-//import { supportedSearchEngines } from "./client/config/search-engines";
+const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
+const RATE_LIMITER_OPTIONS = {
+  points: 10, // Maximum number of requests allowed within the duration
+  duration: 5, // Duration in seconds
+};
 
-const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
-const redisClient = isCacheEnabled
-  ? new Redis({
-      host: "redis", // Use the service name from docker-compose.yml
+interface SearchResult {
+  title: string;
+  content: string;
+  url: string;
+}
+
+class RedisAdapter {
+  private redisClient: Redis;
+
+  constructor() {
+    this.redisClient = new Redis({
+      host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-    })
-  : undefined;
+    });
+  }
+
+  /**
+   * Retrieves the value associated with the given key from Redis.
+   * @param key The key to retrieve the value for.
+   * @returns The value associated with the key, or null if the key doesn't exist.
+   */
+  async get(key: string): Promise<string | null> {
+    try {
+      const value = await this.redisClient.get(key);
+      return value;
+    } catch (error) {
+      console.error("Error retrieving data from Redis:", error);
+      return null;
+    }
+  }
+
+  /**
+   * Sets the value associated with the given key in Redis.
+   * @param key The key to set the value for.
+   * @param value The value to set.
+   * @param expirationTime (Optional) The expiration time for the key-value pair in seconds.
+   */
+  async set(
+    key: string,
+    value: string,
+    expirationTime?: number,
+  ): Promise<void> {
+    try {
+      if (expirationTime) {
+        await this.redisClient.set(key, value, "EX", expirationTime);
+      } else {
+        await this.redisClient.set(key, value);
+      }
+    } catch (error) {
+      console.error("Error storing data in Redis:", error);
+    }
+  }
+}
+
+const isRedisCacheEnabled = process.env.IS_REDIS_CACHE_ENABLED === "true";
+const redisAdapter = isRedisCacheEnabled ? new RedisAdapter() : undefined;
 
 const serverStartTime = new Date().getTime();
-let searchesSinceLastRestart = 0;
+let searchCountSinceLastRestart = 0;
 
 export default defineConfig(({ command }) => {
   if (command === "build") {
@@ -56,36 +107,34 @@ export default defineConfig(({ command }) => {
       target: "esnext",
     },
     plugins: [
-      process.env.BASIC_SSL === "true" ? basicSSL() : undefined,
       react(),
       {
         name: "configure-server-cross-origin-isolation",
-        configureServer: crossOriginServerHook,
-        configurePreviewServer: crossOriginServerHook,
+        configureServer: configureServerCrossOriginIsolation,
+        configurePreviewServer: configureServerCrossOriginIsolation,
       },
       {
         name: "configure-server-search-endpoint",
-        configureServer: searchEndpointServerHook,
-        configurePreviewServer: searchEndpointServerHook,
+        configureServer: configureServerSearchEndpoint,
+        configurePreviewServer: configureServerSearchEndpoint,
       },
       {
         name: "configure-server-status-endpoint",
-        configureServer: statusEndpointServerHook,
-        configurePreviewServer: statusEndpointServerHook,
+        configureServer: configureServerStatusEndpoint,
+        configurePreviewServer: configureServerStatusEndpoint,
       },
       {
         name: "configure-server-cache",
-        configurePreviewServer: cacheServerHook,
+        configurePreviewServer: configureServerCache,
       },
     ],
   };
 });
 
-function crossOriginServerHook<T extends ViteDevServer | PreviewServer>(
-  server: T,
-) {
+function configureServerCrossOriginIsolation<
+  T extends ViteDevServer | PreviewServer,
+>(server: T) {
   server.middlewares.use((_, response, next) => {
-    /** Server headers for cross origin isolation, which enable clients to use `SharedArrayBuffer` on the Browser. */
     const crossOriginIsolationHeaders: { key: string; value: string }[] = [
       {
         key: "Cross-Origin-Embedder-Policy",
@@ -109,7 +158,7 @@ function crossOriginServerHook<T extends ViteDevServer | PreviewServer>(
   });
 }
 
-function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
+function configureServerStatusEndpoint<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
   server.middlewares.use(async (request, response, next) => {
@@ -122,21 +171,18 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     response.end(
       JSON.stringify({
         secondsSinceLastRestart,
-        searchesSinceLastRestart,
-        searchesPerSecond: searchesSinceLastRestart / secondsSinceLastRestart,
+        searchCountSinceLastRestart,
+        searchesPerSecond:
+          searchCountSinceLastRestart / secondsSinceLastRestart,
       }),
     );
   });
 }
 
-function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
+function configureServerSearchEndpoint<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
-  const rateLimiterOptions = {
-    points: 10, // allocate points
-    duration: 5, // per second
-  };
-  const rateLimiter = new RateLimiterMemory(rateLimiterOptions);
+  const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
   server.middlewares.use(async (request, response, next) => {
     if (!request.url.startsWith("/search")) {
@@ -163,7 +209,6 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     const limitParam = searchParams.get("limit");
-
     const limit =
       limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
 
@@ -183,32 +228,33 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       return;
     }
 
-    // Try to get the search results from Redis
-    let searchResults = isCacheEnabled
-      ? await redisClient.get(query)
-      : undefined;
+    let searchResults: SearchResult[] | null = null;
 
-    if (searchResults) {
-      // If the search results are cached in Redis, parse them and return
-      try {
-        searchResults = JSON.parse(searchResults);
-      } catch (error) {
-        console.error("Error parsing JSON data from Redis:", error);
-        searchResults = null; // Reset searchResults to null if parsing fails
+    if (isRedisCacheEnabled) {
+      const cachedResults = await redisAdapter?.get(query);
+      if (cachedResults) {
+        try {
+          searchResults = JSON.parse(cachedResults);
+        } catch (error) {
+          console.error("Error parsing JSON data from Redis:", error);
+        }
       }
     }
 
     if (!searchResults) {
-      // Pass the redisClient instance to fetchSearXNG
-      const fetchedResults = await fetchSearXNG(query, limit, redisClient);
-      searchResults = JSON.stringify(fetchedResults);
+      const fetchedResults = await fetchSearXNG(query, limit);
+      searchResults = fetchedResults;
 
-      if (isCacheEnabled) {
-        await redisClient.set(query, searchResults);
+      if (isRedisCacheEnabled) {
+        await redisAdapter?.set(
+          query,
+          JSON.stringify(searchResults),
+          REDIS_CACHE_EXPIRATION_TIME_SECONDS,
+        );
       }
     }
 
-    searchesSinceLastRestart++;
+    searchCountSinceLastRestart++;
 
     if (!Array.isArray(searchResults) || searchResults.length === 0) {
       response.end(JSON.stringify([]));
@@ -225,7 +271,9 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   });
 }
 
-function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
+function configureServerCache<T extends ViteDevServer | PreviewServer>(
+  server: T,
+) {
   server.middlewares.use(async (request, response, next) => {
     if (
       request.url === "/" ||
@@ -241,30 +289,18 @@ function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
   });
 }
 
+/**
+ * Fetches search results from SearXNG.
+ * @param query The search query.
+ * @param limit (Optional) The maximum number of search results to return.
+ * @returns An array of SearchResult objects representing the search results.
+ */
 async function fetchSearXNG(
   query: string,
   limit?: number,
-  redisClient?: RedisClient,
-): Promise<[title: string, content: string, url: string][]> {
+): Promise<SearchResult[]> {
   try {
-    // Check if the search results are cached in Redis (if cache is enabled)
-    let cachedResults = isCacheEnabled
-      ? await redisClient?.get(`searxng:${query}`)
-      : undefined;
-
-    if (cachedResults) {
-      // If the search results are cached in Redis, parse and return them
-      try {
-        const parsedResults = JSON.parse(cachedResults);
-        return parsedResults;
-      } catch (error) {
-        console.error("Error parsing JSON data from Redis:", error);
-        // Continue with fetching from SearXNG if parsing fails
-      }
-    }
-
     const url = new URL("http://127.0.0.1:8080/search");
-    //const supportedEngines = supportedSearchEngines.join(",");
 
     url.search = new URLSearchParams({
       q: query,
@@ -282,7 +318,7 @@ async function fetchSearXNG(
       results: { url: string; title: string; content: string }[];
     };
 
-    const searchResults: [title: string, content: string, url: string][] = [];
+    const searchResults: SearchResult[] = [];
 
     if (results) {
       if (limit && limit > 0) {
@@ -301,23 +337,11 @@ async function fetchSearXNG(
         if (content === "") continue;
 
         const title = stripHtmlTags(result.title);
-
         const url = result.url;
 
-        searchResults.push([title, content, url]);
-
+        searchResults.push({ title, content, url });
         uniqueUrls.add(url);
       }
-    }
-
-    // Cache the search results in Redis with an expiration time (e.g., 1 hour) (if cache is enabled)
-    if (isCacheEnabled) {
-      await redisClient?.set(
-        `searxng:${query}`,
-        JSON.stringify(searchResults),
-        "EX",
-        3600,
-      );
     }
 
     return searchResults;
@@ -327,28 +351,19 @@ async function fetchSearXNG(
   }
 }
 
-function getSearchTokenFilePath() {
-  return path.resolve(temporaryDirectory, "atomicsearch-token");
-}
-
-function regenerateSearchToken() {
-  const newToken = Math.random().toString(36).substring(2);
-  writeFileSync(getSearchTokenFilePath(), newToken);
-}
-
-function getSearchToken() {
-  if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
-  return readFileSync(getSearchTokenFilePath(), "utf8");
-}
-
 let embeddingModelInstance: EmbeddingsModel | undefined;
 
+/**
+ * Calculates the similarity scores between a query and a list of documents.
+ * @param query The search query.
+ * @param documents An array of documents to compare against the query.
+ * @returns An array of similarity scores, where each score corresponds to a document in the documents array.
+ */
 async function getSimilarityScores(query: string, documents: string[]) {
   if (!embeddingModelInstance)
     embeddingModelInstance = await initModel(embeddingModel);
 
   const [queryEmbedding] = await embeddingModelInstance.embed([query]);
-
   const documentsEmbeddings = await embeddingModelInstance.embed(documents);
 
   return documentsEmbeddings.map((documentEmbedding) =>
@@ -356,24 +371,26 @@ async function getSimilarityScores(query: string, documents: string[]) {
   );
 }
 
-async function rankSearchResults(
-  query: string,
-  searchResults: [title: string, content: string, url: string][],
-) {
+/**
+ * Ranks the search results based on their similarity to the search query.
+ * @param query The search query.
+ * @param searchResults An array of SearchResult objects representing the search results.
+ * @returns An array of SearchResult objects ranked by their similarity to the search query.
+ */
+async function rankSearchResults(query: string, searchResults: SearchResult[]) {
   if (!Array.isArray(searchResults) || searchResults.length === 0) {
-    return searchResults; // Return the original search results if it's not an array or if it's empty
+    return searchResults;
   }
 
   try {
     const scores = await getSimilarityScores(
       query.toLocaleLowerCase(),
-      searchResults.map(([title, snippet, url]) =>
-        `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
+      searchResults.map(({ title, content, url }) =>
+        `${title}\n${url}\n${content}`.toLocaleLowerCase(),
       ),
     );
 
-    const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
-      new Map();
+    const searchResultToScoreMap: Map<SearchResult, number> = new Map();
 
     scores.map((score, index) =>
       searchResultToScoreMap.set(searchResults[index], score ?? 0),
@@ -392,6 +409,36 @@ async function rankSearchResults(
   }
 }
 
+/**
+ * Retrieves the file path for the search token.
+ * @returns The file path for the search token.
+ */
+function getSearchTokenFilePath() {
+  return path.resolve(temporaryDirectory, "atomicsearch-token");
+}
+
+/**
+ * Regenerates the search token and saves it to the search token file.
+ */
+function regenerateSearchToken() {
+  const newToken = Math.random().toString(36).substring(2);
+  writeFileSync(getSearchTokenFilePath(), newToken);
+}
+
+/**
+ * Retrieves the search token from the search token file.
+ * If the search token file doesn't exist, it regenerates the search token.
+ * @returns The search token.
+ */
+function getSearchToken() {
+  if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
+  return readFileSync(getSearchTokenFilePath(), "utf8");
+}
+
+/**
+ * Updates the pthread pool size in the multi-thread wllama.js file.
+ * The pthread pool size is set to the maximum of (number of CPU cores - 2) and 2.
+ */
 function updateWllamaPThreadPoolSize() {
   const multiThreadWllamaJsPath = path.resolve(
     __dirname,
