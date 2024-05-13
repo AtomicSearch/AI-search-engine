@@ -430,6 +430,8 @@ function regenerateSearchToken() {
  * @returns The search token.
  */
 function getSearchToken() {
-  if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
+  if (!existsSync(getSearchTokenFilePath())) {
+    regenerateSearchToken();
+  }
   return readFileSync(getSearchTokenFilePath(), "utf8");
 }
