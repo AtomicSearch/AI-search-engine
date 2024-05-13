@@ -3,6 +3,7 @@ import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
 import { RateLimiterMemory } from "rate-limiter-flexible";
+import StatusCode from "http-status-codes";
 import {
   initModel,
   distance as calculateSimilarity,
@@ -203,7 +204,7 @@ function configureServerSearchEndpoint<T extends ViteDevServer | PreviewServer>(
     const token = searchParams.get("token");
 
     if (!token || token !== getSearchToken()) {
-      response.statusCode = 401;
+      response.statusCode = StatusCode.UNAUTHORIZED;
       response.end("Unauthorized.");
       return;
     }
@@ -211,7 +212,7 @@ function configureServerSearchEndpoint<T extends ViteDevServer | PreviewServer>(
     const query = searchParams.get("q");
 
     if (!query) {
-      response.statusCode = 400;
+      response.statusCode = StatusCode.BAD_REQUEST;
       response.end("Missing the query parameter.");
       return;
     }
@@ -231,7 +232,7 @@ function configureServerSearchEndpoint<T extends ViteDevServer | PreviewServer>(
 
       await rateLimiter.consume(remoteAddress);
     } catch (error) {
-      response.statusCode = 429;
+      response.statusCode = StatusCode.TOO_MANY_REQUESTS;
       response.end("Too many requests.");
       return;
     }
