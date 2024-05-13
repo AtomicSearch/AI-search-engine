@@ -93,6 +93,10 @@ export default defineConfig(({ command }) => {
       VITE_SEARCH_TOKEN: JSON.stringify(getSearchToken()),
     },
     server: {
+      https: {
+        key: fs.readFileSync("./ssl/your-key.key"),
+        cert: fs.readFileSync("./ssl/your-cert.crt"),
+      },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
       hmr: {
@@ -100,6 +104,10 @@ export default defineConfig(({ command }) => {
       },
     },
     preview: {
+      https: {
+        key: fs.readFileSync("./ssl/your-key.key"),
+        cert: fs.readFileSync("./ssl/your-cert.crt"),
+      },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
     },
@@ -307,7 +315,7 @@ async function fetchSearXNG(
       language: "auto",
       safesearch: "0",
       format: "json",
-      //engine: supportedEngines,
+      //engine: supportedSearchEngines.join(","),
       engine: CategoryEngine.RESEARCH,
       timeout: "10000", // Set a timeout of 10 seconds
     }).toString();
