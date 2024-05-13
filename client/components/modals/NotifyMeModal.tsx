@@ -8,7 +8,7 @@ import PhoneInput, {
 } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
-import { AppInfo, I18n } from "../../constants/appInfo.constant";
+import { AppInfo, I18n } from "../../../config/appInfo.config";
 
 const Modal = styled.div`
   position: fixed;

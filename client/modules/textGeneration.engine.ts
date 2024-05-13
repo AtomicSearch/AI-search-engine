@@ -16,7 +16,7 @@ import { query, debug } from "./urlParams";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./en.messages.constants";
-import { I18n, Model, Search } from "../constants/appInfo.constant";
+import { I18n, Model, Search } from "../../config/appInfo.config";
 import { Millisecond } from "../constants/time.constant";
 
 export namespace Engine {

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { BlurredText } from "./atoms/Blur.atom";
-import { SubscriptionPlan } from "../constants/appInfo.constant";
+import { SubscriptionPlan } from "../../config/appInfo.config";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { Millisecond } from "../constants/time.constant";

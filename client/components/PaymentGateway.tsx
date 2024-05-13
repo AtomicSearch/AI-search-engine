@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { loadStripe } from "@stripe/stripe-js";
-import { SubscriptionPlan } from "../constants/appInfo.constant";
+import { SubscriptionPlan } from "../../config/appInfo.config";
 import toast, { Toaster } from "react-hot-toast";
 
 const stripePromise = loadStripe(SubscriptionPlan.PAYMENT_GATEWAY_PUBLIC_KEY);

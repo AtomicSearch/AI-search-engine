@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { AppInfo } from "../../constants/appInfo.constant";
+import { AppInfo } from "../../../config/appInfo.config";
 
 const AboutPageWrapper = styled.div`
   max-width: 800px;

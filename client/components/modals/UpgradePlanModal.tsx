@@ -2,7 +2,7 @@ import { FaSketch } from "react-icons/fa";
 import styled from "styled-components";
 
 import { BlueButton } from "../atoms/Button.atom";
-import { SubscriptionPlan } from "../../constants/appInfo.constant";
+import { SubscriptionPlan } from "../../../config/appInfo.config";
 
 const ModalWrapper = styled.div`
   position: fixed;
