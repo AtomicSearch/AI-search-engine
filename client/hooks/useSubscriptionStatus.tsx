@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SubscriptionPlan } from "../constants/appInfo.constant";
+import { SubscriptionPlan } from "../../config/appInfo.config";
 
 export const useSubscriptionStatus = (): boolean => {
   const [isUserSubscribed, setIsUserSubscribed] = useState<boolean>(false);

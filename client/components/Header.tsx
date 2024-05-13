@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { AppInfo } from "../constants/appInfo.constant";
+import { AppInfo } from "../../config/appInfo.config";
 import { FaBrain } from "react-icons/fa";
 
 const HeaderContainer = styled.header`

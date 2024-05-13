@@ -1,4 +1,4 @@
-import { Search } from "../constants/appInfo.constant";
+import { Search } from "../../config/appInfo.config";
 import { getQuerySuggestions, updateQuerySuggestions } from "./pubSub";
 
 export const querySuggestions: string[] = [];
