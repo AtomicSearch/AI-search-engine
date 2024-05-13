@@ -12,7 +12,9 @@ import temporaryDirectory from "temp-dir";
 import { Redis, RedisOptions } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+
 import { CategoryEngine } from "./appInfo.config";
+import { Millisecond } from "../client/constants/time.constant";
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
 const RATE_LIMITER_OPTIONS = {
@@ -306,7 +308,7 @@ async function fetchSearXNG(
       format: "json",
       //engine: supportedSearchEngines.join(","),
       engine: CategoryEngine.RESEARCH,
-      timeout: "10000", // Set a timeout of 10 seconds
+      timeout: Millisecond.TEN_SECOND.toString(),
     }).toString();
 
     const response = await fetch(url);
