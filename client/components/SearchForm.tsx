@@ -78,7 +78,7 @@ function useQueryCount() {
     localStorage.setItem("queryCount", queryCount.toString());
     const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
     setIsQueryLimitReached(
-      queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR && !isUserSubscribed,
+      isQueryReached && !isUserSubscribed,
     );
   }, [queryCount, isUserSubscribed]);
 
