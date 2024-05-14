@@ -76,8 +76,9 @@ function useQueryCount() {
 
   useEffect(() => {
     localStorage.setItem("queryCount", queryCount.toString());
+    const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
     setIsQueryLimitReached(
-      queryCount >= Search.QUERY_LIMIT && !isUserSubscribed,
+      queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR && !isUserSubscribed,
     );
   }, [queryCount, isUserSubscribed]);
 
