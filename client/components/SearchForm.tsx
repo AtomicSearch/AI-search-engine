@@ -17,13 +17,7 @@ import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { messages } from "../modules/en.messages.constants";
-import { useQueryCount } from "../hooks/useQueryCount";
-
-interface SearchFormProps {
-  query: string;
-  updateQuery: (query: string) => void;
-  clearResponses: () => void;
-}
+import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 
 interface SearchFormProps {
   query: string;
@@ -66,6 +60,33 @@ const MicrophoneButton = styled.button`
     transform: translateY(-40%); /* Decrease movement on click */
   }
 `;
+
+function useQueryCount() {
+  const [queryCount, setQueryCount] = useState<number>(0);
+  const [isQueryLimitReached, setIsQueryLimitReached] =
+    useState<boolean>(false);
+  const isUserSubscribed = useSubscriptionStatus();
+
+  useEffect(() => {
+    const storedQueryCount = localStorage.getItem("queryCount");
+    if (storedQueryCount) {
+      setQueryCount(parseInt(storedQueryCount, 10));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("queryCount", queryCount.toString());
+    setIsQueryLimitReached(
+      queryCount >= Search.QUERY_LIMIT && !isUserSubscribed,
+    );
+  }, [queryCount, isUserSubscribed]);
+
+  const incrementQueryCount = () => {
+    setQueryCount((prevCount) => prevCount + 1);
+  };
+
+  return { queryCount, incrementQueryCount, isQueryLimitReached };
+}
 
 export function SearchForm({
   query,
@@ -120,8 +141,8 @@ export function SearchForm({
     toast.custom(
       <ToastModal>
         <p style={{ marginBottom: "8px" }}>
-          Queries to latest AI models are quite costly. You can either
-          come back in 1 hour or subscribe to the unlimited search.
+          Queries to latest AI models are quite costly. You can either come back
+          in 1 hour or subscribe to the unlimited search.
         </p>
         <p>
           Enter your phone number if you wish us to notify you when you can
