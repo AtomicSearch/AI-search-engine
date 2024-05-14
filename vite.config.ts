@@ -13,8 +13,8 @@ import { Redis, RedisOptions } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-import { CategoryEngine } from "./config/appInfo.config";
-import { Millisecond } from "./client/constants/time.constant";
+import { CategoryEngine } from "./config/appInfo.config.config";
+import { Millisecond } from "./client/constants/time.constant;
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
 const RATE_LIMITER_OPTIONS = {
@@ -109,7 +109,7 @@ export default defineConfig(({ command }) => {
           : undefined,
       },
       host: process.env.HOST,
-      port: 443,
+      port: process.env.PORT ? Number(process.env.PORT) : undefined,
       hmr: {
         port: process.env.HMR_PORT ? Number(process.env.HMR_PORT) : undefined,
       },
@@ -123,7 +123,7 @@ export default defineConfig(({ command }) => {
           ? readFileSync(process.env.SSL_CERT_PATH)
           : undefined,
       },
-      port: 443,
+      host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
     },
     build: {
