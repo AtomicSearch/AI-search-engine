@@ -1,98 +1,22 @@
-import path from "node:path";
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import basicSSL from "@vitejs/plugin-basic-ssl";
 import { RateLimiterMemory } from "rate-limiter-flexible";
-import StatusCode from "http-status-codes";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
+import temporaryDirectory from "temp-dir";
+import path from "node:path";
 import {
   initModel,
   distance as calculateSimilarity,
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
-import temporaryDirectory from "temp-dir";
-import { Redis, RedisOptions } from "ioredis";
-import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-import { Millisecond } from "./client/constants/time.constant";
-import { CategoryEngine } from "./config/appInfo.config";
-
-const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
-const RATE_LIMITER_OPTIONS = {
-  points: 10, // Maximum number of requests allowed within the duration
-  duration: 5, // Duration in seconds
-};
-
-interface SearchResult {
-  title: string;
-  content: string;
-  url: string;
-}
-
-class RedisAdapter {
-  private redisClient: Redis;
-
-  constructor(redisOptions: RedisOptions) {
-    this.redisClient = new Redis(redisOptions);
-  }
-
-  /**
-   * Retrieves the value associated with the given key from Redis.
-   * @param key The key to retrieve the value for.
-   * @returns The value associated with the key, or null if the key doesn't exist.
-   */
-  async get(key: string): Promise<string | null> {
-    try {
-      const value = await this.redisClient.get(key);
-      return value;
-    } catch (error) {
-      console.error("Error retrieving data from Redis:", error);
-      return null;
-    }
-  }
-
-  /**
-   * Sets the value associated with the given key in Redis.
-   * @param key The key to set the value for.
-   * @param value The value to set.
-   * @param expirationTime (Optional) The expiration time for the key-value pair in seconds.
-   */
-  async set(
-    key: string,
-    value: string,
-    expirationTime?: number,
-  ): Promise<void> {
-    try {
-      if (expirationTime) {
-        await this.redisClient.set(key, value, "EX", expirationTime);
-      } else {
-        await this.redisClient.set(key, value);
-      }
-    } catch (error) {
-      console.error("Error storing data in Redis:", error);
-    }
-  }
-
-  async disconnect(): Promise<void> {
-    await this.redisClient.quit();
-  }
-}
-
-const isRedisCacheEnabled = process.env.IS_REDIS_CACHE_ENABLED === "true";
-const redisOptions: RedisOptions = {
-  host: process.env.REDIS_HOST,
-  port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
-};
-const redisAdapter = isRedisCacheEnabled
-  ? new RedisAdapter(redisOptions)
-  : undefined;
-
 const serverStartTime = new Date().getTime();
-let searchCountSinceLastRestart = 0;
+let searchesSinceLastRestart = 0;
 
 export default defineConfig(({ command }) => {
-  if (command === "build") {
-    regenerateSearchToken();
-  }
+  if (command === "build") regenerateSearchToken();
 
   return {
     root: "./client",
@@ -100,14 +24,6 @@ export default defineConfig(({ command }) => {
       VITE_SEARCH_TOKEN: JSON.stringify(getSearchToken()),
     },
     server: {
-      https: {
-        key: process.env.SSL_KEY_PATH
-          ? readFileSync(process.env.SSL_KEY_PATH)
-          : undefined,
-        cert: process.env.SSL_CERT_PATH
-          ? readFileSync(process.env.SSL_CERT_PATH)
-          : undefined,
-      },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
       hmr: {
@@ -115,14 +31,6 @@ export default defineConfig(({ command }) => {
       },
     },
     preview: {
-      https: {
-        key: process.env.SSL_KEY_PATH
-          ? readFileSync(process.env.SSL_KEY_PATH)
-          : undefined,
-        cert: process.env.SSL_CERT_PATH
-          ? readFileSync(process.env.SSL_CERT_PATH)
-          : undefined,
-      },
       host: process.env.HOST,
       port: process.env.PORT ? Number(process.env.PORT) : undefined,
     },
@@ -130,18 +38,36 @@ export default defineConfig(({ command }) => {
       target: "esnext",
     },
     plugins: [
+      process.env.BASIC_SSL === "true" ? basicSSL() : undefined,
       react(),
       {
-        name: "configure-server",
-        configureServer: configureServer,
-        configurePreviewServer: configureServer,
+        name: "configure-server-cross-origin-isolation",
+        configureServer: crossOriginServerHook,
+        configurePreviewServer: crossOriginServerHook,
+      },
+      {
+        name: "configure-server-search-endpoint",
+        configureServer: searchEndpointServerHook,
+        configurePreviewServer: searchEndpointServerHook,
+      },
+      {
+        name: "configure-server-status-endpoint",
+        configureServer: statusEndpointServerHook,
+        configurePreviewServer: statusEndpointServerHook,
+      },
+      {
+        name: "configure-server-cache",
+        configurePreviewServer: cacheServerHook,
       },
     ],
   };
 });
 
-function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
+function crossOriginServerHook<T extends ViteDevServer | PreviewServer>(
+  server: T,
+) {
   server.middlewares.use((_, response, next) => {
+    /** Server headers for cross origin isolation, which enable clients to use `SharedArrayBuffer` on the Browser. */
     const crossOriginIsolationHeaders: { key: string; value: string }[] = [
       {
         key: "Cross-Origin-Embedder-Policy",
@@ -163,121 +89,107 @@ function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
 
     next();
   });
+}
+
+function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
+  server: T,
+) {
+  server.middlewares.use(async (request, response, next) => {
+    if (!request.url.startsWith("/status")) return next();
+
+    const secondsSinceLastRestart = Math.floor(
+      (new Date().getTime() - serverStartTime) / 1000,
+    );
+
+    response.end(
+      JSON.stringify({
+        secondsSinceLastRestart,
+        searchesSinceLastRestart,
+        searchesPerSecond: searchesSinceLastRestart / secondsSinceLastRestart,
+      }),
+    );
+  });
+}
+
+function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
+  server: T,
+) {
+  const rateLimiter = new RateLimiterMemory({
+    points: 2,
+    duration: 10,
+  });
 
   server.middlewares.use(async (request, response, next) => {
-    if (request?.url?.startsWith("/status")) {
-      const secondsSinceLastRestart = Math.floor(
-        (new Date().getTime() - serverStartTime) / 1000,
-      );
+    if (!request.url.startsWith("/search")) return next();
 
+    const { searchParams } = new URL(
+      request.url,
+      `http://${request.headers.host}`,
+    );
+
+    const token = searchParams.get("token");
+
+    if (!token || token !== getSearchToken()) {
+      response.statusCode = 401;
+      response.end("Unauthorized.");
+      return;
+    }
+
+    const query = searchParams.get("q");
+
+    if (!query) {
+      response.statusCode = 400;
+      response.end("Missing the query parameter.");
+      return;
+    }
+
+    const limitParam = searchParams.get("limit");
+
+    const limit =
+      limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
+
+    try {
+      const remoteAddress = (
+        (request.headers["x-forwarded-for"] as string) ||
+        request.socket.remoteAddress ||
+        "unknown"
+      )
+        .split(",")[0]
+        .trim();
+
+      await rateLimiter.consume(remoteAddress);
+    } catch (error) {
+      response.statusCode = 429;
+      response.end("Too many requests.");
+      return;
+    }
+
+    const searchResults = await fetchSearXNG(query, limit);
+
+    searchesSinceLastRestart++;
+
+    if (searchResults.length === 0) {
+      response.end(JSON.stringify([]));
+      return;
+    }
+
+    try {
       response.end(
-        JSON.stringify({
-          secondsSinceLastRestart,
-          searchCountSinceLastRestart,
-          searchesPerSecond:
-            searchCountSinceLastRestart / secondsSinceLastRestart,
-        }),
+        JSON.stringify(await rankSearchResults(query, searchResults)),
       );
-      return;
+    } catch (error) {
+      console.error("Error ranking search results:", error);
+      response.end(JSON.stringify(searchResults));
     }
+  });
+}
 
-    if (request?.url?.startsWith("/search")) {
-      const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
-
-      const url = `https://${request.headers.host}`;
-      const { searchParams } = new URL(request.url, url);
-
-      const token = searchParams.get("token");
-
-      if (!token || token !== getSearchToken()) {
-        response.statusCode = StatusCode.UNAUTHORIZED;
-        response.end("Unauthorized.");
-        return;
-      }
-
-      const query = searchParams.get("q");
-
-      if (!query) {
-        response.statusCode = StatusCode.BAD_REQUEST;
-        response.end("Missing the query parameter.");
-        return;
-      }
-
-      const limitParam = searchParams.get("limit");
-      const limit =
-        limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
-
-      try {
-        const remoteAddress = (
-          (request.headers["x-forwarded-for"] as string) ||
-          request.socket.remoteAddress ||
-          "unknown"
-        )
-          .split(",")[0]
-          .trim();
-
-        await rateLimiter.consume(remoteAddress);
-      } catch (error) {
-        response.statusCode = StatusCode.TOO_MANY_REQUESTS;
-        response.end("Too many requests.");
-        return;
-      }
-
-      let searchResults: SearchResult[] | null = null;
-
-      if (isRedisCacheEnabled) {
-        const cachedResults = await redisAdapter?.get(query);
-        if (cachedResults) {
-          try {
-            searchResults = JSON.parse(cachedResults);
-          } catch (error) {
-            console.error("Error parsing JSON data from Redis:", error);
-          }
-        }
-      }
-
-      if (!searchResults) {
-        try {
-          const fetchedResults = await fetchSearXNG(query, limit);
-          searchResults = fetchedResults;
-
-          if (isRedisCacheEnabled) {
-            await redisAdapter?.set(
-              query,
-              JSON.stringify(searchResults),
-              REDIS_CACHE_EXPIRATION_TIME_SECONDS,
-            );
-          }
-        } catch (error) {
-          console.error("Error fetching search results:", error);
-          response.statusCode = StatusCode.INTERNAL_SERVER_ERROR;
-          response.end("An error occurred while fetching search results.");
-          return;
-        }
-      }
-
-      searchCountSinceLastRestart++;
-
-      if (!Array.isArray(searchResults) || searchResults.length === 0) {
-        response.end(JSON.stringify([]));
-        return;
-      }
-
-      try {
-        const rankedResults = await rankSearchResults(query, searchResults);
-        response.end(JSON.stringify(rankedResults));
-      } catch (error) {
-        console.error("Error ranking search results:", error);
-        response.end(JSON.stringify(searchResults));
-      }
-
-      return;
-    }
-
+function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
+  server.middlewares.use(async (request, response, next) => {
     if (
-      request?.url === "/" ||
-      request?.url?.startsWith("/?") ||
-      request?.url?.endsWith(".html")
+      request.url === "/" ||
+      request.url.startsWith("/?") ||
+      request.url.endsWith(".html")
     ) {
       response.setHeader("Cache-Control", "no-cache");
     } else {
@@ -288,16 +200,7 @@ function configureServer<T extends ViteDevServer | PreviewServer>(server: T) {
   });
 }
 
-/**
- * Fetches search results from SearXNG.
- * @param query The search query.
- * @param limit (Optional) The maximum number of search results to return.
- * @returns An array of SearchResult objects representing the search results.
- */
-async function fetchSearXNG(
-  query: string,
-  limit?: number,
-): Promise<SearchResult[]> {
+async function fetchSearXNG(query: string, limit?: number) {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
 
@@ -306,9 +209,6 @@ async function fetchSearXNG(
       language: "auto",
       safesearch: "0",
       format: "json",
-      //engine: supportedSearchEngines.join(","),
-      engine: CategoryEngine.RESEARCH,
-      timeout: Millisecond.TEN_SECOND.toString(),
     }).toString();
 
     const response = await fetch(url);
@@ -317,7 +217,7 @@ async function fetchSearXNG(
       results: { url: string; title: string; content: string }[];
     };
 
-    const searchResults: SearchResult[] = [];
+    const searchResults: [title: string, content: string, url: string][] = [];
 
     if (results) {
       if (limit && limit > 0) {
@@ -336,33 +236,45 @@ async function fetchSearXNG(
         if (content === "") continue;
 
         const title = stripHtmlTags(result.title);
+
         const url = result.url;
 
-        searchResults.push({ title, content, url });
+        searchResults.push([title, content, url]);
+
         uniqueUrls.add(url);
       }
     }
 
     return searchResults;
   } catch (e) {
-    console.error("Error fetching search results from SearXNG:", e);
-    throw e;
+    console.error(e);
+    return [];
   }
+}
+
+function getSearchTokenFilePath() {
+  return path.resolve(temporaryDirectory, "minisearch-token");
+}
+
+function regenerateSearchToken() {
+  const newToken = Math.random().toString(36).substring(2);
+  writeFileSync(getSearchTokenFilePath(), newToken);
+}
+
+function getSearchToken() {
+  if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
+  return readFileSync(getSearchTokenFilePath(), "utf8");
 }
 
 let embeddingModelInstance: EmbeddingsModel | undefined;
 
-/**
- * Calculates the similarity scores between a query and a list of documents.
- * @param query The search query.
- * @param documents An array of documents to compare against the query.
- * @returns An array of similarity scores, where each score corresponds to a document in the documents array.
- */
 async function getSimilarityScores(query: string, documents: string[]) {
-  if (!embeddingModelInstance)
+  if (!embeddingModelInstance) {
     embeddingModelInstance = await initModel(embeddingModel);
+  }
 
   const [queryEmbedding] = await embeddingModelInstance.embed([query]);
+
   const documentsEmbeddings = await embeddingModelInstance.embed(documents);
 
   return documentsEmbeddings.map((documentEmbedding) =>
@@ -370,69 +282,29 @@ async function getSimilarityScores(query: string, documents: string[]) {
   );
 }
 
-/**
- * Ranks the search results based on their similarity to the search query.
- * @param query The search query.
- * @param searchResults An array of SearchResult objects representing the search results.
- * @returns An array of SearchResult objects ranked by their similarity to the search query.
- */
-async function rankSearchResults(query: string, searchResults: SearchResult[]) {
-  if (!Array.isArray(searchResults) || searchResults.length === 0) {
-    return searchResults;
-  }
+async function rankSearchResults(
+  query: string,
+  searchResults: [title: string, content: string, url: string][],
+) {
+  const scores = await getSimilarityScores(
+    query.toLocaleLowerCase(),
+    searchResults.map(([title, snippet, url]) =>
+      `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
+    ),
+  );
 
-  try {
-    const scores = await getSimilarityScores(
-      query.toLocaleLowerCase(),
-      searchResults.map(({ title, content, url }) =>
-        `${title}\n${url}\n${content}`.toLocaleLowerCase(),
-      ),
+  const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
+    new Map();
+
+  scores.map((score, index) =>
+    searchResultToScoreMap.set(searchResults[index], score ?? 0),
+  );
+
+  return searchResults
+    .slice()
+    .sort(
+      (a, b) =>
+        (searchResultToScoreMap.get(b) ?? 0) -
+        (searchResultToScoreMap.get(a) ?? 0),
     );
-
-    const searchResultToScoreMap: Map<SearchResult, number> = new Map();
-
-    scores.map((score, index) =>
-      searchResultToScoreMap.set(searchResults[index], score ?? 0),
-    );
-
-    return searchResults
-      .slice()
-      .sort(
-        (a, b) =>
-          (searchResultToScoreMap.get(b) ?? 0) -
-          (searchResultToScoreMap.get(a) ?? 0),
-      );
-  } catch (error) {
-    console.error("Error ranking search results:", error);
-    return searchResults;
-  }
-}
-
-/**
- * Retrieves the file path for the search token.
- * @returns The file path for the search token.
- */
-function getSearchTokenFilePath() {
-  return path.resolve(temporaryDirectory, "atomicsearch-token");
-}
-
-/**
- * Regenerates the search token and saves it to the search token file.
- */
-function regenerateSearchToken() {
-  const newToken = Math.random().toString(36).substring(2);
-  writeFileSync(getSearchTokenFilePath(), newToken);
-}
-
-/**
- * Retrieves the search token from the search token file.
- * If the search token file doesn't exist, it regenerates the search token.
- * @returns The search token.
- */
-function getSearchToken() {
-  if (!existsSync(getSearchTokenFilePath())) {
-    regenerateSearchToken();
-  }
-
-  return readFileSync(getSearchTokenFilePath(), "utf8");
 }
