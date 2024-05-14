@@ -39,7 +39,7 @@ const Description = styled.p`
 
 export const UpgradePlanModal: React.FC = () => {
   const handleButtonClick = () => {
-    window.location.href = `/${SubscriptionPlan.PRICING_PAGE_URL}?from=homepage_modal`;
+    window.location.href = `${SubscriptionPlan.PRICING_PAGE_URL}?from=homepage_modal`;
   };
 
   return (
