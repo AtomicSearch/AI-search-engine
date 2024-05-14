@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "config/vite.config.ts",
+    "vite.config.ts",
     "config/appInfo.config.ts",
     "config/search-engines.config.ts",
     "client/constants/time.constant.ts"
