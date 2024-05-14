@@ -265,7 +265,10 @@ export function SearchForm({
 
   useEffect(() => {
     const keyboardEventHandler = (event: KeyboardEvent) => {
-      if (event.code === "Enter" && !event.shiftKey) {
+      const isEnterKeyPressed = event.code === "Enter";
+      const isEscapeKeyPressed = event.code === "Escape";
+
+      if (isEnterKeyPressed && !event.shiftKey) {
         event.preventDefault();
         if (textAreaRef.current) {
           const userQuery = textAreaRef.current.value.trim();
@@ -274,7 +277,7 @@ export function SearchForm({
           }
         }
       }
-      if (event.code === "Escape") {
+    if (isEscapeKeyPressed) {
         // Reset results if press Esc
         clearSearchResultsAndUrl();
       }
