@@ -13,8 +13,8 @@ import { Redis, RedisOptions } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 
-import { CategoryEngine } from "./config/appInfo.config.config";
-import { Millisecond } from "./client/constants/time.constant;
+import { Millisecond } from "./client/constants/time.constant";
+import { CategoryEngine } from "./config/appInfo.config";
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
 const RATE_LIMITER_OPTIONS = {
