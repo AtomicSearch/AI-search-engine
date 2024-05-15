@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePubSub } from "create-pubsub/react";
 import {
   promptPubSub,
@@ -33,6 +33,11 @@ const LoadingText = styled.span`
   color: #333;
 `;
 
+const SubscriptionBasedComponent = () => {
+  const isUserSubscribed = useSubscriptionStatus();
+  return isUserSubscribed ? <SettingsButton /> : <UpgradePlanModal />;
+};
+
 export const SearchPage = () => {
   const [query, setQuery] = usePubSub(promptPubSub);
   const [response, setResponse] = usePubSub(responsePubSub);
@@ -60,18 +65,18 @@ export const SearchPage = () => {
     }
   }, [location.search, setQuery]);
 
-  useEffect(() => {
-    // Call the search function when query changes
-    async function performSearch() {
-      if (query.length) {
-        setIsLoading(true);
-        const results = await search(query);
-        setSearchResults(results);
-      }
-      setIsLoading(false);
+  const performSearch = useCallback(async () => {
+    if (query.length) {
+      setIsLoading(true);
+      const results = await search(query);
+      setSearchResults(results);
     }
-    performSearch();
+    setIsLoading(false);
   }, [query, setSearchResults]);
+
+  useEffect(() => {
+    performSearch();
+  }, [performSearch]);
 
   const shouldResultsBeShown = searchResults.length > 0 && query.length > 0;
 
@@ -103,7 +108,7 @@ export const SearchPage = () => {
           />
         </div>
       )}
-      {isUserSubscribed ? <SettingsButton /> : <UpgradePlanModal />}
+      <SubscriptionBasedComponent />
       <Toaster />
       <Footer hasEmptyResults={searchResults.length === 0} />
     </>
