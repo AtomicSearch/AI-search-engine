@@ -22,8 +22,11 @@ COPY . .
 
 RUN npm run build
 
-# Expose ports
+# Create directory for SSL certificate and key
+RUN mkdir -p /app/ssl
+
+# Expose HTTP and HTTPS port
 EXPOSE 80
 EXPOSE 443
 
-CMD [ "/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & touch /etc/searxng/limiter.toml & npm start -- --host" ]
+CMD ["/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & touch /etc/searxng/limiter.toml & npm start -- --host"]
