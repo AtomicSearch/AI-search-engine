@@ -106,6 +106,8 @@ export function SearchForm({
     useState(false);
   const queryLimitNotificationRef = useRef<HTMLDivElement>(null);
   const queryWordLimitNotificationRef = useRef<HTMLDivElement>(null);
+  const [queryLimitNotificationId, setQueryLimitNotificationId] = useState<string | null>(null);
+  const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] = useState<string | null>(null);
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -144,7 +146,7 @@ export function SearchForm({
 
   const showQueryLimitNotification = useCallback(() => {
     if (!isQueryLimitNotificationShown) {
-      toast.custom(
+      const toastId = toast.custom(
         <ToastModal ref={queryLimitNotificationRef}>
           <div
             style={{
@@ -190,13 +192,14 @@ export function SearchForm({
           },
         }
       );
+      setQueryLimitNotificationId(toastId);
       setIsQueryLimitNotificationShown(true);
     }
   }, [isQueryLimitNotificationShown]);
 
   const showQueryWordLimitNotification = useCallback(() => {
     if (!isQueryWordLimitNotificationShown) {
-      toast.custom(
+      const toastId = toast.custom(
         <div
           style={{
             background: "#fff",
@@ -219,7 +222,7 @@ export function SearchForm({
               cursor: "pointer",
             }}
             onClick={() => {
-              window.location.href = "/pricing";
+              window.location.href = SubscriptionPlan.PRICING_PAGE_URL;
             }}
           >
             Level Up Now 🚀
@@ -234,6 +237,7 @@ export function SearchForm({
           },
         }
       );
+      setQueryWordLimitNotificationId(toastId);
       setIsQueryWordLimitNotificationShown(true);
     }
   }, [isQueryWordLimitNotificationShown]);
@@ -376,15 +380,19 @@ export function SearchForm({
         queryLimitNotificationRef.current &&
         !queryLimitNotificationRef.current.contains(event.target as Node)
       ) {
-        toast.dismiss(queryLimitNotificationRef.current);
-        setIsQueryLimitNotificationShown(false);
+        if (queryLimitNotificationId) {
+          toast.dismiss(queryLimitNotificationId);
+          setIsQueryLimitNotificationShown(false);
+        }
       }
       if (
         queryWordLimitNotificationRef.current &&
         !queryWordLimitNotificationRef.current.contains(event.target as Node)
       ) {
-        toast.dismiss(queryWordLimitNotificationRef.current);
-        setIsQueryWordLimitNotificationShown(false);
+        if (queryWordLimitNotificationId) {
+          toast.dismiss(queryWordLimitNotificationId);
+          setIsQueryWordLimitNotificationShown(false);
+        }
       }
     };
 
@@ -392,7 +400,7 @@ export function SearchForm({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [queryLimitNotificationId, queryWordLimitNotificationId]);
 
   const isQueryEmpty = query.length === 0;
 
