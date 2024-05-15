@@ -110,7 +110,11 @@ export function SearchResultsList({
               </a>
             ) : (
               <cite
-                onClick={() => !notificationShown && showUpgradeMessage()}
+                onClick={() => {
+                  if (!notificationShown) {
+                    showUpgradeMessage();
+                  }
+                }}
                 style={{
                   fontSize: "small",
                   color: "gray",
