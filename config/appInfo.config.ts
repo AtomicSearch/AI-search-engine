@@ -53,7 +53,7 @@ export enum XInfo {
 
 export enum SubscriptionPlan {
   PRICING_PAGE_URL = "/subscription",
-  PRICE_DISPLAYED = "$2.95/w",
+  PRICE_DISPLAYED = "$2.95/pw",
   PLAN_NAME = "Smarter Plan",
   ACTIVE_STATUS = "active",
   DEACTIVATED_STATUS = "deactivated",

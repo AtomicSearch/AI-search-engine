@@ -77,9 +77,7 @@ function useQueryCount() {
   useEffect(() => {
     localStorage.setItem("queryCount", queryCount.toString());
     const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
-    setIsQueryLimitReached(
-      isQueryReached && !isUserSubscribed,
-    );
+    setIsQueryLimitReached(isQueryReached && !isUserSubscribed);
   }, [queryCount, isUserSubscribed]);
 
   const incrementQueryCount = () => {
@@ -102,6 +100,12 @@ export function SearchForm({
   const [isListening, setIsListening] = useState<boolean>(false);
   const { queryCount, incrementQueryCount, isQueryLimitReached } =
     useQueryCount();
+  const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
+    useState(false);
+  const [isQueryWordLimitNotificationShown, setIsQueryWordLimitNotificationShown] =
+    useState(false);
+  const queryLimitNotificationRef = useRef<HTMLDivElement>(null);
+  const queryWordLimitNotificationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -116,7 +120,7 @@ export function SearchForm({
       updateQuery(queryToEncode);
       navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
     },
-    [updateQuery, navigate],
+    [updateQuery, navigate]
   );
 
   const clearSearchResultsAndUrl = useCallback(() => {
@@ -138,47 +142,119 @@ export function SearchForm({
     startSearching,
   ]);
 
-  const showUpgradeNotification = useCallback(() => {
-    toast.custom(
-      <ToastModal>
-        <p style={{ marginBottom: "8px" }}>
-          Queries to latest AI models are quite costly. You can either come back
-          in 1 hour or subscribe to the unlimited search.
-        </p>
-        <p>
-          Enter your phone number if you wish us to notify you when you can
-          search again for free.
-        </p>
-        <input
-          type="tel"
-          placeholder="Enter your phone number"
-          onChange={(e) => localStorage.setItem("phoneNumber", e.target.value)}
-        />
-        <BlueButton
-          onClick={() =>
-            (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
-          }
+  const showQueryLimitNotification = useCallback(() => {
+    if (!isQueryLimitNotificationShown) {
+      toast.custom(
+        <ToastModal ref={queryLimitNotificationRef}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              maxWidth: "400px", // Adjust the width as needed
+              margin: "0 auto", // Center the modal content
+            }}
+          >
+            <p style={{ marginBottom: "8px" }}>
+              Queries to latest AI models are quite costly. You can either come
+              back in 1 hour or subscribe to the unlimited search.
+            </p>
+            <p>
+              Enter your phone number if you wish us to notify you when you can
+              search again for free.
+            </p>
+            <input
+              type="tel"
+              placeholder="Enter your phone number"
+              onChange={(e) =>
+                localStorage.setItem("phoneNumber", e.target.value)
+              }
+              style={{ marginBottom: "8px", textAlign: "center" }}
+            />
+            <BlueButton
+              onClick={() =>
+                (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
+              }
+            >
+              {messages.levelUp}
+            </BlueButton>
+          </div>
+        </ToastModal>,
+        {
+          duration: Millisecond.FIVE_SECOND,
+          position: "top-center",
+          style: {
+            background: "transparent",
+            boxShadow: "none",
+          },
+        }
+      );
+      setIsQueryLimitNotificationShown(true);
+    }
+  }, [isQueryLimitNotificationShown]);
+
+  const showQueryWordLimitNotification = useCallback(() => {
+    if (!isQueryWordLimitNotificationShown) {
+      toast.custom(
+        <div
+          style={{
+            background: "#fff",
+            color: "#333",
+            padding: "16px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
         >
-          {messages.levelUp}
-        </BlueButton>
-      </ToastModal>,
-      {
-        duration: Millisecond.FIVE_SECOND,
-        position: "top-center",
-        style: {
-          background: "transparent",
-          boxShadow: "none",
-        },
-      },
-    );
-  }, []);
+          <p style={{ marginBottom: "8px" }}>
+            Upgrade your subscription for leveling up queries
+          </p>
+          <button
+            style={{
+              background: "#007bff",
+              color: "#fff",
+              border: "none",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              window.location.href = "/pricing";
+            }}
+          >
+            Level Up Now 🚀
+          </button>
+        </div>,
+        {
+          duration: Millisecond.FIVE_SECOND,
+          position: "top-center",
+          style: {
+            background: "transparent",
+            boxShadow: "none",
+          },
+        }
+      );
+      setIsQueryWordLimitNotificationShown(true);
+    }
+  }, [isQueryWordLimitNotificationShown]);
 
   const handleInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       const userQuery = event.target.value.trim();
 
+      const wordCount = userQuery.split(/\s+/).length;
+      const needToUpgradeSubscription =
+        wordCount > Search.MAXIMUM_FREE_QUERY_WORDS;
+
+      if (needToUpgradeSubscription) {
+        showQueryWordLimitNotification();
+        return;
+      }
+
       if (isQueryLimitReached) {
-        showUpgradeNotification();
+        if (!isQueryLimitNotificationShown) {
+          showQueryLimitNotification();
+        }
         return;
       }
 
@@ -202,12 +278,14 @@ export function SearchForm({
     },
     [
       isQueryLimitReached,
-      showUpgradeNotification,
+      isQueryLimitNotificationShown,
+      showQueryLimitNotification,
+      showQueryWordLimitNotification,
       suggestedQuery,
       debouncedStartSearching,
       incrementQueryCount,
       clearSearchResultsAndUrl,
-    ],
+    ]
   );
 
   const handleVoiceInput = useCallback(() => {
@@ -277,7 +355,8 @@ export function SearchForm({
           }
         }
       }
-    if (isEscapeKeyPressed) {
+
+      if (isEscapeKeyPressed) {
         // Reset results if press Esc
         clearSearchResultsAndUrl();
       }
@@ -290,6 +369,30 @@ export function SearchForm({
       textArea?.removeEventListener("keypress", keyboardEventHandler);
     };
   }, [startSearching, clearSearchResultsAndUrl]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        queryLimitNotificationRef.current &&
+        !queryLimitNotificationRef.current.contains(event.target as Node)
+      ) {
+        toast.dismiss(queryLimitNotificationRef.current);
+        setIsQueryLimitNotificationShown(false);
+      }
+      if (
+        queryWordLimitNotificationRef.current &&
+        !queryWordLimitNotificationRef.current.contains(event.target as Node)
+      ) {
+        toast.dismiss(queryWordLimitNotificationRef.current);
+        setIsQueryWordLimitNotificationShown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const isQueryEmpty = query.length === 0;
 
@@ -346,7 +449,7 @@ export function SearchForm({
 
 function useWindowInnerHeight() {
   const [windowInnerHeight, setWindowInnerHeight] = useState<number>(
-    self.innerHeight,
+    self.innerHeight
   );
 
   useEffect(() => {
