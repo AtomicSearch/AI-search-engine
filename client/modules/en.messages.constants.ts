@@ -8,5 +8,6 @@ export const messages = {
   loadingAiModel: "Loading AI models...",
   researchReturnedNothing: "The query has no results. Try refining it",
   levelUp: "Level Up 🚀",
+  levelUpToday: "Level Up Today 🚀",
   upgrade: "Upgrade Now ⚡️",
 };

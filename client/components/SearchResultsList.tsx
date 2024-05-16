@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
 import toast, { Toast } from "react-hot-toast";
@@ -20,7 +20,9 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
-  const [notificationModalShown, setNotificationModalShown] = useState<boolean>(false);
+  const [notificationModalShown, setNotificationModalShown] =
+    useState<boolean>(false);
+  const toastRef = useRef<Toast | null>(null);
 
   const isUserSubscribed = useSubscriptionStatus();
 
@@ -39,9 +41,11 @@ export function SearchResultsList({
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
 
   const showUpgradeMessage = () => {
-    setNotificationModalShown(true); // Prevent showing the modal multiple times
+    if (toastRef.current) {
+      toast.dismiss(toastRef.current);
+    }
 
-    toast.custom(
+    toastRef.current = toast.custom(
       <ToastModal>
         <p>
           Unlock full URLs and enhanced search results with a premium account.
@@ -61,8 +65,14 @@ export function SearchResultsList({
           background: "transparent",
           boxShadow: "none",
         },
+        onClose: () => {
+          setNotificationModalShown(false);
+          toastRef.current = null;
+        },
       },
     );
+
+    setNotificationModalShown(true);
   };
 
   return (

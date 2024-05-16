@@ -140,7 +140,7 @@ export function SearchForm({
             placeholder="Enter your phone number"
             onChange={(e) =>
               localStorage.setItem(
-                localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                LocalStorageKeys.TEMPORARY_USER_PHONE_NUMBER,
                 e.target.value,
               )
             }
@@ -154,7 +154,7 @@ export function SearchForm({
 
               try {
                 const temporarySavedPhoneNumber = localStorage.getItem(
-                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                  LocalStorageKeys.TEMPORARY_USER_PHONE_NUMBER,
                 );
                 if (temporarySavedPhoneNumber) {
                   const response = await Server.persistPhoneNumber(
@@ -186,10 +186,6 @@ export function SearchForm({
             background: "transparent",
             boxShadow: "none",
           },
-          onClick: () => {
-            toast.dismiss(queryLimitNotificationRef.current!);
-            queryLimitNotificationRef.current = null;
-          },
         },
       );
     }
@@ -214,7 +210,7 @@ export function SearchForm({
               window.location.href = SubscriptionPlan.PRICING_PAGE_URL;
             }}
           >
-            Level Up Now 🚀
+            {messages.levelUpToday}
           </BlueButton>
         </ToastModal>,
         {
@@ -223,10 +219,6 @@ export function SearchForm({
           style: {
             background: "transparent",
             boxShadow: "none",
-          },
-          onClick: () => {
-            toast.dismiss(queryWordLimitNotificationRef.current!);
-            queryWordLimitNotificationRef.current = null;
           },
         },
       );
@@ -366,14 +358,20 @@ export function SearchForm({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const isClickOutsideQueryLimitModal = (
+        notificationRef: React.RefObject<Toast | null>,
+      ) => {
+        const notification = notificationRef.current;
+        const notificationElement = notification?.toastElement;
+        return (
+          notificationElement &&
+          !notificationElement.contains(event.target as Node)
+        );
+      };
+
       if (
         queryLimitNotificationRef.current &&
-        queryLimitNotificationRef.current.props &&
-        queryLimitNotificationRef.current.props.children &&
-        !queryLimitNotificationRef.current.props.children.props.children.some(
-          (child: React.ReactNode) =>
-            child instanceof Node && child.contains(event.target as Node),
-        )
+        isClickOutsideQueryLimitModal(queryLimitNotificationRef)
       ) {
         toast.dismiss(queryLimitNotificationRef.current);
         queryLimitNotificationRef.current = null;
@@ -381,12 +379,7 @@ export function SearchForm({
 
       if (
         queryWordLimitNotificationRef.current &&
-        queryWordLimitNotificationRef.current.props &&
-        queryWordLimitNotificationRef.current.props.children &&
-        !queryWordLimitNotificationRef.current.props.children.props.children.some(
-          (child: React.ReactNode) =>
-            child instanceof Node && child.contains(event.target as Node),
-        )
+        isClickOutsideQueryLimitModal(queryWordLimitNotificationRef)
       ) {
         toast.dismiss(queryWordLimitNotificationRef.current);
         queryWordLimitNotificationRef.current = null;
