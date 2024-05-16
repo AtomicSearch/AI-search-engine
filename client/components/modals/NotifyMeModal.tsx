@@ -8,7 +8,8 @@ import PhoneInput, {
 } from "react-phone-number-input";
 import en from "react-phone-number-input/locale/en.json";
 import "react-phone-number-input/style.css";
-import { AppInfo, I18n } from "../../../config/appInfo.config";
+import { I18n } from "../../../config/appInfo.config";
+import { Server } from "../../modules/persistence";
 
 const Modal = styled.div`
   position: fixed;
@@ -102,14 +103,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const formData = new URLSearchParams();
-      formData.append("phoneNumber", phoneNumber);
-
-      const response = await fetch(AppInfo.NOTIFY_ME_FORM_API_URL, {
-        method: "POST",
-        body: formData.toString(),
-      });
-
+      const response = await Server.persistPhoneNumber(phoneNumber);
       if (!response.ok) {
         throw new Error(
           "We couldn't submit your phone number. Please try again.",

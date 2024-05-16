@@ -19,6 +19,7 @@ import { BlueButton } from "./atoms/Button.atom";
 import { messages } from "../modules/en.messages.constants";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { stripHtmlTags } from "../../utils/strip-tags";
+import { Server } from "../modules/persistence";
 
 interface SearchFormProps {
   query: string;
@@ -176,13 +177,22 @@ export function SearchForm({
               style={{ marginBottom: "8px", textAlign: "center" }}
             />
             <BlueButton
-              onClick={() => {
+              onClick={async () => {
                 setIsQueryLimitNotificationShown(false);
+                const temporarySavedPhoneNumber = localStorage.getItem(
+                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                );
+                if (temporarySavedPhoneNumber) {
+                  const response = await Server.persistPhoneNumber(
+                    temporarySavedPhoneNumber,
+                  );
+                }
                 toast.success("Number registered for upcoming notification", {
                   position: "top-center",
                   duration: Millisecond.THREE_SECOND,
                 });
-              }}>
+              }}
+            >
               {messages.levelUp}
             </BlueButton>
           </ToastModal>
