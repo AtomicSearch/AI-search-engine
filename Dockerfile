@@ -25,6 +25,12 @@ RUN npm run build
 # Create directory for SSL certificate and key
 RUN mkdir -p /app/ssl
 
+# Install Certbot
+RUN apk add --no-cache certbot
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
 # Expose HTTP and HTTPS port
 EXPOSE 80
 EXPOSE 443
