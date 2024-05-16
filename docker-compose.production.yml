@@ -8,9 +8,10 @@ services:
       - PORT=${PORT:-443}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - DOMAIN=your_domain.com
     restart: "always"
     ports:
-      - "8000:80"
+      - "80:80"
       - "443:443"
     build:
       dockerfile: Dockerfile
