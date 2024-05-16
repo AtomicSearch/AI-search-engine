@@ -19,6 +19,14 @@ import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en
 
 //import { supportedSearchEngines } from "./client/config/search-engines";
 
+const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
+const RATE_LIMITER_OPTIONS = {
+  points: 10, // Maximum number of requests allowed within the duration
+  duration: 5, // Duration in seconds
+};
+
+type SearchResult = [title: string, content: string, url: string];
+
 const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
 const redisClient = isCacheEnabled
   ? new Redis({
@@ -133,11 +141,7 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
-  const rateLimiterOptions = {
-    points: 10, // allocate points
-    duration: 5, // per second
-  };
-  const rateLimiter = new RateLimiterMemory(rateLimiterOptions);
+  const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
   server.middlewares.use(async (request, response, next) => {
     if (!request.url.startsWith("/search")) {
@@ -241,7 +245,7 @@ async function fetchSearXNG(
   query: string,
   limit?: number,
   redisClient?: RedisClient,
-): Promise<[title: string, content: string, url: string][]> {
+): Promise<SearchResult[]> {
   try {
     // Check if the search results are cached in Redis (if cache is enabled)
     let cachedResults = isCacheEnabled
@@ -278,7 +282,7 @@ async function fetchSearXNG(
       results: { url: string; title: string; content: string }[];
     };
 
-    const searchResults: [title: string, content: string, url: string][] = [];
+    const searchResults: SearchResult[] = [];
 
     if (results) {
       if (limit && limit > 0) {
@@ -312,7 +316,7 @@ async function fetchSearXNG(
         `searxng:${query}`,
         JSON.stringify(searchResults),
         "EX",
-        3600,
+        REDIS_CACHE_EXPIRATION_TIME_SECONDS,
       );
     }
 
@@ -352,10 +356,7 @@ async function getSimilarityScores(query: string, documents: string[]) {
   );
 }
 
-async function rankSearchResults(
-  query: string,
-  searchResults: [title: string, content: string, url: string][],
-) {
+async function rankSearchResults(query: string, searchResults: SearchResult[]) {
   if (!Array.isArray(searchResults) || searchResults.length === 0) {
     return searchResults; // Return the original search results if it's not an array or if it's empty
   }
