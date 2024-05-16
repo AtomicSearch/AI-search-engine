@@ -5,4 +5,6 @@ export enum Millisecond {
   FOUR_SECOND = 4000,
   FIVE_SECOND = 5000,
   TEN_SECOND = 10000,
+  FIFTEEN_SECOND = 15000,
+  TWENTY_SECOND = 20000,
 }
