@@ -279,7 +279,7 @@ async function fetchSearXNG(
       safesearch: "0",
       format: "json",
       //engine: supportedEngines,
-      engine: CategoryEngine.RESEARCH,
+      engine: CategoryEngine.EVERYDAY,
       timeout: Millisecond.TEN_SECOND.toString(),
     }).toString();
 
