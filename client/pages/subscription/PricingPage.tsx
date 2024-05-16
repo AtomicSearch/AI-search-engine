@@ -201,7 +201,7 @@ const DartIcon = styled(FaRegDotCircle)`
 `;
 
 const CheckCircleIcon = styled(FaRegCheckCircle)`
-  font-size: 30px;
+  font-size: 1.9rem;
 `;
 
 const BenefitsList = styled.ul`
