@@ -184,14 +184,30 @@ export function SearchForm({
                   localStorage.TEMPORARY_USER_PHONE_NUMBER,
                 );
                 if (temporarySavedPhoneNumber) {
-                  const response = await Server.persistPhoneNumber(
-                    temporarySavedPhoneNumber,
-                  );
+                  try {
+                    const response = await Server.persistPhoneNumber(
+                      temporarySavedPhoneNumber,
+                    );
+                    if (response.ok) {
+                      return toast.success(
+                        "Number registered for upcoming notification",
+                        {
+                          position: "top-center",
+                          duration: Millisecond.THREE_SECOND,
+                        },
+                      );
+                    }
+                    throw new Error("Something happened. Please try again.");
+                  } catch (e) {
+                    toast.error(
+                      "Something went wrong. Please try again later.",
+                      {
+                        position: "top-right",
+                        duration: Millisecond.THREE_SECOND,
+                      },
+                    );
+                  }
                 }
-                toast.success("Number registered for upcoming notification", {
-                  position: "top-center",
-                  duration: Millisecond.THREE_SECOND,
-                });
               }}
             >
               {messages.levelUp}
@@ -243,11 +259,12 @@ export function SearchForm({
 
   const handleInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const isUserSubscribed = useSubscriptionStatus();
       const userQuery = event.target.value.trim();
 
       const wordCount = userQuery.split(/\s+/).length;
       const needToUpgradeSubscription =
-        wordCount > Search.MAXIMUM_FREE_QUERY_WORDS;
+        !isUserSubscribed && wordCount > Search.MAXIMUM_FREE_QUERY_WORDS;
 
       if (needToUpgradeSubscription) {
         showQueryWordLimitNotification();

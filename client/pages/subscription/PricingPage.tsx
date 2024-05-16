@@ -283,7 +283,7 @@ export const PricingPage: React.FC = () => {
   const handleSubmitError = () => {
     toast.error("Oops! Something went wrong. Please try again later.", {
       position: "top-right",
-      duration: Millisecond.FIVE_SECOND,
+      duration: Millisecond.THREE_SECOND,
     });
   };
 

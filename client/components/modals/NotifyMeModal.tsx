@@ -109,9 +109,10 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
           "We couldn't submit your phone number. Please try again.",
         );
       }
+      // clear phone number after successful submission
+      setPhoneNumber("" as Value);
 
       onSubmitSuccess();
-      setPhoneNumber("" as Value); // clear phone number after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
       onSubmitError();
