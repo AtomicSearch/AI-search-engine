@@ -20,7 +20,7 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
-  const [notificationShown, setNotificationShown] = useState<boolean>(false);
+  const [notificationModalShown, setNotificationModalShown] = useState<boolean>(false);
 
   const isUserSubscribed = useSubscriptionStatus();
 
@@ -39,7 +39,7 @@ export function SearchResultsList({
   const shouldDisplayDomainBelowTitle = windowWidth < 720;
 
   const showUpgradeMessage = () => {
-    setNotificationShown(true); // Prevent showing the modal multiple times
+    setNotificationModalShown(true); // Prevent showing the modal multiple times
 
     toast.custom(
       <ToastModal>
@@ -111,7 +111,7 @@ export function SearchResultsList({
             ) : (
               <cite
                 onClick={() => {
-                  if (!notificationShown) {
+                  if (!notificationModalShown) {
                     showUpgradeMessage();
                   }
                 }}
