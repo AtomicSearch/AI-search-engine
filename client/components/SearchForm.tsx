@@ -17,6 +17,7 @@ import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { messages } from "../modules/en.messages.constants";
+import { useWindowInnerHeight } from "../hooks/useWindowInnerHeight";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { useQueryCount } from "../hooks/useQueryCount";
 import { stripHtmlTags } from "../../utils/strip-tags";
@@ -444,18 +445,4 @@ export function SearchForm({
       </div>
     </>
   );
-}
-
-function useWindowInnerHeight() {
-  const [windowInnerHeight, setWindowInnerHeight] = useState<number>(
-    self.innerHeight,
-  );
-
-  useEffect(() => {
-    const handleResize = () => setWindowInnerHeight(self.innerHeight);
-    self.addEventListener("resize", handleResize);
-    return () => self.removeEventListener("resize", handleResize);
-  }, []);
-
-  return windowInnerHeight;
 }
