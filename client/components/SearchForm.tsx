@@ -4,7 +4,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import confetti from "canvas-confetti";
 import { FaMicrophone } from "react-icons/fa";
 import styled from "styled-components";
-import toast from "react-hot-toast";
+import toast, { Toast } from "react-hot-toast";
 
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
 import { debounce } from "../../utils/debounce";
@@ -78,19 +78,8 @@ export function SearchForm({
   const [isListening, setIsListening] = useState<boolean>(false);
   const { queryCount, incrementQueryCount, isQueryLimitReached } =
     useQueryCount();
-  const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
-    useState(false);
-  const [
-    isQueryWordLimitNotificationShown,
-    setIsQueryWordLimitNotificationShown,
-  ] = useState(false);
-  const queryLimitNotificationRef = useRef<HTMLDivElement>(null);
-  const queryWordLimitNotificationRef = useRef<HTMLDivElement>(null);
-  const [queryLimitNotificationId, setQueryLimitNotificationId] = useState<
-    string | null
-  >(null);
-  const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] =
-    useState<string | null>(null);
+  const queryLimitNotificationRef = useRef<Toast | null>(null);
+  const queryWordLimitNotificationRef = useRef<Toast | null>(null);
 
   const isUserSubscribed = useSubscriptionStatus();
 
@@ -130,64 +119,65 @@ export function SearchForm({
   ]);
 
   const showQueryLimitNotification = useCallback(() => {
-    if (!isQueryLimitNotificationShown) {
-      const toastId = toast.custom(
-        <ToastModal ref={queryLimitNotificationRef}>
-          <ToastModal>
-            <p style={{ marginBottom: "8px" }}>
-              Queries to latest AI models are quite costly. You can either come
-              back in 1 hour or subscribe to the unlimited search.
-            </p>
-            <p>
-              Enter your phone number if you wish us to notify you when you can
-              search again for free.
-            </p>
-            <input
-              type="tel"
-              placeholder="Enter your phone number"
-              onChange={(e) =>
-                localStorage.setItem(
-                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
-                  e.target.value,
-                )
-              }
-              required
-              style={{ marginBottom: "8px", textAlign: "center" }}
-            />
-            <BlueButton
-              onClick={async () => {
-                setIsQueryLimitNotificationShown(false);
+    if (queryWordLimitNotificationRef.current) {
+      toast.dismiss(queryWordLimitNotificationRef.current);
+      queryWordLimitNotificationRef.current = null;
+    }
 
-                try {
-                  const temporarySavedPhoneNumber = localStorage.getItem(
-                    localStorage.TEMPORARY_USER_PHONE_NUMBER,
+    if (!queryLimitNotificationRef.current) {
+      queryLimitNotificationRef.current = toast.custom(
+        <ToastModal>
+          <p style={{ marginBottom: "8px" }}>
+            Queries to latest AI models are quite costly. You can either come
+            back in 1 hour or subscribe to the unlimited search.
+          </p>
+          <p>
+            Enter your phone number if you wish us to notify you when you can
+            search again for free.
+          </p>
+          <input
+            type="tel"
+            placeholder="Enter your phone number"
+            onChange={(e) =>
+              localStorage.setItem(
+                localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                e.target.value,
+              )
+            }
+            required
+            style={{ marginBottom: "8px", textAlign: "center" }}
+          />
+          <BlueButton
+            onClick={async () => {
+              toast.dismiss(queryLimitNotificationRef.current!);
+              queryLimitNotificationRef.current = null;
+
+              try {
+                const temporarySavedPhoneNumber = localStorage.getItem(
+                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                );
+                if (temporarySavedPhoneNumber) {
+                  const response = await Server.persistPhoneNumber(
+                    temporarySavedPhoneNumber,
                   );
-                  if (temporarySavedPhoneNumber) {
-                    const response = await Server.persistPhoneNumber(
-                      temporarySavedPhoneNumber,
-                    );
-                    if (response.ok) {
-                      return toast.success(
-                        "Number successfully registered",
-                        {
-                          position: "top-center",
-                          duration: Millisecond.THREE_SECOND,
-                        },
-                      );
-                    }
+                  if (response.ok) {
+                    return toast.success("Number successfully registered", {
+                      position: "top-center",
+                      duration: Millisecond.THREE_SECOND,
+                    });
                   }
-                  throw new Error("Something happened. Please try again.");
-                } catch (e) {
-                  toast.error("Something went wrong. Please try again later.", {
-                    position: "top-right",
-                    duration: Millisecond.THREE_SECOND,
-                  });
                 }
-              }}
-            >
-              {messages.levelUp}
-            </BlueButton>
-          </ToastModal>
+                throw new Error("Something happened. Please try again.");
+              } catch (e) {
+                toast.error("Something went wrong. Please try again later.", {
+                  position: "top-right",
+                  duration: Millisecond.THREE_SECOND,
+                });
+              }
+            }}
+          >
+            {messages.levelUp}
+          </BlueButton>
         </ToastModal>,
         {
           duration: Infinity,
@@ -196,22 +186,31 @@ export function SearchForm({
             background: "transparent",
             boxShadow: "none",
           },
+          onClick: () => {
+            toast.dismiss(queryLimitNotificationRef.current!);
+            queryLimitNotificationRef.current = null;
+          },
         },
       );
-      setQueryLimitNotificationId(toastId);
-      setIsQueryLimitNotificationShown(true);
     }
-  }, [isQueryLimitNotificationShown]);
+  }, []);
 
   const showQueryWordLimitNotification = useCallback(() => {
-    if (!isQueryWordLimitNotificationShown) {
-      const toastId = toast.custom(
+    if (queryLimitNotificationRef.current) {
+      toast.dismiss(queryLimitNotificationRef.current);
+      queryLimitNotificationRef.current = null;
+    }
+
+    if (!queryWordLimitNotificationRef.current) {
+      queryWordLimitNotificationRef.current = toast.custom(
         <ToastModal>
           <p style={{ marginBottom: "8px" }}>
             Upgrade your subscription for leveling up queries.
           </p>
           <BlueButton
             onClick={() => {
+              toast.dismiss(queryWordLimitNotificationRef.current!);
+              queryWordLimitNotificationRef.current = null;
               window.location.href = SubscriptionPlan.PRICING_PAGE_URL;
             }}
           >
@@ -225,12 +224,14 @@ export function SearchForm({
             background: "transparent",
             boxShadow: "none",
           },
+          onClick: () => {
+            toast.dismiss(queryWordLimitNotificationRef.current!);
+            queryWordLimitNotificationRef.current = null;
+          },
         },
       );
-      setQueryWordLimitNotificationId(toastId);
-      setIsQueryWordLimitNotificationShown(true);
     }
-  }, [isQueryWordLimitNotificationShown]);
+  }, []);
 
   const handleInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -246,9 +247,7 @@ export function SearchForm({
       }
 
       if (isQueryLimitReached) {
-        if (!isQueryLimitNotificationShown) {
-          showQueryLimitNotification();
-        }
+        showQueryLimitNotification();
         return;
       }
 
@@ -274,7 +273,6 @@ export function SearchForm({
     },
     [
       isQueryLimitReached,
-      isQueryLimitNotificationShown,
       showQueryLimitNotification,
       showQueryWordLimitNotification,
       suggestedQuery,
@@ -370,21 +368,28 @@ export function SearchForm({
     const handleClickOutside = (event: MouseEvent) => {
       if (
         queryLimitNotificationRef.current &&
-        !queryLimitNotificationRef.current.contains(event.target as Node)
+        queryLimitNotificationRef.current.props &&
+        queryLimitNotificationRef.current.props.children &&
+        !queryLimitNotificationRef.current.props.children.props.children.some(
+          (child: React.ReactNode) =>
+            child instanceof Node && child.contains(event.target as Node),
+        )
       ) {
-        if (queryLimitNotificationId) {
-          toast.dismiss(queryLimitNotificationId);
-          setIsQueryLimitNotificationShown(false);
-        }
+        toast.dismiss(queryLimitNotificationRef.current);
+        queryLimitNotificationRef.current = null;
       }
+
       if (
         queryWordLimitNotificationRef.current &&
-        !queryWordLimitNotificationRef.current.contains(event.target as Node)
+        queryWordLimitNotificationRef.current.props &&
+        queryWordLimitNotificationRef.current.props.children &&
+        !queryWordLimitNotificationRef.current.props.children.props.children.some(
+          (child: React.ReactNode) =>
+            child instanceof Node && child.contains(event.target as Node),
+        )
       ) {
-        if (queryWordLimitNotificationId) {
-          toast.dismiss(queryWordLimitNotificationId);
-          setIsQueryWordLimitNotificationShown(false);
-        }
+        toast.dismiss(queryWordLimitNotificationRef.current);
+        queryWordLimitNotificationRef.current = null;
       }
     };
 
@@ -392,7 +397,7 @@ export function SearchForm({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [queryLimitNotificationId, queryWordLimitNotificationId]);
+  }, []);
 
   const isQueryEmpty = query.length === 0;
 
