@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const ToastModal = styled.div`
+  text-align: center;
   background: #fff;
   font-size: 14px;
   color: #333;
