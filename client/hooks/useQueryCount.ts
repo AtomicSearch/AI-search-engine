@@ -7,10 +7,12 @@ export const useQueryCount = () => {
   const [queryCount, setQueryCount] = useState<number>(0);
   const [isQueryLimitReached, setIsQueryLimitReached] =
     useState<boolean>(false);
+
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
     const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
+
     if (storedQueryCount) {
       setQueryCount(parseInt(storedQueryCount, 10));
     }
@@ -18,9 +20,8 @@ export const useQueryCount = () => {
 
   useEffect(() => {
     localStorage.setItem(LocalStorageKeys.QUERY_COUNT, queryCount.toString());
-    setIsQueryLimitReached(
-      queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR && !isUserSubscribed,
-    );
+    const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
+    setIsQueryLimitReached(isQueryReached && !isUserSubscribed);
   }, [queryCount, isUserSubscribed]);
 
   const incrementQueryCount = () => {

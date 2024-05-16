@@ -18,6 +18,7 @@ import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { messages } from "../modules/en.messages.constants";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { useQueryCount } from "../hooks/useQueryCount";
 import { stripHtmlTags } from "../../utils/strip-tags";
 import { Server } from "../modules/persistence";
 
@@ -62,33 +63,6 @@ const MicrophoneButton = styled.button`
     transform: translateY(-40%); /* Decrease movement on click */
   }
 `;
-
-function useQueryCount() {
-  const isUserSubscribed = useSubscriptionStatus();
-  const [queryCount, setQueryCount] = useState<number>(0);
-  const [isQueryLimitReached, setIsQueryLimitReached] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
-
-    if (storedQueryCount) {
-      setQueryCount(parseInt(storedQueryCount, 10));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(LocalStorageKeys.QUERY_COUNT, queryCount.toString());
-    const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
-    setIsQueryLimitReached(isQueryReached && !isUserSubscribed);
-  }, [queryCount, isUserSubscribed]);
-
-  const incrementQueryCount = () => {
-    setQueryCount((prevCount) => prevCount + 1);
-  };
-
-  return { queryCount, incrementQueryCount, isQueryLimitReached };
-}
 
 export function SearchForm({
   query,
