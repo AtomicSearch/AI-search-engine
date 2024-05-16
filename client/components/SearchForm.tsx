@@ -64,10 +64,10 @@ const MicrophoneButton = styled.button`
 `;
 
 function useQueryCount() {
+  const isUserSubscribed = useSubscriptionStatus();
   const [queryCount, setQueryCount] = useState<number>(0);
   const [isQueryLimitReached, setIsQueryLimitReached] =
     useState<boolean>(false);
-  const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
     const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
