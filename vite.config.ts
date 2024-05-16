@@ -1,11 +1,8 @@
-import { Millisecond } from "./client/constants/time.constant";
-import { CategoryEngine } from "./config/appInfo.config";
 import path from "node:path";
 import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
 
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
-
 import { RateLimiterMemory } from "rate-limiter-flexible";
 import {
   initModel,
@@ -17,6 +14,11 @@ import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import { StatusCodes } from "http-status-codes";
+
+import { Millisecond } from "./client/constants/time.constant";
+import { CategoryEngine } from "./config/appInfo.config";
+
+//import { supportedSearchEngines } from "./client/config/search-engines"
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
 const RATE_LIMITER_OPTIONS = {
