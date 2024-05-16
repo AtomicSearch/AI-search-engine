@@ -169,7 +169,7 @@ export function SearchForm({
               placeholder="Enter your phone number"
               onChange={(e) =>
                 localStorage.setItem(
-                  localStorage.TEMPORARY_USER_HONE_NUMBER,
+                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
                   e.target.value,
                 )
               }
