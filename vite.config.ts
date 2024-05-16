@@ -279,7 +279,7 @@ async function fetchSearXNG(
       format: "json",
       //engine: supportedEngines,
       engine: CategoryEngine.RESEARCH,
-      timeout: Millisecond.TEN_SECOND.toString(), // Set a timeout of 10 seconds
+      timeout: Millisecond.TEN_SECOND.toString(),
     }).toString();
 
     const response = await fetch(url);
