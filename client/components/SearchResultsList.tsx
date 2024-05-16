@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Markdown from "markdown-to-jsx";
-import toast from "react-hot-toast";
+import toast, { Toast } from "react-hot-toast";
 
 import { SearchResults } from "../modules/search";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";

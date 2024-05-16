@@ -148,16 +148,7 @@ export function SearchForm({
     if (!isQueryLimitNotificationShown) {
       const toastId = toast.custom(
         <ToastModal ref={queryLimitNotificationRef}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              maxWidth: "400px", // Adjust the width as needed
-              margin: "0 auto", // Center the modal content
-            }}
-          >
+          <ToastModal>
             <p style={{ marginBottom: "8px" }}>
               Queries to latest AI models are quite costly. You can either come
               back in 1 hour or subscribe to the unlimited search.
@@ -181,7 +172,7 @@ export function SearchForm({
             >
               {messages.levelUp}
             </BlueButton>
-          </div>
+          </ToastModal>
         </ToastModal>,
         {
           duration: Millisecond.FIVE_SECOND,
@@ -200,17 +191,9 @@ export function SearchForm({
   const showQueryWordLimitNotification = useCallback(() => {
     if (!isQueryWordLimitNotificationShown) {
       const toastId = toast.custom(
-        <div
-          style={{
-            background: "#fff",
-            color: "#333",
-            padding: "16px",
-            borderRadius: "8px",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-          }}
-        >
+        <ToastModal>
           <p style={{ marginBottom: "8px" }}>
-            Upgrade your subscription for leveling up queries
+            Upgrade your subscription for leveling up queries.
           </p>
           <button
             style={{
@@ -227,7 +210,7 @@ export function SearchForm({
           >
             Level Up Now 🚀
           </button>
-        </div>,
+        </ToastModal>,
         {
           duration: Millisecond.FIVE_SECOND,
           position: "top-center",
