@@ -174,6 +174,7 @@ export function SearchForm({
                   e.target.value,
                 )
               }
+              required
               style={{ marginBottom: "8px", textAlign: "center" }}
             />
             <BlueButton
