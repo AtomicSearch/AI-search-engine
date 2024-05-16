@@ -70,6 +70,7 @@ function useQueryCount() {
 
   useEffect(() => {
     const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
+
     if (storedQueryCount) {
       setQueryCount(parseInt(storedQueryCount, 10));
     }
@@ -167,15 +168,21 @@ export function SearchForm({
               type="tel"
               placeholder="Enter your phone number"
               onChange={(e) =>
-                localStorage.setItem(localStorage.TEMPORARY_USER_HONE_NUMBER, e.target.value)
+                localStorage.setItem(
+                  localStorage.TEMPORARY_USER_HONE_NUMBER,
+                  e.target.value,
+                )
               }
               style={{ marginBottom: "8px", textAlign: "center" }}
             />
             <BlueButton
-              onClick={() =>
-                (window.location.href = SubscriptionPlan.PRICING_PAGE_URL)
-              }
-            >
+              onClick={() => {
+                setIsQueryLimitNotificationShown(false);
+                toast.success("Number registered for upcoming notification", {
+                  position: "top-center",
+                  duration: Millisecond.THREE_SECOND,
+                });
+              }}>
               {messages.levelUp}
             </BlueButton>
           </ToastModal>
