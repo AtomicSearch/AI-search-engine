@@ -241,6 +241,12 @@ function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
   });
 }
 
+/**
+ * Fetches search results from SearXNG.
+ * @param query The search query.
+ * @param limit (Optional) The maximum number of search results to return.
+ * @returns An array of SearchResult objects representing the search results.
+ */
 async function fetchSearXNG(
   query: string,
   limit?: number,
@@ -326,16 +332,27 @@ async function fetchSearXNG(
     return [];
   }
 }
-
+/**
+ * Retrieves the file path for the search token.
+ * @returns The file path for the search token.
+ */
 function getSearchTokenFilePath() {
   return path.resolve(temporaryDirectory, "atomicsearch-token");
 }
 
+/**
+ * Regenerates the search token and saves it to the search token file.
+ */
 function regenerateSearchToken() {
   const newToken = Math.random().toString(36).substring(2);
   writeFileSync(getSearchTokenFilePath(), newToken);
 }
 
+/**
+ * Retrieves the search token from the search token file.
+ * If the search token file doesn't exist, it regenerates the search token.
+ * @returns The search token.
+ */
 function getSearchToken() {
   if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
   return readFileSync(getSearchTokenFilePath(), "utf8");
@@ -343,6 +360,12 @@ function getSearchToken() {
 
 let embeddingModelInstance: EmbeddingsModel | undefined;
 
+/**
+ * Calculates the similarity scores between a query and a list of documents.
+ * @param query The search query.
+ * @param documents An array of documents to compare against the query.
+ * @returns An array of similarity scores, where each score corresponds to a document in the documents array.
+ */
 async function getSimilarityScores(query: string, documents: string[]) {
   if (!embeddingModelInstance)
     embeddingModelInstance = await initModel(embeddingModel);
@@ -356,6 +379,12 @@ async function getSimilarityScores(query: string, documents: string[]) {
   );
 }
 
+/**
+ * Ranks the search results based on their similarity to the search query.
+ * @param query The search query.
+ * @param searchResults An array of SearchResult objects representing the search results.
+ * @returns An array of SearchResult objects ranked by their similarity to the search query.
+ */
 async function rankSearchResults(query: string, searchResults: SearchResult[]) {
   if (!Array.isArray(searchResults) || searchResults.length === 0) {
     return searchResults; // Return the original search results if it's not an array or if it's empty
