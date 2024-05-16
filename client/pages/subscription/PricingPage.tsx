@@ -6,7 +6,7 @@ import { Toaster } from "react-hot-toast";
 import "react-phone-number-input/style.css";
 import {
   FaSearch,
-  FaClock,
+  FaRegClock,
   FaShieldAlt,
   FaSearchengin,
   FaRegLightbulb,
@@ -14,6 +14,7 @@ import {
   FaLockOpen,
   FaDatabase,
   FaRegDotCircle,
+  FaRegCheckCircle,
 } from "react-icons/fa";
 import {
   TbInfinity,
@@ -68,7 +69,7 @@ const PricingSubHeader = styled.h2`
 `;
 
 const LockOpenIcon = styled(FaLockOpen)`
-  font-size: 24px;
+  font-size: 26px;
   margin-right: 8px;
 `;
 
@@ -199,6 +200,10 @@ const DartIcon = styled(FaRegDotCircle)`
   font-size: 24px;
 `;
 
+const CheckCircleIcon = styled(FaRegCheckCircle)`
+  font-size: 30px;
+`;
+
 const BenefitsList = styled.ul`
   list-style-type: none;
   padding: 0;
@@ -229,7 +234,7 @@ const SearchIcon = styled(FaSearch)`
   font-size: 24px;
 `;
 
-const ClockIcon = styled(FaClock)`
+const ClockIcon = styled(FaRegClock)`
   font-size: 24px;
 `;
 
@@ -285,7 +290,7 @@ export const PricingPage: React.FC = () => {
   return (
     <>
       <PricingContainer>
-        <PricingHeader>Goodbye doubts. Hello certainties.</PricingHeader>
+        <PricingHeader>Goodbye doubts. Hello certainties <CheckCircleIcon /></PricingHeader>
         <PricingSubHeader>
           <LockOpenIcon /> Unlock Full Knowledge with Smarter Plan
         </PricingSubHeader>
