@@ -16,8 +16,7 @@ import temporaryDirectory from "temp-dir";
 import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
-
-//import { supportedSearchEngines } from "./client/config/search-engines";
+import { StatusCodes } from "http-status-codes";
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
 const RATE_LIMITER_OPTIONS = {
@@ -154,7 +153,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     const token = searchParams.get("token");
 
     if (!token || token !== getSearchToken()) {
-      response.statusCode = 401;
+      response.statusCode = StatusCodes.UNAUTHORIZED;
       response.end("Unauthorized.");
       return;
     }
@@ -162,7 +161,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     const query = searchParams.get("q");
 
     if (!query) {
-      response.statusCode = 400;
+      response.statusCode = StatusCodes.BAD_REQUEST;
       response.end("Missing the query parameter.");
       return;
     }
@@ -183,7 +182,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 
       await rateLimiter.consume(remoteAddress);
     } catch (error) {
-      response.statusCode = 429;
+      response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
       response.end("Too many requests.");
       return;
     }
@@ -336,6 +335,7 @@ async function fetchSearXNG(
     return [];
   }
 }
+
 /**
  * Retrieves the file path for the search token.
  * @returns The file path for the search token.
