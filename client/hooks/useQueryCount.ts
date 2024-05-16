@@ -1,3 +1,4 @@
+import { LocalStorageKeys } from "./../constants/localStorages.constant";
 import { useEffect, useState } from "react";
 import { useSubscriptionStatus } from "./useSubscriptionStatus";
 import { Search } from "../../config/appInfo.config";
@@ -9,14 +10,14 @@ export const useQueryCount = () => {
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
-    const storedQueryCount = localStorage.getItem("queryCount");
+    const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
     if (storedQueryCount) {
       setQueryCount(parseInt(storedQueryCount, 10));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("queryCount", queryCount.toString());
+    localStorage.setItem(LocalStorageKeys.QUERY_COUNT, queryCount.toString());
     setIsQueryLimitReached(
       queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR && !isUserSubscribed,
     );

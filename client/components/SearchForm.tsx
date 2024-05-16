@@ -69,14 +69,14 @@ function useQueryCount() {
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
-    const storedQueryCount = localStorage.getItem("queryCount");
+    const storedQueryCount = localStorage.getItem(LocalStorageKeys.QUERY_COUNT);
     if (storedQueryCount) {
       setQueryCount(parseInt(storedQueryCount, 10));
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("queryCount", queryCount.toString());
+    localStorage.setItem(LocalStorageKeys.QUERY_COUNT, queryCount.toString());
     const isQueryReached = queryCount >= Search.MAXIMUM_FREE_QUERIES_PER_HOUR;
     setIsQueryLimitReached(isQueryReached && !isUserSubscribed);
   }, [queryCount, isUserSubscribed]);
