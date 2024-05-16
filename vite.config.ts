@@ -298,13 +298,17 @@ async function fetchSearXNG(
       const uniqueUrls = new Set<string>();
 
       for (const result of results) {
-        if (!result.content || uniqueUrls.has(result.url)) continue;
+        if (!result.content || uniqueUrls.has(result.url)) {
+          continue;
+        }
 
         const stripHtmlTags = (str: string) => str.replace(/<[^>]*>?/gm, "");
 
         const content = stripHtmlTags(result.content).trim();
 
-        if (content === "") continue;
+        if (content === "") {
+          continue;
+        }
 
         const title = stripHtmlTags(result.title);
 
