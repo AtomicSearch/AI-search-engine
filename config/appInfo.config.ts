@@ -15,7 +15,7 @@ export enum Search {
 
 // SearXNG engines
 export enum CategoryEngine {
-  EVERYDAY = "google,bing,youtube,duckduckgo", // generic everyday queries
+  EVERYDAY = "google,bing,youtube,duckduckgo,wikipedia", // generic everyday queries
   RESEARCH = "arxiv,google scholar,semantic scholar,pubmed,openairedatasets,wikipedia", // AI and Machine Learning Research
 }
 
