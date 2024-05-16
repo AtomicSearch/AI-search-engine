@@ -168,7 +168,7 @@ export function SearchForm({
                     );
                     if (response.ok) {
                       return toast.success(
-                        "Number registered for upcoming notification",
+                        "Number successfully registered",
                         {
                           position: "top-center",
                           duration: Millisecond.THREE_SECOND,
