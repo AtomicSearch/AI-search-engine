@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { FaSearch, FaSearchengin } from "react-icons/fa";
 
-import { random } from "../../utils/random";
+import { random } from "../../../utils/random";
 import { taglines } from "../../../config/taglines.config";
 
 const TaglineContainer = styled.div`

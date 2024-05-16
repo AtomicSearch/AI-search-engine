@@ -1,3 +1,4 @@
+import { stripHtmlTags } from "./../../utils/strip-tags";
 import { isWebGPUAvailable } from "./webGpu";
 import {
   updatePrompt,
@@ -21,9 +22,12 @@ import { Millisecond } from "../constants/time.constant";
 
 export namespace Engine {
   export async function prepareTextGeneration() {
-    if (query === null) return;
+    if (query === null) {
+      // TODO If nothing returned - Look automatically with different keywords for the user
+      return;
+    }
 
-    document.title = query;
+    document.title = stripHtmlTags(query);
 
     updatePrompt(query);
 

@@ -17,6 +17,7 @@ import { StatusCodes } from "http-status-codes";
 
 import { Millisecond } from "./client/constants/time.constant";
 import { CategoryEngine } from "./config/appInfo.config";
+import { stripHtmlTags } from "./utils/strip-tags";
 
 //import { supportedSearchEngines } from "./client/config/search-engines"
 
@@ -302,8 +303,6 @@ async function fetchSearXNG(
         if (!result.content || uniqueUrls.has(result.url)) {
           continue;
         }
-
-        const stripHtmlTags = (str: string) => str.replace(/<[^>]*>?/gm, "");
 
         const content = stripHtmlTags(result.content).trim();
 

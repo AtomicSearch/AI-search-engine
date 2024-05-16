@@ -7,7 +7,7 @@ import styled from "styled-components";
 import toast from "react-hot-toast";
 
 import { getRandomQuerySuggestion } from "../modules/querySuggestions";
-import { debounce } from "../utils/debounce";
+import { debounce } from "../../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../../config/confettiOptions.config";
 import { Header } from "./Header";
@@ -18,6 +18,7 @@ import { ToastModal } from "./atoms/ToastModel.atom";
 import { BlueButton } from "./atoms/Button.atom";
 import { messages } from "../modules/en.messages.constants";
 import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
+import { stripHtmlTags } from "../../utils/strip-tags";
 
 interface SearchFormProps {
   query: string;
@@ -102,12 +103,17 @@ export function SearchForm({
     useQueryCount();
   const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
     useState(false);
-  const [isQueryWordLimitNotificationShown, setIsQueryWordLimitNotificationShown] =
-    useState(false);
+  const [
+    isQueryWordLimitNotificationShown,
+    setIsQueryWordLimitNotificationShown,
+  ] = useState(false);
   const queryLimitNotificationRef = useRef<HTMLDivElement>(null);
   const queryWordLimitNotificationRef = useRef<HTMLDivElement>(null);
-  const [queryLimitNotificationId, setQueryLimitNotificationId] = useState<string | null>(null);
-  const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] = useState<string | null>(null);
+  const [queryLimitNotificationId, setQueryLimitNotificationId] = useState<
+    string | null
+  >(null);
+  const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] =
+    useState<string | null>(null);
 
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
@@ -122,7 +128,7 @@ export function SearchForm({
       updateQuery(queryToEncode);
       navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
     },
-    [updateQuery, navigate]
+    [updateQuery, navigate],
   );
 
   const clearSearchResultsAndUrl = useCallback(() => {
@@ -161,7 +167,7 @@ export function SearchForm({
               type="tel"
               placeholder="Enter your phone number"
               onChange={(e) =>
-                localStorage.setItem("phoneNumber", e.target.value)
+                localStorage.setItem(localStorage.TEMPORARY_USER_HONE_NUMBER, e.target.value)
               }
               style={{ marginBottom: "8px", textAlign: "center" }}
             />
@@ -175,13 +181,13 @@ export function SearchForm({
           </ToastModal>
         </ToastModal>,
         {
-          duration: Millisecond.FIVE_SECOND,
+          duration: Infinity,
           position: "top-center",
           style: {
             background: "transparent",
             boxShadow: "none",
           },
-        }
+        },
       );
       setQueryLimitNotificationId(toastId);
       setIsQueryLimitNotificationShown(true);
@@ -195,21 +201,13 @@ export function SearchForm({
           <p style={{ marginBottom: "8px" }}>
             Upgrade your subscription for leveling up queries.
           </p>
-          <button
-            style={{
-              background: "#007bff",
-              color: "#fff",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
+          <BlueButton
             onClick={() => {
               window.location.href = SubscriptionPlan.PRICING_PAGE_URL;
             }}
           >
             Level Up Now 🚀
-          </button>
+          </BlueButton>
         </ToastModal>,
         {
           duration: Millisecond.FIVE_SECOND,
@@ -218,7 +216,7 @@ export function SearchForm({
             background: "transparent",
             boxShadow: "none",
           },
-        }
+        },
       );
       setQueryWordLimitNotificationId(toastId);
       setIsQueryWordLimitNotificationShown(true);
@@ -250,6 +248,7 @@ export function SearchForm({
 
       // Start searching immediately when user types (with a debounce)
       if (!userQueryIsBlank) {
+        document.title = stripHtmlTags(userQuery);
         debouncedStartSearching(userQuery);
         incrementQueryCount();
       } else {
@@ -260,7 +259,8 @@ export function SearchForm({
       if (userQueryIsBlank && suggestedQueryIsBlank) {
         setSuggestedQuery(await getRandomQuerySuggestion());
       } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
-        setSuggestedQuery(""); // Clear the suggested queries
+        // Clear the suggested queries
+        setSuggestedQuery("");
       }
     },
     [
@@ -272,7 +272,7 @@ export function SearchForm({
       debouncedStartSearching,
       incrementQueryCount,
       clearSearchResultsAndUrl,
-    ]
+    ],
   );
 
   const handleVoiceInput = useCallback(() => {
@@ -440,7 +440,7 @@ export function SearchForm({
 
 function useWindowInnerHeight() {
   const [windowInnerHeight, setWindowInnerHeight] = useState<number>(
-    self.innerHeight
+    self.innerHeight,
   );
 
   useEffect(() => {

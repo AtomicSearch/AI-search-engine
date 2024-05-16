@@ -1,4 +1,4 @@
-import featureFlags from "../../config/feature-flags.json";
+import featureFlags from "../config/feature-flags.json";
 
 type FeatureFlag = {
   enabled: boolean;
