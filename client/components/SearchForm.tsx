@@ -171,7 +171,7 @@ export function SearchForm({
                         "Number successfully registered",
                         {
                           position: "top-center",
-                          duration: Millisecond.THREE_SECOND,
+                          duration: Millisecond.TWO_SECOND,
                         },
                       );
                     }
@@ -180,7 +180,7 @@ export function SearchForm({
                 } catch (e) {
                   toast.error("Something went wrong. Please try again later.", {
                     position: "top-right",
-                    duration: Millisecond.THREE_SECOND,
+                    duration: Millisecond.TWO_SECOND,
                   });
                 }
               }}
@@ -219,7 +219,7 @@ export function SearchForm({
           </BlueButton>
         </ToastModal>,
         {
-          duration: Millisecond.FIVE_SECOND,
+          duration: Millisecond.TEN_SECOND,
           position: "top-center",
           style: {
             background: "transparent",
