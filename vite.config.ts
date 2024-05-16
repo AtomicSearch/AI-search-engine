@@ -1,22 +1,41 @@
-import { PreviewServer, ViteDevServer, defineConfig } from "vite";
+import { Millisecond } from "./client/constants/time.constant";
+import { CategoryEngine } from "./config/appInfo.config";
+import path from "node:path";
+import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
+
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
+
 import { RateLimiterMemory } from "rate-limiter-flexible";
-import { writeFileSync, readFileSync, existsSync } from "node:fs";
-import temporaryDirectory from "temp-dir";
-import path from "node:path";
 import {
   initModel,
   distance as calculateSimilarity,
   EmbeddingsModel,
 } from "@energetic-ai/embeddings";
+import temporaryDirectory from "temp-dir";
+import Redis, { Redis as RedisClient } from "ioredis";
+import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+
+//import { supportedSearchEngines } from "./client/config/search-engines";
+
+const isCacheEnabled = process.env.IS_CACHE_ENABLED === "true";
+const redisClient = isCacheEnabled
+  ? new Redis({
+      host: "redis", // Use the service name from docker-compose.yml
+      port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : undefined,
+    })
+  : undefined;
 
 const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
 
 export default defineConfig(({ command }) => {
-  if (command === "build") regenerateSearchToken();
+  if (command === "build") {
+    regenerateSearchToken();
+  }
+
+  updateWllamaPThreadPoolSize();
 
   return {
     root: "./client",
@@ -114,18 +133,19 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
 ) {
-  const rateLimiter = new RateLimiterMemory({
-    points: 2,
-    duration: 10,
-  });
+  const rateLimiterOptions = {
+    points: 10, // allocate points
+    duration: 5, // per second
+  };
+  const rateLimiter = new RateLimiterMemory(rateLimiterOptions);
 
   server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/search")) return next();
+    if (!request.url.startsWith("/search")) {
+      return next();
+    }
 
-    const { searchParams } = new URL(
-      request.url,
-      `http://${request.headers.host}`,
-    );
+    const url = `https://${request.headers.host}`;
+    const { searchParams } = new URL(request.url, url);
 
     const token = searchParams.get("token");
 
@@ -164,19 +184,36 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       return;
     }
 
-    const searchResults = await fetchSearXNG(query, limit);
+    // Try to get the search results from Redis
+    let searchResults = await redisClient.get(query);
+
+    if (searchResults) {
+      // If the search results are cached in Redis, parse them and return
+      try {
+        searchResults = JSON.parse(searchResults);
+      } catch (error) {
+        console.error("Error parsing JSON data from Redis:", error);
+        searchResults = null; // Reset searchResults to null if parsing fails
+      }
+    }
+
+    if (!searchResults) {
+      // Pass the redisClient instance to fetchSearXNG
+      const fetchedResults = await fetchSearXNG(query, limit, redisClient);
+      searchResults = JSON.stringify(fetchedResults);
+      await redisClient.set(query, searchResults);
+    }
 
     searchesSinceLastRestart++;
 
-    if (searchResults.length === 0) {
+    if (!Array.isArray(searchResults) || searchResults.length === 0) {
       response.end(JSON.stringify([]));
       return;
     }
 
     try {
-      response.end(
-        JSON.stringify(await rankSearchResults(query, searchResults)),
-      );
+      const rankedResults = await rankSearchResults(query, searchResults);
+      response.end(JSON.stringify(rankedResults));
     } catch (error) {
       console.error("Error ranking search results:", error);
       response.end(JSON.stringify(searchResults));
@@ -200,15 +237,39 @@ function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
   });
 }
 
-async function fetchSearXNG(query: string, limit?: number) {
+async function fetchSearXNG(
+  query: string,
+  limit?: number,
+  redisClient?: RedisClient,
+): Promise<[title: string, content: string, url: string][]> {
   try {
+    // Check if the search results are cached in Redis (if cache is enabled)
+    let cachedResults = isCacheEnabled
+      ? await redisClient?.get(`searxng:${query}`)
+      : undefined;
+
+    if (cachedResults) {
+      // If the search results are cached in Redis, parse and return them
+      try {
+        const parsedResults = JSON.parse(cachedResults);
+        return parsedResults;
+      } catch (error) {
+        console.error("Error parsing JSON data from Redis:", error);
+        // Continue with fetching from SearXNG if parsing fails
+      }
+    }
+
     const url = new URL("http://127.0.0.1:8080/search");
+    //const supportedEngines = supportedSearchEngines.join(",");
 
     url.search = new URLSearchParams({
       q: query,
       language: "auto",
       safesearch: "0",
       format: "json",
+      //engine: supportedEngines,
+      engine: CategoryEngine.RESEARCH,
+      timeout: Millisecond.TEN_SECOND.toString(), // Set a timeout of 10 seconds
     }).toString();
 
     const response = await fetch(url);
@@ -245,15 +306,25 @@ async function fetchSearXNG(query: string, limit?: number) {
       }
     }
 
+    // Cache the search results in Redis with an expiration time (e.g., 1 hour) if cache is enabled
+    if (isCacheEnabled) {
+      await redisClient?.set(
+        `searxng:${query}`,
+        JSON.stringify(searchResults),
+        "EX",
+        3600,
+      );
+    }
+
     return searchResults;
   } catch (e) {
-    console.error(e);
+    console.error("Error fetching search results from SearXNG:", e);
     return [];
   }
 }
 
 function getSearchTokenFilePath() {
-  return path.resolve(temporaryDirectory, "minisearch-token");
+  return path.resolve(temporaryDirectory, "atomicsearch-token");
 }
 
 function regenerateSearchToken() {
@@ -269,9 +340,8 @@ function getSearchToken() {
 let embeddingModelInstance: EmbeddingsModel | undefined;
 
 async function getSimilarityScores(query: string, documents: string[]) {
-  if (!embeddingModelInstance) {
+  if (!embeddingModelInstance)
     embeddingModelInstance = await initModel(embeddingModel);
-  }
 
   const [queryEmbedding] = await embeddingModelInstance.embed([query]);
 
@@ -286,25 +356,51 @@ async function rankSearchResults(
   query: string,
   searchResults: [title: string, content: string, url: string][],
 ) {
-  const scores = await getSimilarityScores(
-    query.toLocaleLowerCase(),
-    searchResults.map(([title, snippet, url]) =>
-      `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
-    ),
-  );
+  if (!Array.isArray(searchResults) || searchResults.length === 0) {
+    return searchResults; // Return the original search results if it's not an array or if it's empty
+  }
 
-  const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
-    new Map();
-
-  scores.map((score, index) =>
-    searchResultToScoreMap.set(searchResults[index], score ?? 0),
-  );
-
-  return searchResults
-    .slice()
-    .sort(
-      (a, b) =>
-        (searchResultToScoreMap.get(b) ?? 0) -
-        (searchResultToScoreMap.get(a) ?? 0),
+  try {
+    const scores = await getSimilarityScores(
+      query.toLocaleLowerCase(),
+      searchResults.map(([title, snippet, url]) =>
+        `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
+      ),
     );
+
+    const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
+      new Map();
+
+    scores.map((score, index) =>
+      searchResultToScoreMap.set(searchResults[index], score ?? 0),
+    );
+
+    return searchResults
+      .slice()
+      .sort(
+        (a, b) =>
+          (searchResultToScoreMap.get(b) ?? 0) -
+          (searchResultToScoreMap.get(a) ?? 0),
+      );
+  } catch (error) {
+    console.error("Error ranking search results:", error);
+    return searchResults;
+  }
+}
+
+function updateWllamaPThreadPoolSize() {
+  const multiThreadWllamaJsPath = path.resolve(
+    __dirname,
+    "node_modules/@wllama/wllama/esm/multi-thread/wllama.js",
+  );
+
+  fs.writeFileSync(
+    multiThreadWllamaJsPath,
+    fs
+      .readFileSync(multiThreadWllamaJsPath, "utf8")
+      .replace(
+        /pthreadPoolSize=[0-9]+;/g,
+        "pthreadPoolSize=Math.max(navigator.hardwareConcurrency - 2, 2);",
+      ),
+  );
 }
