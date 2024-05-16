@@ -91,6 +91,8 @@ export function SearchForm({
   const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] =
     useState<string | null>(null);
 
+  const isUserSubscribed = useSubscriptionStatus();
+
   useEffect(() => {
     getRandomQuerySuggestion().then((querySuggestion) => {
       setSuggestedQuery(querySuggestion);
@@ -154,11 +156,12 @@ export function SearchForm({
             <BlueButton
               onClick={async () => {
                 setIsQueryLimitNotificationShown(false);
-                const temporarySavedPhoneNumber = localStorage.getItem(
-                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
-                );
-                if (temporarySavedPhoneNumber) {
-                  try {
+
+                try {
+                  const temporarySavedPhoneNumber = localStorage.getItem(
+                    localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                  );
+                  if (temporarySavedPhoneNumber) {
                     const response = await Server.persistPhoneNumber(
                       temporarySavedPhoneNumber,
                     );
@@ -171,16 +174,13 @@ export function SearchForm({
                         },
                       );
                     }
-                    throw new Error("Something happened. Please try again.");
-                  } catch (e) {
-                    toast.error(
-                      "Something went wrong. Please try again later.",
-                      {
-                        position: "top-right",
-                        duration: Millisecond.THREE_SECOND,
-                      },
-                    );
                   }
+                  throw new Error("Something happened. Please try again.");
+                } catch (e) {
+                  toast.error("Something went wrong. Please try again later.", {
+                    position: "top-right",
+                    duration: Millisecond.THREE_SECOND,
+                  });
                 }
               }}
             >
@@ -233,7 +233,6 @@ export function SearchForm({
 
   const handleInputChange = useCallback(
     async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const isUserSubscribed = useSubscriptionStatus();
       const userQuery = event.target.value.trim();
 
       const wordCount = userQuery.split(/\s+/).length;
