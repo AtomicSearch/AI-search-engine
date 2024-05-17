@@ -8,16 +8,13 @@ services:
       - PORT=${PORT:-443}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - DOMAIN=your_domain.com
+      - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-false}
     restart: "always"
     ports:
       - "80:80"
       - "443:443"
-    build:
-      dockerfile: Dockerfile
-      context: .
     volumes:
-      - ./ssl:/app/ssl
+      - .:/home/user/app/
     depends_on:
       - redis
     networks:
