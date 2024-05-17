@@ -6,6 +6,7 @@ export enum AppInfo {
 }
 
 export enum Search {
+  DEFAULT_SUGGESTED_QUERY = "Pro Query?",
   MAXIMUM_SUGGESTIONS = 25,
   SEARCH_QUERY_LIMIT_LENGTH = 2000,
   SUMMARIZE_LINKS_LIMIT_LENGTH = 2500,

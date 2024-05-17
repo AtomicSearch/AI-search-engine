@@ -74,7 +74,7 @@ export function SearchForm({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const windowInnerHeight = useWindowInnerHeight();
-  const [suggestedQuery, setSuggestedQuery] = useState<string>("");
+  const [suggestedQuery, setSuggestedQuery] = useState<string>(Search.DEFAULT_SUGGESTED_QUERY);
   const [isListening, setIsListening] = useState<boolean>(false);
   const { isQueryLimitReached } = useQueryCount();
   const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
@@ -251,7 +251,7 @@ export function SearchForm({
       }
 
       const userQueryIsBlank = userQuery.length === 0;
-      const suggestedQueryIsBlank = suggestedQuery?.length === 0;
+      const suggestedQueryIsTheDefault = suggestedQuery === Search.DEFAULT_SUGGESTED_QUERY;
 
       // Start searching immediately when user types (with a debounce)
       if (!userQueryIsBlank) {
@@ -262,12 +262,12 @@ export function SearchForm({
         clearSearchResultsAndUrl();
       }
 
-      if (userQueryIsBlank && suggestedQueryIsBlank) {
+      if (userQueryIsBlank && suggestedQueryIsTheDefault) {
         const querySuggestion = await getRandomQuerySuggestion();
         setSuggestedQuery(querySuggestion);
-      } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
+      } else if (!userQueryIsBlank && !suggestedQueryIsTheDefault) {
         // Clear the suggested queries
-        setSuggestedQuery("");
+        setSuggestedQuery(Search.DEFAULT_SUGGESTED_QUERY);
       }
     },
     [
