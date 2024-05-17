@@ -13,11 +13,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    build:
-      dockerfile: Dockerfile
-      context: .
     volumes:
-      - ./ssl:/app/ssl
+      - /path/to/ssl/cert:/app/ssl/cert
+      - /path/to/ssl/key:/app/ssl/key
     depends_on:
       - redis
     networks:
