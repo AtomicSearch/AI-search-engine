@@ -76,8 +76,7 @@ export function SearchForm({
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
-  const { incrementQueryCount, isQueryLimitReached } =
-    useQueryCount();
+  const { isQueryLimitReached } = useQueryCount();
   const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
     useState(false);
   const [
@@ -95,9 +94,12 @@ export function SearchForm({
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
-    getRandomQuerySuggestion().then((querySuggestion) => {
+    const fetchSuggestedQuery = async () => {
+      const querySuggestion = await getRandomQuerySuggestion();
       setSuggestedQuery(querySuggestion);
-    });
+    };
+
+    fetchSuggestedQuery();
   }, []);
 
   const navigate = useNavigate();
@@ -133,61 +135,57 @@ export function SearchForm({
     if (!isQueryLimitNotificationShown) {
       const toastId = toast.custom(
         <ToastModal ref={queryLimitNotificationRef}>
-          <ToastModal>
-            <p style={{ marginBottom: "8px" }}>
-              Queries to latest AI models are quite costly. You can either come
-              back in 1 hour or subscribe to the unlimited search.
-            </p>
-            <p>
-              Enter your phone number if you wish us to notify you when you can
-              search again for free.
-            </p>
-            <input
-              type="tel"
-              placeholder="Enter your phone number"
-              onChange={(e) =>
-                localStorage.setItem(
-                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
-                  e.target.value,
-                )
-              }
-              required
-              style={{ marginBottom: "8px", textAlign: "center" }}
-            />
-            <BlueButton
-              onClick={async () => {
-                setIsQueryLimitNotificationShown(false);
+          <p style={{ marginBottom: "8px" }}>
+            Queries to latest AI models are quite costly. You can either come
+            back in 1 hour or subscribe to the unlimited search.
+          </p>
+          <p>
+            Enter your phone number if you wish us to notify you when you can
+            search again for free.
+          </p>
+          <input
+            type="tel"
+            placeholder="Enter your phone number"
+            onChange={(e) =>
+              localStorage.setItem(
+                localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                e.target.value,
+              )
+            }
+            required
+            style={{ marginBottom: "8px", textAlign: "center" }}
+          />
+          <BlueButton
+            onClick={async () => {
+              setIsQueryLimitNotificationShown(false);
 
-                try {
-                  const temporarySavedPhoneNumber = localStorage.getItem(
-                    localStorage.TEMPORARY_USER_PHONE_NUMBER,
+              try {
+                const temporarySavedPhoneNumber = localStorage.getItem(
+                  localStorage.TEMPORARY_USER_PHONE_NUMBER,
+                );
+                if (temporarySavedPhoneNumber) {
+                  const response = await Server.persistPhoneNumber(
+                    temporarySavedPhoneNumber,
                   );
-                  if (temporarySavedPhoneNumber) {
-                    const response = await Server.persistPhoneNumber(
-                      temporarySavedPhoneNumber,
-                    );
-                    if (response.ok) {
-                      return toast.success(
-                        "Number successfully registered",
-                        {
-                          position: "top-center",
-                          duration: Millisecond.TWO_SECOND,
-                        },
-                      );
-                    }
+                  if (response.ok) {
+                    toast.success("Number successfully registered", {
+                      position: "top-center",
+                      duration: Millisecond.TWO_SECOND,
+                    });
+                    return;
                   }
-                  throw new Error("Something happened. Please try again.");
-                } catch (e) {
-                  toast.error("Something went wrong. Please try again later.", {
-                    position: "top-right",
-                    duration: Millisecond.TWO_SECOND,
-                  });
                 }
-              }}
-            >
-              {messages.levelUp}
-            </BlueButton>
-          </ToastModal>
+                throw new Error("Something happened. Please try again.");
+              } catch (e) {
+                toast.error("Something went wrong. Please try again later.", {
+                  position: "top-right",
+                  duration: Millisecond.TWO_SECOND,
+                });
+              }
+            }}
+          >
+            {messages.levelUp}
+          </BlueButton>
         </ToastModal>,
         {
           duration: Infinity,
@@ -259,14 +257,14 @@ export function SearchForm({
       if (!userQueryIsBlank) {
         document.title = stripHtmlTags(userQuery);
         debouncedStartSearching(userQuery);
-        incrementQueryCount();
       } else {
         // If the user deleted the input, reset the search results
         clearSearchResultsAndUrl();
       }
 
       if (userQueryIsBlank && suggestedQueryIsBlank) {
-        setSuggestedQuery(await getRandomQuerySuggestion());
+        const querySuggestion = await getRandomQuerySuggestion();
+        setSuggestedQuery(querySuggestion);
       } else if (!userQueryIsBlank && !suggestedQueryIsBlank) {
         // Clear the suggested queries
         setSuggestedQuery("");
@@ -279,7 +277,6 @@ export function SearchForm({
       showQueryWordLimitNotification,
       suggestedQuery,
       debouncedStartSearching,
-      incrementQueryCount,
       clearSearchResultsAndUrl,
     ],
   );

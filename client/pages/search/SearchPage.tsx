@@ -20,6 +20,7 @@ import styled from "styled-components";
 import { LoadingSpinner } from "../../components/atoms/Loading.atom";
 import { SettingsButton } from "../../components/SettingsButton";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
+import { useQueryCount } from "../../hooks/useQueryCount";
 
 const LoadingContainer = styled.div`
   display: flex;
@@ -45,6 +46,7 @@ export const SearchPage = () => {
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
   const isUserSubscribed = useSubscriptionStatus();
+  const { incrementQueryCount } = useQueryCount();
 
   const location = useLocation();
 
@@ -70,9 +72,10 @@ export const SearchPage = () => {
       setIsLoading(true);
       const results = await search(query);
       setSearchResults(results);
+      incrementQueryCount(); // Increment query count when a search result is received
     }
     setIsLoading(false);
-  }, [query, setSearchResults]);
+  }, [query, setSearchResults, incrementQueryCount]);
 
   useEffect(() => {
     performSearch();

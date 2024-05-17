@@ -43,6 +43,7 @@ export const useQueryCount = () => {
       count: queryCount,
       timestamp: Date.now(),
     };
+
     localStorage.setItem(
       LocalStorageKeys.QUERY_DATA,
       JSON.stringify(queryData),
