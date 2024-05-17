@@ -45,15 +45,14 @@ export const SearchPage = () => {
   const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
-  const isUserSubscribed = useSubscriptionStatus();
   const { incrementQueryCount } = useQueryCount();
 
   const location = useLocation();
 
-  const clearResponses = () => {
+  const clearResponses = useCallback(() => {
     setSearchResults([]);
     setResponse("");
-  };
+  }, [setSearchResults, setResponse]);
 
   useEffect(() => {
     Engine.prepareTextGeneration();
@@ -70,11 +69,18 @@ export const SearchPage = () => {
   const performSearch = useCallback(async () => {
     if (query.length) {
       setIsLoading(true);
-      const results = await search(query);
-      setSearchResults(results);
-      incrementQueryCount(); // Increment query count when a search result is received
+      try {
+        const results = await search(query);
+        setSearchResults(results);
+
+        // Increment query count when a search result is received
+        incrementQueryCount();
+      } catch (error) {
+        console.error("Error performing search:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    setIsLoading(false);
   }, [query, setSearchResults, incrementQueryCount]);
 
   useEffect(() => {
