@@ -76,7 +76,7 @@ export function SearchForm({
   const windowInnerHeight = useWindowInnerHeight();
   const [suggestedQuery, setSuggestedQuery] = useState<string>("");
   const [isListening, setIsListening] = useState<boolean>(false);
-  const { queryCount, incrementQueryCount, isQueryLimitReached } =
+  const { incrementQueryCount, isQueryLimitReached } =
     useQueryCount();
   const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
     useState(false);

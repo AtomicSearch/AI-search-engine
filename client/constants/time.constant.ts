@@ -7,4 +7,5 @@ export enum Millisecond {
   TEN_SECOND = 10000,
   FIFTEEN_SECOND = 15000,
   TWENTY_SECOND = 20000,
+  ONE_HOUR = 3600000,
 }
