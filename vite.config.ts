@@ -13,6 +13,7 @@ import temporaryDirectory from "temp-dir";
 import Redis, { Redis as RedisClient } from "ioredis";
 import { Connect, PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
+import compression from "compression";
 import { StatusCodes } from "http-status-codes";
 
 import { Millisecond } from "./client/constants/time.constant";
@@ -71,6 +72,11 @@ export default defineConfig(({ command }) => {
       process.env.BASIC_SSL === "true" ? basicSSL() : undefined,
       react(),
       {
+        name: "configure-server-compression",
+        configureServer: compressionServerHook,
+        configurePreviewServer: compressionServerHook,
+      },
+      {
         name: "configure-server-cross-origin-isolation",
         configureServer: crossOriginServerHook,
         configurePreviewServer: crossOriginServerHook,
@@ -92,6 +98,12 @@ export default defineConfig(({ command }) => {
     ],
   };
 });
+
+function compressionServerHook<T extends ViteDevServer | PreviewServer>(
+  server: T,
+) {
+  server.middlewares.use(compression());
+}
 
 function crossOriginServerHook<T extends ViteDevServer | PreviewServer>(
   server: T,
@@ -224,7 +236,12 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
 
 function cacheServerHook<T extends ViteDevServer | PreviewServer>(server: T) {
   server.middlewares.use(async (request, response, next) => {
-    if (
+    if (request.url.endsWith(".woff2")) {
+      response.setHeader(
+        "Cache-Control",
+        "public, max-age=31536000, immutable",
+      );
+    } else if (
       request.url === "/" ||
       request.url.startsWith("/?") ||
       request.url.endsWith(".html")
@@ -391,26 +408,24 @@ async function rankSearchResults(query: string, searchResults: SearchResult[]) {
   }
 
   try {
-    const scores = await getSimilarityScores(
-      query.toLocaleLowerCase(),
-      searchResults.map(([title, snippet, url]) =>
-        `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
-      ),
-    );
-
     const searchResultToScoreMap: Map<(typeof searchResults)[0], number> =
       new Map();
 
-    scores.map((score, index) =>
-      searchResultToScoreMap.set(searchResults[index], score ?? 0),
-    );
+    (
+      await getSimilarityScores(
+        query.toLocaleLowerCase(),
+        searchResults.map(([title, snippet, url]) =>
+          `${title}\n${url}\n${snippet}`.toLocaleLowerCase(),
+        ),
+      )
+    ).forEach((score, index) => {
+      searchResultToScoreMap.set(searchResults[index], score);
+    });
 
     return searchResults
       .slice()
       .sort(
-        (a, b) =>
-          (searchResultToScoreMap.get(b) ?? 0) -
-          (searchResultToScoreMap.get(a) ?? 0),
+        (a, b) => searchResultToScoreMap.get(b) - searchResultToScoreMap.get(a),
       );
   } catch (error) {
     console.error("Error ranking search results:", error);

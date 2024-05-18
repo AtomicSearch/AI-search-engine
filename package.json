@@ -10,7 +10,8 @@
     "dev": "vite",
     "eslint:fix": "eslint --fix client",
     "prettier:check": "prettier --check 'client/**/*.{ts,js,jsx,tsx,json}'",
-    "prettier:fix": "prettier --write 'client/**/*.{ts,js,jsx,tsx,json}'"
+    "prettier:fix": "prettier --write 'client/**/*.{ts,js,jsx,tsx,json}'",
+    "lint": "npm run prettier:fix"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
@@ -24,6 +25,7 @@
     "@stripe/stripe-js": "^3.4.0",
     "@wllama/wllama": "^1.8.0",
     "canvas-confetti": "^1.9.3",
+    "compression": "^1.7.4",
     "create-pubsub": "^1.6.3",
     "hash-wasm": "^4.11.0",
     "html-to-text": "^9.0.5",
@@ -51,6 +53,7 @@
     "@capacitor/cli": "^6.0.0",
     "@eslint/js": "^9.2.0",
     "@types/canvas-confetti": "^1.6.4",
+    "@types/compression": "^1.7.5",
     "@types/dom-speech-recognition": "^0.0.4",
     "@types/html-to-text": "^9.0.4",
     "@types/node": "^20.12.7",

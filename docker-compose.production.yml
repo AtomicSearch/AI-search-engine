@@ -8,6 +8,7 @@ services:
       - PORT=${PORT:-443}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - BASIC_SSL=${BASIC_SSL:-true}
       - IS_CACHE_ENABLED=${IS_CACHE_ENABLED:-false}
     restart: "always"
     ports:

@@ -1,5 +1,6 @@
 import { createPubSub } from "create-pubsub";
 import { SearchResults } from "./search";
+import { isRunningOnMobile } from "./mobileDetection";
 
 const SearchOptions = {
   IS_AI_RESPONSE_DISABLED: false,
@@ -53,6 +54,17 @@ export const disableWebGpuUsageSettingPubSub = createLocalStoragePubSub(
 
 export const [, , getDisableWebGpuUsageSetting] =
   disableWebGpuUsageSettingPubSub;
+
+export const numberOfThreadsSettingPubSub = createLocalStoragePubSub(
+  "numberOfThreads",
+  isRunningOnMobile && navigator.hardwareConcurrency
+    ? navigator.hardwareConcurrency
+    : (navigator.hardwareConcurrency ?? 1) > 1
+      ? Math.max(navigator.hardwareConcurrency - 2, 2)
+      : 1,
+);
+
+export const [, , getNumberOfThreadsSetting] = numberOfThreadsSettingPubSub;
 
 export const querySuggestionsPubSub = createLocalStoragePubSub<string[]>(
   "querySuggestions",

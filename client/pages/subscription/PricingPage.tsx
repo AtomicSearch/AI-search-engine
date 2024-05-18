@@ -290,7 +290,9 @@ export const PricingPage: React.FC = () => {
   return (
     <>
       <PricingContainer>
-        <PricingHeader>Goodbye doubts. Hello certainties <CheckCircleIcon /></PricingHeader>
+        <PricingHeader>
+          Goodbye doubts. Hello certainties <CheckCircleIcon />
+        </PricingHeader>
         <PricingSubHeader>
           <LockOpenIcon /> Unlock Full Knowledge with Smarter Plan
         </PricingSubHeader>

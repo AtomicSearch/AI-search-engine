@@ -20,7 +20,8 @@ export function SearchResultsList({
   urlsDescriptions: Record<string, string>;
 }) {
   const [windowWidth, setWindowWidth] = useState(self.innerWidth);
-  const [notificationModalShown, setNotificationModalShown] = useState<boolean>(false);
+  const [notificationModalShown, setNotificationModalShown] =
+    useState<boolean>(false);
 
   const isUserSubscribed = useSubscriptionStatus();
 
