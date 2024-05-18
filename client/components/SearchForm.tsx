@@ -129,7 +129,7 @@ export function SearchForm({
     clearSearchResultsAndUrl();
   }, [clearSearchResultsAndUrl]);
 
-  const debouncedStartSearching = useCallback(debounce(startSearching, 300), [
+  const debouncedStartSearching = useCallback(debounce(startSearching, 600), [
     startSearching,
   ]);
 

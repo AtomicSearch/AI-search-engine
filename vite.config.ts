@@ -1,5 +1,5 @@
 import path from "node:path";
-import fs, { writeFileSync, readFileSync, existsSync } from "node:fs";
+import { writeFileSync, readFileSync, existsSync } from "node:fs";
 
 import react from "@vitejs/plugin-react";
 import basicSSL from "@vitejs/plugin-basic-ssl";
@@ -14,6 +14,7 @@ import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import compression from "compression";
+import { argon2Verify } from "hash-wasm";
 import { StatusCodes } from "http-status-codes";
 
 import { Millisecond } from "./client/constants/time.constant";
@@ -24,8 +25,8 @@ import { stripHtmlTags } from "./utils/strip-tags";
 
 const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 7200; // 2 hour
 const RATE_LIMITER_OPTIONS = {
-  points: 20, // Maximum number of requests allowed within the duration
-  duration: 10, // Duration in seconds
+  points: 15, // Maximum number of requests allowed within the duration
+  duration: 5, // Duration in seconds
 };
 
 type SearchResult = [title: string, content: string, url: string];
@@ -40,13 +41,12 @@ const redisClient = isCacheEnabled
 
 const serverStartTime = new Date().getTime();
 let searchesSinceLastRestart = 0;
+const verifiedTokens = new Set();
 
 export default defineConfig(({ command }) => {
   if (command === "build") {
     regenerateSearchToken();
   }
-
-  updateWllamaPThreadPoolSize();
 
   return {
     root: "./client",
@@ -142,11 +142,11 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       (new Date().getTime() - serverStartTime) / 1000,
     );
 
-    response.end(
+    response.setHeader("Content-Type", "application/json").end(
       JSON.stringify({
         secondsSinceLastRestart,
         searchesSinceLastRestart,
-        searchesPerSecond: searchesSinceLastRestart / secondsSinceLastRestart,
+        tokensVerifiedSinceLastRestart: verifiedTokens.size,
       }),
     );
   });
@@ -165,13 +165,10 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     const url = `https://${request.headers.host}`;
     const { searchParams } = new URL(request.url, url);
 
-    const token = searchParams.get("token");
+    const limitParam = searchParams.get("limit");
 
-    if (!token || token !== getSearchToken()) {
-      response.statusCode = StatusCodes.UNAUTHORIZED;
-      response.end("Unauthorized.");
-      return;
-    }
+    const limit =
+      limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
 
     const query = searchParams.get("q");
 
@@ -181,21 +178,33 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       return;
     }
 
-    const limitParam = searchParams.get("limit");
+    const token = searchParams.get("token");
 
-    const limit =
-      limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
+    const isVerifiedToken = verifiedTokens.has(token);
+
+    if (!isVerifiedToken) {
+      let isValidToken = false;
+
+      try {
+        isValidToken = await argon2Verify({
+          password: getSearchToken(),
+          hash: token,
+        });
+      } catch (error) {
+        void error;
+      }
+
+      if (isValidToken) {
+        verifiedTokens.add(token);
+      } else {
+        response.statusCode = StatusCodes.UNAUTHORIZED;
+        response.end("Unauthorized.");
+        return;
+      }
+    }
 
     try {
-      const remoteAddress = (
-        (request.headers["x-forwarded-for"] as string) ||
-        request.socket.remoteAddress ||
-        "unknown"
-      )
-        .split(",")[0]
-        .trim();
-
-      await rateLimiter.consume(remoteAddress);
+      await rateLimiter.consume(token);
     } catch (error) {
       response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
       response.end("Too many requests.");
@@ -225,16 +234,21 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     searchesSinceLastRestart++;
 
     if (!Array.isArray(searchResults) || searchResults.length === 0) {
-      response.end(JSON.stringify([]));
-      return;
+      return response
+        .setHeader("Content-Type", "application/json")
+        .end(JSON.stringify([]));
     }
 
     try {
       const rankedResults = await rankSearchResults(query, searchResults);
-      response.end(JSON.stringify(rankedResults));
+      response
+        .setHeader("Content-Type", "application/json")
+        .end(JSON.stringify(rankedResults));
     } catch (error) {
       console.error("Error ranking search results:", error);
-      response.end(JSON.stringify(searchResults));
+      response
+        .setHeader("Content-Type", "application/json")
+        .end(JSON.stringify(searchResults));
     }
   });
 }
@@ -302,7 +316,7 @@ async function fetchSearXNG(
         format: "json",
         //engine: supportedEngines,
         //engine: CategoryEngine.MINIMUM,
-        engine: "google,bing,duckduckgo",
+        //engine: "google,bing,duckduckgo",
         timeout: Millisecond.TEN_SECOND.toString(),
       }).toString();
 
@@ -450,21 +464,4 @@ async function rankSearchResults(query: string, searchResults: SearchResult[]) {
     console.error("Error ranking search results:", error);
     return searchResults;
   }
-}
-
-function updateWllamaPThreadPoolSize() {
-  const multiThreadWllamaJsPath = path.resolve(
-    __dirname,
-    "node_modules/@wllama/wllama/esm/multi-thread/wllama.js",
-  );
-
-  fs.writeFileSync(
-    multiThreadWllamaJsPath,
-    fs
-      .readFileSync(multiThreadWllamaJsPath, "utf8")
-      .replace(
-        /pthreadPoolSize=[0-9]+;/g,
-        "pthreadPoolSize=Math.max(navigator.hardwareConcurrency - 2, 2);",
-      ),
-  );
 }
