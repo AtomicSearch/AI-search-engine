@@ -73,16 +73,16 @@ export function SearchForm({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  const windowInnerHeight = useWindowInnerHeight();
-  const [suggestedQuery, setSuggestedQuery] = useState<string>(Search.DEFAULT_SUGGESTED_QUERY);
+  const [suggestedQuery, setSuggestedQuery] = useState<string>(
+    Search.DEFAULT_SUGGESTED_QUERY,
+  );
   const [isListening, setIsListening] = useState<boolean>(false);
-  const { isQueryLimitReached } = useQueryCount();
   const [isQueryLimitNotificationShown, setIsQueryLimitNotificationShown] =
-    useState(false);
+    useState<boolean>(false);
   const [
     isQueryWordLimitNotificationShown,
     setIsQueryWordLimitNotificationShown,
-  ] = useState(false);
+  ] = useState<boolean>(false);
   const queryLimitNotificationRef = useRef<HTMLDivElement>(null);
   const queryWordLimitNotificationRef = useRef<HTMLDivElement>(null);
   const [queryLimitNotificationId, setQueryLimitNotificationId] = useState<
@@ -91,6 +91,8 @@ export function SearchForm({
   const [queryWordLimitNotificationId, setQueryWordLimitNotificationId] =
     useState<string | null>(null);
 
+  const windowInnerHeight = useWindowInnerHeight();
+  const { isQueryLimitReached } = useQueryCount();
   const isUserSubscribed = useSubscriptionStatus();
 
   useEffect(() => {
@@ -251,7 +253,8 @@ export function SearchForm({
       }
 
       const userQueryIsBlank = userQuery.length === 0;
-      const suggestedQueryIsTheDefault = suggestedQuery === Search.DEFAULT_SUGGESTED_QUERY;
+      const suggestedQueryIsTheDefault =
+        suggestedQuery === Search.DEFAULT_SUGGESTED_QUERY;
 
       // Start searching immediately when user types (with a debounce)
       if (!userQueryIsBlank) {
