@@ -1,4 +1,4 @@
-FROM searxng/searxng:2024.5.10-901819359
+FROM searxng/searxng:2024.5.17-ec41b5358
 
 RUN apk add --update --no-cache \
   nodejs \
