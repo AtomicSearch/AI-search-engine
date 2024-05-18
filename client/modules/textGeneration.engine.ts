@@ -575,7 +575,7 @@ export namespace Engine {
 
     try {
       const pageContent = await fetchPageContent(url, {
-        maxLength: Search.SUMMARIZE_LINKS_LIMIT_LENGTH,
+        maxLength: Search.SUMMARIZE_LINKS_LIMIT_LENGTH as number,
       });
 
       prompt = [
