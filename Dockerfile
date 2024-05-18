@@ -1,35 +1,36 @@
-FROM searxng/searxng:2024.5.17-ec41b5358
+# Use the latest SearXNG image as the base
+FROM searxng/searxng:latest
 
-RUN apk add --update --no-cache \
+# Install necessary dependencies
+RUN apk add --no-cache \
   nodejs \
   npm \
   git
 
-ARG SEARXNG_SETTINGS_FOLDER=/etc/searxng
-
-RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
-  && sed -i 's/su-exec searxng:searxng //' /usr/local/searxng/dockerfiles/docker-entrypoint.sh \
-  && mkdir -p ${SEARXNG_SETTINGS_FOLDER} \
-  && chmod 777 ${SEARXNG_SETTINGS_FOLDER}
-
+# Set the working directory
 WORKDIR /app
 
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
+# Install Node.js dependencies
 RUN npm ci
 
+# Copy the application code
 COPY . .
 
+# Build the application
 RUN npm run build
 
 # Create directory for SSL certificate and key
 RUN mkdir -p /app/ssl
 
-# Install Certbot
+# Install Certbot (if required)
 RUN apk add --no-cache certbot
 
-# Expose HTTP and HTTPS port
+# Expose HTTP and HTTPS ports
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/usr/local/searxng/dockerfiles/docker-entrypoint.sh -f & touch /etc/searxng/limiter.toml & npm start -- --host"]
+# Set the entrypoint command
+CMD ["/sbin/tini", "--", "/usr/local/searxng/dockerfiles/docker-entrypoint.sh"]
