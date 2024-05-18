@@ -11,7 +11,7 @@ import {
 } from "@energetic-ai/embeddings";
 import temporaryDirectory from "temp-dir";
 import Redis, { Redis as RedisClient } from "ioredis";
-import { Connect, PreviewServer, ViteDevServer, defineConfig } from "vite";
+import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import compression from "compression";
 import { StatusCodes } from "http-status-codes";
@@ -39,7 +39,6 @@ const redisClient = isCacheEnabled
   : undefined;
 
 const serverStartTime = new Date().getTime();
-const connectionsReceived = new Set();
 let searchesSinceLastRestart = 0;
 
 export default defineConfig(({ command }) => {
@@ -147,7 +146,7 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       JSON.stringify({
         secondsSinceLastRestart,
         searchesSinceLastRestart,
-        uniqueVisitorsSinceLastRestart: connectionsReceived.size,
+        searchesPerSecond: searchesSinceLastRestart / secondsSinceLastRestart,
       }),
     );
   });
@@ -162,8 +161,6 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     if (!request.url.startsWith("/search")) {
       return next();
     }
-
-    connectionsReceived.add(getConnectionIdFromRequest(request));
 
     const url = `https://${request.headers.host}`;
     const { searchParams } = new URL(request.url, url);
@@ -190,7 +187,15 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       limitParam && Number(limitParam) > 0 ? Number(limitParam) : undefined;
 
     try {
-      await rateLimiter.consume(getConnectionIdFromRequest(request));
+      const remoteAddress = (
+        (request.headers["x-forwarded-for"] as string) ||
+        request.socket.remoteAddress ||
+        "unknown"
+      )
+        .split(",")[0]
+        .trim();
+
+      await rateLimiter.consume(remoteAddress);
     } catch (error) {
       response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
       response.end("Too many requests.");
@@ -462,8 +467,4 @@ function updateWllamaPThreadPoolSize() {
         "pthreadPoolSize=Math.max(navigator.hardwareConcurrency - 2, 2);",
       ),
   );
-}
-
-function getConnectionIdFromRequest(request: Connect.IncomingMessage) {
-  return (request.socket.remoteAddress || "unknown").split(",")[0].trim();
 }
