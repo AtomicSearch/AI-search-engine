@@ -4,7 +4,7 @@ import { isRunningOnMobile } from "./mobileDetection";
 
 const SearchOptions = {
   IS_AI_RESPONSE_DISABLED: false,
-  IS_WEBGPU_USAGE_DISABLED: true,
+  IS_WEBGPU_USAGE_DISABLED: false,
 
   // enable by default
   IS_LINKS_SUMMARIZED_ENABLED: true,
