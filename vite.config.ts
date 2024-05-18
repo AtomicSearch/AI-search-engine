@@ -22,10 +22,10 @@ import { stripHtmlTags } from "./utils/strip-tags";
 
 //import { supportedSearchEngines } from "./client/config/search-engines"
 
-const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 3600; // 1 hour
+const REDIS_CACHE_EXPIRATION_TIME_SECONDS = 7200; // 2 hour
 const RATE_LIMITER_OPTIONS = {
-  points: 10, // Maximum number of requests allowed within the duration
-  duration: 5, // Duration in seconds
+  points: 20, // Maximum number of requests allowed within the duration
+  duration: 10, // Duration in seconds
 };
 
 type SearchResult = [title: string, content: string, url: string];
@@ -266,86 +266,100 @@ async function fetchSearXNG(
   limit?: number,
   redisClient?: RedisClient,
 ): Promise<SearchResult[]> {
-  try {
-    // Check if the search results are cached in Redis (if cache is enabled)
-    let cachedResults = isCacheEnabled
-      ? await redisClient?.get(`searxng:${query}`)
-      : undefined;
+  const maxRetries = 3;
+  const retryDelay = 5000; // 5 seconds
 
-    if (cachedResults) {
-      // If the search results are cached in Redis, parse and return them
-      try {
-        const parsedResults = JSON.parse(cachedResults);
-        return parsedResults;
-      } catch (error) {
-        console.error("Error parsing JSON data from Redis:", error);
-        // Continue with fetching from SearXNG if parsing fails
-      }
-    }
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Check if the search results are cached in Redis (if cache is enabled)
+      let cachedResults = isCacheEnabled
+        ? await redisClient?.get(`searxng:${query}`)
+        : undefined;
 
-    const url = new URL("http://127.0.0.1:8080/search");
-    //const supportedEngines = supportedSearchEngines.join(",");
-
-    url.search = new URLSearchParams({
-      q: query,
-      language: "auto",
-      safesearch: "0",
-      format: "json",
-      //engine: supportedEngines,
-      engine: CategoryEngine.EVERYDAY,
-      timeout: Millisecond.TEN_SECOND.toString(),
-    }).toString();
-
-    const response = await fetch(url);
-
-    let { results } = (await response.json()) as {
-      results: { url: string; title: string; content: string }[];
-    };
-
-    const searchResults: SearchResult[] = [];
-
-    if (results) {
-      if (limit && limit > 0) {
-        results = results.slice(0, limit);
+      if (cachedResults) {
+        // If the search results are cached in Redis, parse and return them
+        try {
+          const parsedResults = JSON.parse(cachedResults);
+          return parsedResults;
+        } catch (error) {
+          console.error("Error parsing JSON data from Redis:", error);
+          // Continue with fetching from SearXNG if parsing fails
+        }
       }
 
-      const uniqueUrls = new Set<string>();
+      const url = new URL("http://127.0.0.1:8080/search");
+      //const supportedEngines = supportedSearchEngines.join(",");
 
-      for (const result of results) {
-        if (!result.content || uniqueUrls.has(result.url)) {
-          continue;
+      url.search = new URLSearchParams({
+        q: query,
+        language: "auto",
+        safesearch: "0",
+        format: "json",
+        //engine: supportedEngines,
+        //engine: CategoryEngine.MINIMUM,
+        engine: "google,bing,duckduckgo",
+        timeout: Millisecond.TEN_SECOND.toString(),
+      }).toString();
+
+      const response = await fetch(url);
+
+      let { results } = (await response.json()) as {
+        results: { url: string; title: string; content: string }[];
+      };
+
+      const searchResults: SearchResult[] = [];
+
+      if (results) {
+        if (limit && limit > 0) {
+          results = results.slice(0, limit);
         }
 
-        const content = stripHtmlTags(result.content).trim();
+        const uniqueUrls = new Set<string>();
 
-        if (content === "") {
-          continue;
+        for (const result of results) {
+          if (!result.content || uniqueUrls.has(result.url)) {
+            continue;
+          }
+
+          const content = stripHtmlTags(result.content).trim();
+
+          if (content === "") {
+            continue;
+          }
+
+          const title = stripHtmlTags(result.title);
+
+          const url = result.url;
+
+          searchResults.push([title, content, url]);
+
+          uniqueUrls.add(url);
         }
-
-        const title = stripHtmlTags(result.title);
-
-        const url = result.url;
-
-        searchResults.push([title, content, url]);
-
-        uniqueUrls.add(url);
       }
-    }
 
-    // Cache the search results in Redis with an expiration time (e.g., 1 hour) if cache is enabled
-    if (isCacheEnabled) {
-      await redisClient?.set(
-        `searxng:${query}`,
-        JSON.stringify(searchResults),
-        "EX",
-        REDIS_CACHE_EXPIRATION_TIME_SECONDS,
+      // Cache the search results in Redis with an expiration time (e.g., 1 hour) if cache is enabled
+      if (isCacheEnabled) {
+        await redisClient?.set(
+          `searxng:${query}`,
+          JSON.stringify(searchResults),
+          "EX",
+          REDIS_CACHE_EXPIRATION_TIME_SECONDS,
+        );
+      }
+
+      return searchResults;
+    } catch (error) {
+      console.error(
+        `Error fetching search results from SearXNG (attempt ${attempt + 1}):`,
+        error,
       );
-    }
 
-    return searchResults;
-  } catch (e) {
-    console.error("Error fetching search results from SearXNG:", e);
-    return [];
+      if (attempt < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      } else {
+        throw error;
+      }
+    }
   }
 }
 
