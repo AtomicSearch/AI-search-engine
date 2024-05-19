@@ -262,21 +262,6 @@ export namespace Engine {
         url: Array.from(
           { length: 7 },
           (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.shard-${(
-              i + 1
-            )
-              .toString()
-              .padStart(5, "0")}-of-00007.gguf`,
-        ),
-        userPrefix: "<|user|>\n",
-        assistantPrefix: "<|assistant|>\n",
-        messageSuffix: "</s>\n",
-        sampling: commonSamplingConfig,
-      },
-      mobileLarger: {
-        url: Array.from(
-          { length: 7 },
-          (_, i) =>
             `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-${(
               i + 1
             )
@@ -286,6 +271,21 @@ export namespace Engine {
         userPrefix: "<|im_start|>user\n",
         assistantPrefix: "<|im_start|>assistant\n",
         messageSuffix: "<|im_end|>\n",
+        sampling: commonSamplingConfig,
+      },
+      mobileLarger: {
+        url: Array.from(
+          { length: 7 },
+          (_, i) =>
+            `https://huggingface.co/Felladrin/gguf-sharded-zephyr-1b-olmo-sft-qlora/resolve/main/zephyr-1b-olmo-sft-qlora.Q3_K_S.shard-${(
+              i + 1
+            )
+              .toString()
+              .padStart(5, "0")}-of-00007.gguf`,
+        ),
+        userPrefix: "<|user|>\n",
+        assistantPrefix: "<|assistant|>\n",
+        messageSuffix: "<|endoftext|>\n",
         sampling: commonSamplingConfig,
       },
       desktopDefault: {

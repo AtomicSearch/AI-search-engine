@@ -13,7 +13,7 @@ import temporaryDirectory from "temp-dir";
 import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
-import compression from "compression";
+import compression from "http-compression";
 import { argon2Verify } from "hash-wasm";
 import { StatusCodes } from "http-status-codes";
 
@@ -142,7 +142,8 @@ function statusEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       (new Date().getTime() - serverStartTime) / 1000,
     );
 
-    response.setHeader("Content-Type", "application/json").end(
+    response.setHeader("Content-Type", "application/json");
+    response.end(
       JSON.stringify({
         secondsSinceLastRestart,
         searchesSinceLastRestart,
@@ -234,21 +235,21 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     searchesSinceLastRestart++;
 
     if (!Array.isArray(searchResults) || searchResults.length === 0) {
-      return response
-        .setHeader("Content-Type", "application/json")
-        .end(JSON.stringify([]));
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify([]));
+      return;
     }
 
     try {
       const rankedResults = await rankSearchResults(query, searchResults);
-      response
-        .setHeader("Content-Type", "application/json")
-        .end(JSON.stringify(rankedResults));
+      response.setHeader("Content-Type", "application/json");
+      response.end(
+        JSON.stringify(await rankSearchResults(query, searchResults)),
+      );
     } catch (error) {
       console.error("Error ranking search results:", error);
-      response
-        .setHeader("Content-Type", "application/json")
-        .end(JSON.stringify(searchResults));
+      response.setHeader("Content-Type", "application/json");
+      response.end(JSON.stringify(searchResults));
     }
   });
 }
