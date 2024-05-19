@@ -226,99 +226,7 @@ export namespace Engine {
   }
 
   async function generateTextWithWllama() {
-    const { initializeWllama, runCompletion, exitWllama } = await import(
-      "./wllama"
-    );
-
-    const commonSamplingConfig: import("@wllama/wllama").SamplingConfig = {
-      temp: 0.35,
-      dynatemp_range: 0.25,
-      top_k: 0,
-      top_p: 1,
-      min_p: 0.05,
-      tfs_z: 0.95,
-      typical_p: 0.85,
-      penalty_freq: 0.5,
-      penalty_repeat: 1.176,
-      penalty_last_n: -1,
-      mirostat: 2,
-      mirostat_tau: 3.5,
-    };
-
-    const availableModels: {
-      [key in
-        | "mobileDefault"
-        | "mobileLarger"
-        | "desktopDefault"
-        | "desktopLarger"]: {
-        url: string | string[];
-        userPrefix: string;
-        assistantPrefix: string;
-        messageSuffix: string;
-        sampling: import("@wllama/wllama").SamplingConfig;
-      };
-    } = {
-      mobileDefault: {
-        url: Array.from(
-          { length: 7 },
-          (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-${(
-              i + 1
-            )
-              .toString()
-              .padStart(5, "0")}-of-00007.gguf`,
-        ),
-        userPrefix: "<|im_start|>user\n",
-        assistantPrefix: "<|im_start|>assistant\n",
-        messageSuffix: "<|im_end|>\n",
-        sampling: commonSamplingConfig,
-      },
-      mobileLarger: {
-        url: Array.from(
-          { length: 7 },
-          (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-zephyr-1b-olmo-sft-qlora/resolve/main/zephyr-1b-olmo-sft-qlora.Q3_K_S.shard-${(
-              i + 1
-            )
-              .toString()
-              .padStart(5, "0")}-of-00007.gguf`,
-        ),
-        userPrefix: "<|user|>\n",
-        assistantPrefix: "<|assistant|>\n",
-        messageSuffix: "<|endoftext|>\n",
-        sampling: commonSamplingConfig,
-      },
-      desktopDefault: {
-        url: Array.from(
-          { length: 7 },
-          (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-stablelm-2-1_6b-chat/resolve/main/stablelm-2-1_6b-chat.Q8_0.shard-${(
-              i + 1
-            )
-              .toString()
-              .padStart(5, "0")}-of-00007.gguf`,
-        ),
-        userPrefix: "<|im_start|>user\n",
-        assistantPrefix: "<|im_start|>assistant\n",
-        messageSuffix: "<|im_end|>\n",
-        sampling: commonSamplingConfig,
-      },
-      desktopLarger: {
-        url: Array.from(
-          { length: 51 },
-          (_, i) =>
-            `https://huggingface.co/Felladrin/gguf-sharded-Phi-3-mini-4k-instruct-iMat/resolve/main/phi-3-mini-4k-instruct-imat-Q5_K_M.shard-${(
-              i + 1
-            )
-              .toString()
-              .padStart(5, "0")}-of-00051.gguf`,
-        ),
-        userPrefix: "<|user|>\n",
-        assistantPrefix: "<|assistant|>\n",
-        messageSuffix: "<|end|>\n",
-        sampling: commonSamplingConfig,
-      },
-    };
+    const { initializeWllama, availableModels } = await import("./wllama");
 
     const defaultModel = isRunningOnMobile
       ? availableModels.mobileDefault
@@ -334,9 +242,11 @@ export namespace Engine {
 
     let loadingPercentage = 0;
 
-    await initializeWllama({
-      modelUrl: selectedModel.url,
-      modelConfig: {
+    const wllama = await initializeWllama(selectedModel.url, {
+      wllama: {
+        suppressNativeLog: !debug,
+      },
+      model: {
         n_ctx: 2 * 1024,
         n_threads: getNumberOfThreadsSetting(),
         cache_type_k: "q4_0",
@@ -390,8 +300,7 @@ export namespace Engine {
 
       let isAnswering = false;
 
-      const completion = await runCompletion({
-        prompt,
+      const completion = await wllama.createCompletion(prompt, {
         nPredict: 768,
         sampling: selectedModel.sampling,
         onNewToken: (_token, _piece, currentText, { abortSignal }) => {
@@ -433,8 +342,7 @@ export namespace Engine {
           ["Answer:", "This text is about"].join("\n"),
         ].join("");
 
-        const completion = await runCompletion({
-          prompt,
+        const completion = await wllama.createCompletion(prompt, {
           nPredict: 128,
           sampling: selectedModel.sampling,
           onNewToken: (_token, _piece, currentText, { abortSignal }) => {
@@ -456,7 +364,7 @@ export namespace Engine {
       }
     }
 
-    await exitWllama();
+    await wllama.exit();
   }
 
   async function generateTextWithRatchet() {
