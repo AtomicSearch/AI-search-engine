@@ -159,7 +159,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
   const rateLimiter = new RateLimiterMemory(RATE_LIMITER_OPTIONS);
 
   server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/search")) {
+    if (!request.url?.startsWith("/search")) {
       return next();
     }
 
@@ -179,7 +179,8 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
       return;
     }
 
-    const token = searchParams.get("token");
+    // retrieve the token from the query string
+    const token = searchParams.get("token") || "";
 
     const isVerifiedToken = verifiedTokens.has(token);
 
@@ -213,7 +214,7 @@ function searchEndpointServerHook<T extends ViteDevServer | PreviewServer>(
     }
 
     // Try to get the search results from Redis
-    let searchResults = await redisClient.get(query);
+    let searchResults = await redisClient?.get(query);
 
     if (searchResults) {
       // If the search results are cached in Redis, parse them and return
