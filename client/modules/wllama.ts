@@ -80,7 +80,7 @@ export const availableModels: {
     url: Array.from(
       { length: 7 },
       (_, i) =>
-        `https://huggingface.co/Felladrin/gguf-sharded-zephyr-1b-olmo-sft-qlora/resolve/main/zephyr-1b-olmo-sft-qlora.Q3_K_S.shard-${(
+        `https://huggingface.co/Felladrin/gguf-sharded-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.shard-${(
           i + 1
         )
           .toString()
@@ -88,7 +88,7 @@ export const availableModels: {
     ),
     userPrefix: "<|user|>\n",
     assistantPrefix: "<|assistant|>\n",
-    messageSuffix: "<|endoftext|>\n",
+    messageSuffix: "</s>\n",
     sampling: commonSamplingConfig,
   },
   desktopDefault: {
