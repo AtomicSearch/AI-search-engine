@@ -319,14 +319,20 @@ async function fetchSearXNG(
         //engine: supportedEngines,
         //engine: CategoryEngine.MINIMUM,
         //engine: "google,bing,duckduckgo",
-        timeout: Millisecond.TEN_SECOND.toString(),
+        timeout: Millisecond.THIRTY_SECOND.toString(), // Increase the timeout value
       }).toString();
+
+      console.log(`Fetching search results from SearXNG for query: ${query}`);
 
       const response = await fetch(url);
 
       let { results } = (await response.json()) as {
         results: { url: string; title: string; content: string }[];
       };
+
+      console.log(
+        `Search results retrieved from SearXNG: ${results.length} results`,
+      );
 
       const searchResults: SearchResult[] = [];
 

@@ -2,10 +2,7 @@
 FROM searxng/searxng:latest
 
 # Install necessary dependencies
-RUN apk add --no-cache \
-  nodejs \
-  npm \
-  git
+RUN apk add --no-cache nodejs npm git certbot
 
 ARG SEARXNG_SETTINGS_FOLDER=/etc/searxng
 RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
@@ -22,6 +19,9 @@ COPY package*.json ./
 # Copy the .npmrc file
 COPY ./.npmrc ./.npmrc
 
+# Copy the custom SearXNG settings file
+COPY custom-settings.yml ${SEARXNG_SETTINGS_FOLDER}/settings.yml
+
 # Install Node.js dependencies
 RUN npm ci
 
@@ -33,9 +33,6 @@ RUN npm run build
 
 # Create directory for SSL certificate and key
 RUN mkdir -p /app/ssl
-
-# Install Certbot (if required)
-RUN apk add --no-cache certbot
 
 # Expose HTTP and HTTPS ports
 ENV PORT ${PORT:-7860}
