@@ -320,10 +320,7 @@ async function fetchSearXNG(
         language: "auto",
         safesearch: "0",
         format: "json",
-        //engine: supportedEngines,
-        //engine: CategoryEngine.MINIMUM,
-        //engine: "google,bing,duckduckgo",
-        timeout: Millisecond.SIXTY_SECOND.toString(), // Increase the timeout value to 60 seconds
+        timeout: Millisecond.ONE_HUNDRED_TWENTY_SECOND.toString(),
       }).toString();
 
       console.log(`Fetching search results from SearXNG for query: ${query}`);

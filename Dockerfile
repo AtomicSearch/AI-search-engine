@@ -7,7 +7,7 @@ RUN apk add --no-cache nodejs npm git certbot
 ARG SEARXNG_SETTINGS_FOLDER=/etc/searxng
 RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
   && sed -i 's/su-exec searxng:searxng //' /usr/local/searxng/dockerfiles/docker-entrypoint.sh \
-  && mkdir -p ${SEARXNG_SETTINGS_FOLDER}  \
+  && mkdir -p ${SEARXNG_SETTINGS_FOLDER} \
   && chmod 777 ${SEARXNG_SETTINGS_FOLDER}
 
 # Set the working directory
@@ -33,6 +33,10 @@ RUN npm run build
 
 # Create directory for SSL certificate and key
 RUN mkdir -p /app/ssl
+
+# Set higher timeout values for SearXNG
+ENV SEARXNG_TIMEOUT_ALL=120
+ENV SEARXNG_TIMEOUT_SPECIFIC="soundcloud=120 wikidata=120"
 
 # Expose HTTP and HTTPS ports
 ENV PORT ${PORT:-7860}
