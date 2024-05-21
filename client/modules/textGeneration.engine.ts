@@ -32,38 +32,7 @@ export namespace Engine {
 
     updatePrompt(query);
 
-    updateLoadingToast(messages.browseInternet);
-
-    let searchResults = await search(
-      query.length > Search.SEARCH_QUERY_LIMIT_LENGTH
-        ? (await getKeywords(query, 20)).join(" ")
-        : query,
-      30,
-    );
-
-    if (searchResults.length === 0) {
-      const queryKeywords = await getKeywords(query, 10);
-      searchResults = await search(queryKeywords.join(" "), 30);
-    }
-
-    if (searchResults.length === 0) {
-      toast(messages.researchReturnedNothing, {
-        position: "bottom-center",
-        duration: Millisecond.TWO_SECOND,
-        icon: "🔎",
-      });
-    }
-
-    updateSearchResults(searchResults);
-
-    updateUrlsDescriptions(
-      searchResults.reduce(
-        (acc, [, snippet, url]) => ({ ...acc, [url]: snippet }),
-        {},
-      ),
-    );
-
-    dismissLoadingToast();
+    const searchPromise = getSearchPromise(query);
 
     if (getDisableAiResponseSetting() && !getSummarizeLinksSetting()) return;
 
@@ -81,23 +50,21 @@ export namespace Engine {
 
         if (getUseLargerModelSetting()) {
           try {
-            await generateTextWithWebLlm();
+            await generateTextWithWebLlm(searchPromise);
           } catch (error) {
-            await generateTextWithRatchet();
+            await generateTextWithRatchet(searchPromise);
           }
         } else {
           try {
-            await generateTextWithRatchet();
+            await generateTextWithRatchet(searchPromise);
           } catch (error) {
-            await generateTextWithWebLlm();
+            await generateTextWithWebLlm(searchPromise);
           }
         }
       } catch (error) {
-        await generateTextWithWllama();
+        await generateTextWithWllama(searchPromise);
       }
     } catch (error) {
-      console.error("Error while generating response with wllama:", error);
-
       toast(messages.cannotGenerateResponse, {
         position: "bottom-right",
         duration: Millisecond.THREE_SECOND,
@@ -123,7 +90,7 @@ export namespace Engine {
     toast.dismiss("text-generation-loading-toast");
   }
 
-  async function generateTextWithWebLlm() {
+  async function generateTextWithWebLlm(searchPromise: Promise<void>) {
     const { CreateWebWorkerEngine, CreateEngine, hasModelInCache } =
       await import("@mlc-ai/web-llm");
 
@@ -158,6 +125,8 @@ export namespace Engine {
       : await CreateEngine(selectedModel, { initProgressCallback });
 
     if (!getDisableAiResponseSetting()) {
+      await searchPromise;
+
       updateLoadingToast(messages.generatingResponse);
 
       let isAnswering = false;
@@ -225,7 +194,7 @@ export namespace Engine {
     engine.unload();
   }
 
-  async function generateTextWithWllama() {
+  async function generateTextWithWllama(searchPromise: Promise<void>) {
     const { initializeWllama, availableModels } = await import("./wllama");
 
     const defaultModel = isRunningOnMobile
@@ -267,6 +236,10 @@ export namespace Engine {
     });
 
     if (!getDisableAiResponseSetting()) {
+      await searchPromise;
+
+      updateLoadingToast(messages.generatingResponse);
+
       const prompt = [
         selectedModel.userPrefix,
         "Hello!",
@@ -293,10 +266,6 @@ export namespace Engine {
         selectedModel.messageSuffix,
         selectedModel.assistantPrefix,
       ].join("");
-
-      if (!query) throw Error("Query is empty.");
-
-      updateLoadingToast(messages.generatingResponse);
 
       let isAnswering = false;
 
@@ -367,7 +336,7 @@ export namespace Engine {
     await wllama.exit();
   }
 
-  async function generateTextWithRatchet() {
+  async function generateTextWithRatchet(searchPromise: Promise<void>) {
     const { initializeRatchet, runCompletion, exitRatchet } = await import(
       "./ratchet"
     );
@@ -377,9 +346,7 @@ export namespace Engine {
     );
 
     if (!getDisableAiResponseSetting()) {
-      if (!query) {
-        throw Error("Query is empty.");
-      }
+      await searchPromise;
 
       updateLoadingToast(messages.generatingResponse);
 
@@ -519,5 +486,45 @@ export namespace Engine {
     return (await import("keyword-extractor")).default
       .extract(text, { language: I18n.DEFAULT_LANGUAGE })
       .slice(0, limit);
+  }
+
+  async function getSearchPromise(query: string) {
+    toast.loading("Searching the web...", {
+      id: "search-progress-toast",
+      position: "bottom-center",
+    });
+
+    let searchResults = await search(
+      query.length > 2000 ? (await getKeywords(query, 20)).join(" ") : query,
+      30,
+    );
+
+    if (searchResults.length === 0) {
+      const queryKeywords = await getKeywords(query, 10);
+
+      searchResults = await search(queryKeywords.join(" "), 30);
+    }
+
+    if (searchResults.length === 0) {
+      toast(
+        "It looks like your current search did not return any results. Try refining your search by adding more keywords or rephrasing your query.",
+        {
+          position: "bottom-center",
+          duration: 10000,
+          icon: "💡",
+        },
+      );
+    }
+
+    toast.dismiss("search-progress-toast");
+
+    updateSearchResults(searchResults);
+
+    updateUrlsDescriptions(
+      searchResults.reduce(
+        (acc, [, snippet, url]) => ({ ...acc, [url]: snippet }),
+        {},
+      ),
+    );
   }
 }
