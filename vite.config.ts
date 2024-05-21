@@ -287,8 +287,12 @@ async function fetchSearXNG(
   limit?: number,
   redisClient?: RedisClient,
 ): Promise<SearchResult[]> {
-  const maxRetries = 3;
-  const retryDelay = 5000; // 5 seconds
+  const maxRetries = 5;
+  const initialDelay = 1000; // Initial delay in milliseconds
+  const maxDelay = 30000; // Maximum delay in milliseconds
+  const backoffFactor = 2; // Backoff factor for exponential increase
+
+  let delay = initialDelay;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -319,7 +323,7 @@ async function fetchSearXNG(
         //engine: supportedEngines,
         //engine: CategoryEngine.MINIMUM,
         //engine: "google,bing,duckduckgo",
-        timeout: Millisecond.THIRTY_SECOND.toString(), // Increase the timeout value
+        timeout: Millisecond.SIXTY_SECOND.toString(), // Increase the timeout value to 60 seconds
       }).toString();
 
       console.log(`Fetching search results from SearXNG for query: ${query}`);
@@ -382,7 +386,8 @@ async function fetchSearXNG(
       );
 
       if (attempt < maxRetries - 1) {
-        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        delay = Math.min(delay * backoffFactor, maxDelay);
       } else {
         throw error;
       }
