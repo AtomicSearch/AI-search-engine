@@ -16,4 +16,5 @@ export const taglines = [
   "Stop generic results. Receive domain-specific answers",
   "Reinventing how knowledge is distributed",
   "Retrieve the relevant findings. AI knowledge-based search",
+  "The search engine that don't store any of your data",
 ];
