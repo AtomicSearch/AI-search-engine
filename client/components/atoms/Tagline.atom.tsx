@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { FaSearch, FaSearchengin } from "react-icons/fa";
-
 import { random } from "../../../utils/random";
 import { taglines } from "../../../config/taglines.config";
+import { useMemo } from "react";
 
 const TaglineContainer = styled.div`
   display: flex;
@@ -31,10 +31,10 @@ const TaglineText = styled.h2`
 
 const icons = [<SearchenginIcon />, <SearchIcon />];
 
-const pickedUpTagline = random(taglines);
-const pickedUpIcons = random(icons);
-
 export const Tagline = () => {
+  const pickedUpTagline = useMemo(() => random(taglines), []);
+  const pickedUpIcons = useMemo(() => random(icons), []);
+
   return (
     <TaglineContainer>
       <TaglineText>{pickedUpTagline}</TaglineText> {pickedUpIcons}

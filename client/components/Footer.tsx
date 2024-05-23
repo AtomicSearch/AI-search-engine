@@ -1,8 +1,8 @@
 import { FaBrain, FaHeart } from "react-icons/fa";
 import styled, { css } from "styled-components";
-
 import { AppInfo, XInfo, GitHubInfo } from "../../config/appInfo.config";
 import { random } from "../../utils/random";
+import { useMemo } from "react";
 
 interface FooterContainerProps {
   $isEmpty: boolean;
@@ -52,7 +52,7 @@ export const Footer = ({
     </a>,
   ];
 
-  const pickedUpAuthorLink = random(authorLinks);
+  const pickedUpAuthorLink = useMemo(() => random(authorLinks), [authorLinks]);
 
   return (
     <FooterContainer $isEmpty={hasEmptyResults}>
