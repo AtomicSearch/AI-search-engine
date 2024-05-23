@@ -1,2 +1,6 @@
-export const random = (values: any[]) =>
-  values[Math.floor(Math.random() * values.length)];
+import { useCallback, useMemo } from "react";
+
+export const random = useCallback(
+  (values: any[]) => values[Math.floor(Math.random() * values.length)],
+  [],
+);
