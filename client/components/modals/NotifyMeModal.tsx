@@ -172,7 +172,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
             )}
           />
         </PhoneInputWrapper>
-        <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
+        <SubmitButton onClick={handleSubmit}>Send</SubmitButton>
       </ModalContent>
     </Modal>
   );
