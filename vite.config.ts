@@ -309,8 +309,8 @@ async function fetchSearXNG(
         safesearch: "0",
         format: "json",
         //engine: supportedEngines,
-        //engine: CategoryEngine.MINIMUM,
-        engine: "google,bing,duckduckgo",
+        engine: CategoryEngine.MINIMUM,
+        //engine: "google,bing,duckduckgo",
         timeout: Millisecond.TEN_SECOND.toString(),
       }).toString();
 
