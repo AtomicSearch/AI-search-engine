@@ -48,6 +48,28 @@ const commonSamplingConfig: SamplingConfig = {
   mirostat_tau: 3.5,
 };
 
+function parseModelUrl(url: string) {
+  const urlPartsRegex = /(.*)-(\d{5})-of-(\d{5})\.gguf$/;
+
+  const matches = url.match(urlPartsRegex);
+
+  if (!matches || matches.length !== 4) return url;
+
+  const baseURL = matches[1];
+
+  const paddedShardsAmount = matches[3];
+
+  const paddedShardNumbers = Array.from(
+    { length: Number(paddedShardsAmount) },
+    (_, i) => (i + 1).toString().padStart(5, "0"),
+  );
+
+  return paddedShardNumbers.map(
+    (paddedShardNumber) =>
+      `${baseURL}-${paddedShardNumber}-of-${paddedShardsAmount}.gguf`,
+  );
+}
+
 export const availableModels: {
   [key in
     | "mobileDefault"
@@ -58,67 +80,48 @@ export const availableModels: {
     userPrefix: string;
     assistantPrefix: string;
     messageSuffix: string;
+    cacheType?: "f16" | "q8_0" | "q4_0";
     sampling: SamplingConfig;
   };
 } = {
   mobileDefault: {
-    url: Array.from(
-      { length: 7 },
-      (_, i) =>
-        `https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-${(
-          i + 1
-        )
-          .toString()
-          .padStart(5, "0")}-of-00007.gguf`,
+    url: parseModelUrl(
+      "https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-00001-of-00007.gguf",
     ),
     userPrefix: "<|im_start|>user\n",
     assistantPrefix: "<|im_start|>assistant\n",
     messageSuffix: "<|im_end|>\n",
+    cacheType: "q8_0",
     sampling: commonSamplingConfig,
   },
   mobileLarger: {
-    url: Array.from(
-      { length: 7 },
-      (_, i) =>
-        `https://huggingface.co/Felladrin/gguf-sharded-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.shard-${(
-          i + 1
-        )
-          .toString()
-          .padStart(5, "0")}-of-00007.gguf`,
+    url: parseModelUrl(
+      "https://huggingface.co/Felladrin/gguf-sharded-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.shard-00001-of-00007.gguf",
     ),
     userPrefix: "<|user|>\n",
     assistantPrefix: "<|assistant|>\n",
     messageSuffix: "</s>\n",
+    cacheType: "q8_0",
     sampling: commonSamplingConfig,
   },
   desktopDefault: {
-    url: Array.from(
-      { length: 26 },
-      (_, i) =>
-        `https://huggingface.co/Felladrin/gguf-sharded-h2o-danube2-1.8b-chat/resolve/main/h2o-danube2-1.8b-chat.Q8_0.shard-${(
-          i + 1
-        )
-          .toString()
-          .padStart(5, "0")}-of-00026.gguf`,
+    url: parseModelUrl(
+      "https://huggingface.co/Felladrin/gguf-sharded-h2o-danube2-1.8b-chat/resolve/main/h2o-danube2-1.8b-chat.Q8_0.shard-00001-of-00026.gguf",
     ),
     userPrefix: "<|prompt|>\n",
     assistantPrefix: "<|answer|>\n",
     messageSuffix: "</s>\n",
+    cacheType: "f16",
     sampling: commonSamplingConfig,
   },
   desktopLarger: {
-    url: Array.from(
-      { length: 51 },
-      (_, i) =>
-        `https://huggingface.co/Felladrin/gguf-sharded-Phi-3-mini-4k-instruct-iMat/resolve/main/phi-3-mini-4k-instruct-imat-Q5_K_M.shard-${(
-          i + 1
-        )
-          .toString()
-          .padStart(5, "0")}-of-00051.gguf`,
+    url: parseModelUrl(
+      "https://huggingface.co/Felladrin/gguf-sharded-Phi-3-mini-4k-instruct-iMat/resolve/main/phi-3-mini-4k-instruct-imat-Q5_K_M.shard-00001-of-00051.gguf",
     ),
     userPrefix: "<|user|>\n",
     assistantPrefix: "<|assistant|>\n",
     messageSuffix: "<|end|>\n",
+    cacheType: "q4_0",
     sampling: commonSamplingConfig,
   },
 };
