@@ -13,7 +13,7 @@ import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
 import { Engine } from "../../modules/textGeneration.engine";
 import { useLocation } from "react-router-dom";
-import { search } from "../../modules/search";
+import { SearchResults, search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
 import { UpgradePlanModal } from "../../components/modals/UpgradePlanModal";
 import styled from "styled-components";
@@ -42,7 +42,7 @@ const SubscriptionBasedComponent = () => {
 export const SearchPage = () => {
   const [query, setQuery] = usePubSub(promptPubSub);
   const [response, setResponse] = usePubSub(responsePubSub);
-  const [searchResults, setSearchResults] = usePubSub(searchResultsPubSub);
+  const [searchResults, setSearchResults] = usePubSub<SearchResults>(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
   const { incrementQueryCount } = useQueryCount();
@@ -68,8 +68,11 @@ export const SearchPage = () => {
 
   const performSearch = useCallback(async () => {
     if (query.length) {
-      setIsLoading(true);
       try {
+        if (!searchResults.length) {
+          setIsLoading(true);
+        }
+
         const results = await search(query);
         setSearchResults(results);
 

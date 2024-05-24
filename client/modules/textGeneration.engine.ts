@@ -142,7 +142,9 @@ export namespace Engine {
       for await (const chunk of completion) {
         const deltaContent = chunk.choices[0].delta.content;
 
-        if (deltaContent) streamedMessage += deltaContent;
+        if (deltaContent) {
+          streamedMessage += deltaContent;
+        }
 
         if (!isAnswering) {
           isAnswering = true;
