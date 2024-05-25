@@ -42,7 +42,8 @@ const SubscriptionBasedComponent = () => {
 export const SearchPage = () => {
   const [query, setQuery] = usePubSub(promptPubSub);
   const [response, setResponse] = usePubSub(responsePubSub);
-  const [searchResults, setSearchResults] = usePubSub<SearchResults>(searchResultsPubSub);
+  const [searchResults, setSearchResults] =
+    usePubSub<SearchResults>(searchResultsPubSub);
   const [urlsDescriptions] = usePubSub(urlsDescriptionsPubSub);
   const [isLoading, setIsLoading] = useState(false);
   const { incrementQueryCount } = useQueryCount();
@@ -70,6 +71,7 @@ export const SearchPage = () => {
     if (query.length) {
       try {
         if (!searchResults.length) {
+          // if no results, set loading spinner
           setIsLoading(true);
         }
 
@@ -105,6 +107,7 @@ export const SearchPage = () => {
           <LoadingText>Answering...</LoadingText>
         </LoadingContainer>
       )}
+
       {!getDisableAiResponseSetting() && response.length > 0 && (
         <div className="mt-4">
           <div className="bg-gray-100 p-4 rounded-md mt-2">
@@ -112,6 +115,7 @@ export const SearchPage = () => {
           </div>
         </div>
       )}
+
       {shouldResultsBeShown && (
         <div>
           <SearchResultsList
@@ -120,6 +124,7 @@ export const SearchPage = () => {
           />
         </div>
       )}
+
       <SubscriptionBasedComponent />
       <Toaster />
       <Footer hasEmptyResults={searchResults.length === 0} />
