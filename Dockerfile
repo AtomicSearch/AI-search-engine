@@ -35,6 +35,7 @@ RUN npm run build
 RUN mkdir -p /app/ssl
 
 # Set higher timeout values for SearXNG
+# TODO Could potentially be removed
 ENV SEARXNG_TIMEOUT_ALL=120
 ENV SEARXNG_TIMEOUT_SPECIFIC="soundcloud=120 wikidata=120"
 
