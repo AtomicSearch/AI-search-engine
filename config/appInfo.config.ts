@@ -1,6 +1,7 @@
 export enum AppInfo {
   APP_NAME = "Massive Prediction",
   APP_TAGLINE = "Making Knowledge Search Impactful in AI Era",
+  APP_SHORT_DESCRIPTION = "Retrieve specific findings in minutes",
   APP_URL = "http://localhost:7860",
   NOTIFY_ME_FORM_API_URL = "https://send.pageclip.co/arfoGnoQdNuEAQAL841uEo3nxLvjo3hk/Waiting_List_AtomicSearch_phone_numbers",
 }

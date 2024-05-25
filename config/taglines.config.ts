@@ -2,6 +2,7 @@ import { AppInfo } from "./appInfo.config";
 
 export const taglines = [
   AppInfo.APP_TAGLINE, // default principal tagline
+  AppInfo.APP_SHORT_DESCRIPTION, // default short description
   "The knowledge for every decision",
   "Rapid. Reliable. AI-first search engine",
   "One-click search. No time wasted",
