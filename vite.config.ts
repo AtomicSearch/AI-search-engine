@@ -14,6 +14,7 @@ import Redis, { Redis as RedisClient } from "ioredis";
 import { PreviewServer, ViteDevServer, defineConfig } from "vite";
 import { modelSource as embeddingModel } from "@energetic-ai/model-embeddings-en";
 import compression from "http-compression";
+import replaceInFile from "replace-in-file";
 import { StatusCodes } from "http-status-codes";
 
 import { Millisecond } from "./client/constants/time.constant";
@@ -45,6 +46,13 @@ export default defineConfig(({ command }) => {
   if (command === "build") {
     regenerateSearchToken();
   }
+
+  // This replacement is a temporary solution for https://github.com/mlc-ai/web-llm/issues/414:
+  replaceInFile.sync({
+    files: path.resolve(__dirname, "node_modules/@mlc-ai/web-llm/lib/index.js"),
+    from: "//# sourceMappingURL=index.js.map",
+    to: "",
+  });
 
   return {
     root: "./client",

@@ -11,7 +11,8 @@
     "eslint:fix": "eslint --fix client",
     "prettier:check": "prettier --check 'client/**/*.{ts,js,jsx,tsx,json}'",
     "prettier:fix": "prettier --write 'client/**/*.{ts,js,jsx,tsx,json}'",
-    "lint": "npm run prettier:fix"
+    "lint": "npm run prettier:fix",
+    "test": "glob -c 'tsx --test' '**/*.test.ts'"
   },
   "dependencies": {
     "@capacitor/android": "^6.0.0",
@@ -20,7 +21,7 @@
     "@energetic-ai/core": "^0.2.0",
     "@energetic-ai/embeddings": "^0.2.0",
     "@energetic-ai/model-embeddings-en": "^0.2.0",
-    "@mlc-ai/web-llm": "0.2.35",
+    "@mlc-ai/web-llm": "^0.2.38",
     "@ratchet-ml/ratchet-web": "^0.4.0",
     "@stripe/stripe-js": "^3.4.0",
     "@wllama/wllama": "^1.9.0",
@@ -45,6 +46,7 @@
     "react-router-dom": "^6.23.0",
     "react-textarea-autosize": "^8.5.3",
     "react-tooltip": "^5.21.6",
+    "replace-in-file": "^7.1.0",
     "styled-components": "^6.1.9",
     "temp-dir": "^3.0.0",
     "water.css": "^2.1.1"
@@ -61,7 +63,9 @@
     "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.57.0",
+    "glob": "^10.4.1",
     "prettier": "^3.2.5",
+    "tsx": "^4.11.0",
     "typescript": "^5.0.2",
     "typescript-eslint": "^7.8.0",
     "vite": "^5.2.9"

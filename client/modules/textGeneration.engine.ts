@@ -91,7 +91,7 @@ export namespace Engine {
   }
 
   async function generateTextWithWebLlm(searchPromise: Promise<void>) {
-    const { CreateWebWorkerEngine, CreateEngine, hasModelInCache } =
+    const { CreateWebWorkerMLCEngine, CreateMLCEngine, hasModelInCache } =
       await import("@mlc-ai/web-llm");
 
     const selectedModel = getUseLargerModelSetting()
@@ -115,14 +115,14 @@ export namespace Engine {
     }
 
     const engine = Worker
-      ? await CreateWebWorkerEngine(
+      ? await CreateWebWorkerMLCEngine(
           new Worker(new URL("./webLlmWorker.ts", import.meta.url), {
             type: "module",
           }),
           selectedModel,
           { initProgressCallback },
         )
-      : await CreateEngine(selectedModel, { initProgressCallback });
+      : await CreateMLCEngine(selectedModel, { initProgressCallback });
 
     if (!getDisableAiResponseSetting()) {
       await searchPromise;
