@@ -1,4 +1,5 @@
 import { convert as convertHtmlToPlainText } from "html-to-text";
+import { VITE_SEARCH_TOKEN } from "../../config";
 
 export type SearchResults = [title: string, snippet: string, url: string][];
 
@@ -17,7 +18,9 @@ export async function search(
 
   const response = await fetch(searchUrl.toString());
 
-  if (!response.ok) return [];
+  if (!response.ok) {
+    return [];
+  }
 
   const searchResults = (await response.json()) as SearchResults;
 

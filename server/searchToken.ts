@@ -7,7 +7,10 @@ function getSearchTokenFilePath() {
 }
 
 export const getSearchToken = () => {
-  if (!existsSync(getSearchTokenFilePath())) regenerateSearchToken();
+  if (!existsSync(getSearchTokenFilePath())) {
+    regenerateSearchToken();
+  }
+
   return readFileSync(getSearchTokenFilePath(), "utf8");
 };
 

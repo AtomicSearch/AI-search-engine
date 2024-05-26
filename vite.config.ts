@@ -11,7 +11,9 @@ import { cacheServerHook } from "./server/cacheServerHook";
 import { getSearchToken, regenerateSearchToken } from "./server/searchToken";
 
 export default defineConfig(({ command }) => {
-  if (command === "build") regenerateSearchToken();
+  if (command === "build") {
+    regenerateSearchToken();
+  }
 
   // This replacement is a temporary solution for https://github.com/mlc-ai/web-llm/issues/414:
   replaceInFile.sync({
