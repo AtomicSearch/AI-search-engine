@@ -22,6 +22,7 @@ import { useSubscriptionStatus } from "../hooks/useSubscriptionStatus";
 import { useQueryCount } from "../hooks/useQueryCount";
 import { stripHtmlTags } from "../../utils/strip-tags";
 import { Server } from "../modules/persistence";
+import { search } from "../modules/search";
 
 interface SearchFormProps {
   query: string;
@@ -107,9 +108,17 @@ export function SearchForm({
   const navigate = useNavigate();
 
   const startSearching = useCallback(
-    (queryToEncode: string) => {
+    async (queryToEncode: string) => {
       updateQuery(queryToEncode);
       navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
+  
+      try {
+        const searchResults = await search(queryToEncode);
+        // Handle the search results as needed
+      } catch (error) {
+        console.error("Error performing search:", error);
+        // Handle the error, e.g., show an error message to the user
+      }
     },
     [updateQuery, navigate],
   );

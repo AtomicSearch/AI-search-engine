@@ -1,5 +1,4 @@
 import { convert as convertHtmlToPlainText } from "html-to-text";
-import { VITE_SEARCH_TOKEN } from "../../config";
 
 export type SearchResults = [title: string, snippet: string, url: string][];
 
