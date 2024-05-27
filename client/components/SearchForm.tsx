@@ -107,40 +107,44 @@ export function SearchForm({
 
   const navigate = useNavigate();
 
-  const startSearching = useCallback(
-    async (queryToEncode: string) => {
-      updateQuery(queryToEncode);
-      navigate(`/?q=${encodeURIComponent(queryToEncode)}`);
-  
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
       try {
-        const searchResults = await search(queryToEncode);
+        const searchResults = await search(query);
         // Handle the search results as needed
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error performing search:", error);
         // Handle the error, e.g., show an error message to the user
+        if (error.message === "Unauthorized") {
+          toast.error("Unauthorized. Please try again later.", {
+            position: "top-right",
+            duration: Millisecond.TWO_SECOND,
+          });
+        } else {
+          toast.error("Something went wrong. Please try again later.", {
+            position: "top-right",
+            duration: Millisecond.TWO_SECOND,
+          });
+        }
       }
-    },
-    [updateQuery, navigate],
+    }, 500),
+    [],
   );
 
   const clearSearchResultsAndUrl = useCallback(() => {
     if (textAreaRef.current) {
       textAreaRef.current.value = "";
-      startSearching("");
+      updateQuery("");
       clearResponses();
     }
 
     // Reset the URL to index
     navigate("/");
-  }, [startSearching, clearResponses, navigate]);
+  }, [updateQuery, clearResponses, navigate]);
 
   const navigateToHomePage = useCallback(() => {
     clearSearchResultsAndUrl();
   }, [clearSearchResultsAndUrl]);
-
-  const debouncedStartSearching = useCallback(debounce(startSearching, 500), [
-    startSearching,
-  ]);
 
   const showQueryLimitNotification = useCallback(() => {
     if (!isQueryLimitNotificationShown) {
@@ -268,7 +272,8 @@ export function SearchForm({
       // Start searching immediately when user types (with a debounce)
       if (!userQueryIsBlank) {
         document.title = stripHtmlTags(userQuery);
-        debouncedStartSearching(userQuery);
+        updateQuery(userQuery);
+        debouncedSearch(userQuery);
       } else {
         // If the user deleted the input, reset the search results
         clearSearchResultsAndUrl();
@@ -288,7 +293,8 @@ export function SearchForm({
       showQueryLimitNotification,
       showQueryWordLimitNotification,
       suggestedQuery,
-      debouncedStartSearching,
+      debouncedSearch,
+      updateQuery,
       clearSearchResultsAndUrl,
     ],
   );
@@ -314,7 +320,8 @@ export function SearchForm({
         const transcript = event.results[0][0].transcript;
         if (textAreaRef.current) {
           textAreaRef.current.value = transcript;
-          startSearching(transcript);
+          updateQuery(transcript);
+          debouncedSearch(transcript);
         }
         setIsListening(false);
       };
@@ -331,7 +338,7 @@ export function SearchForm({
       recognitionRef.current.start();
       setIsListening(true);
     }
-  }, [isListening, startSearching]);
+  }, [isListening, updateQuery, debouncedSearch]);
 
   useEffect(() => {
     const isFirstVisit = localStorage.getItem(LocalStorageKeys.FIRST_VISIT);
@@ -356,7 +363,8 @@ export function SearchForm({
         if (textAreaRef.current) {
           const userQuery = textAreaRef.current.value.trim();
           if (userQuery.length > 0) {
-            startSearching(userQuery);
+            updateQuery(userQuery);
+            debouncedSearch(userQuery);
           }
         }
       }
@@ -373,7 +381,7 @@ export function SearchForm({
     return () => {
       textArea?.removeEventListener("keypress", keyboardEventHandler);
     };
-  }, [startSearching, clearSearchResultsAndUrl]);
+  }, [updateQuery, debouncedSearch, clearSearchResultsAndUrl]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
