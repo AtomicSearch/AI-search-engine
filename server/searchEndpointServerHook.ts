@@ -16,7 +16,7 @@ export function searchEndpointServerHook<
   });
 
   server.middlewares.use(async (request, response, next) => {
-    if (!request.url.startsWith("/search")) return next();
+    if (!request.url?.startsWith("/search")) return next();
 
     const { searchParams } = new URL(
       request.url,
