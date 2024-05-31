@@ -23,11 +23,11 @@ export enum CategoryEngine {
 }
 
 export enum Model {
-  LLAMA = "Llama-3-8B-Instruct-q4f16_1",
-  TINY_LLAM = "TinyLlama-1.1B-Chat-v0.4-q0f16",
-  MISTRA = "Mistral-7B-Instruct-v0.2-q4f16_1",
-  GEMMA = "gemma-2b-it-q4f16_1",
-  PHI = "Phi2-q4f16_1",
+  Llama = "Llama-3-8B-Instruct-q4f16_1-MLC",
+  Mistral = "Mistral-7B-Instruct-v0.2-q4f16_1-MLC",
+  Gemma = "gemma-2b-it-q4f16_1-MLC",
+  Phi = "Phi-3-mini-4k-instruct-q4f16_1-MLC",
+  TinyLlama = "TinyLlama-1.1B-Chat-v0.4-q4f16_1-MLC",
 }
 
 export enum I18n {

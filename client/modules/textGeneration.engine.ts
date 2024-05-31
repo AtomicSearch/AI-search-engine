@@ -94,9 +94,7 @@ export namespace Engine {
     const { CreateWebWorkerMLCEngine, CreateMLCEngine, hasModelInCache } =
       await import("@mlc-ai/web-llm");
 
-    const selectedModel = getUseLargerModelSetting()
-      ? Model.LLAMA
-      : Model.GEMMA;
+    const selectedModel = getUseLargerModelSetting() ? Model.Llama : Model.Phi;
 
     const isModelCached = await hasModelInCache(selectedModel);
 
@@ -120,9 +118,12 @@ export namespace Engine {
             type: "module",
           }),
           selectedModel,
-          { initProgressCallback },
+          { initProgressCallback, logLevel: debug ? "DEBUG" : "SILENT" },
         )
-      : await CreateMLCEngine(selectedModel, { initProgressCallback });
+      : await CreateMLCEngine(selectedModel, {
+          initProgressCallback,
+          logLevel: debug ? "DEBUG" : "SILENT",
+        });
 
     if (!getDisableAiResponseSetting()) {
       await searchPromise;
