@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export async function fetchSearXNG(query: string, limit?: number) {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
