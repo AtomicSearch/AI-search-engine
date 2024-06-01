@@ -1,3 +1,5 @@
+import { CategoryEngine } from "../config/appInfo.config";
+
 export async function fetchSearXNG(query: string, limit?: number) {
   try {
     const url = new URL("http://127.0.0.1:8080/search");
@@ -7,6 +9,7 @@ export async function fetchSearXNG(query: string, limit?: number) {
       language: "auto",
       safesearch: "0",
       format: "json",
+      engine: CategoryEngine.MINIMUM,
     }).toString();
 
     const response = await fetch(url);
