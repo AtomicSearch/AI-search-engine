@@ -11,7 +11,7 @@ import { debounce } from "../../utils/debounce";
 import { LocalStorageKeys } from "../constants/localStorages.constant";
 import { confettiOptions } from "../../config/confettiOptions.config";
 import { Header } from "./Header";
-import { I18n, Search, SubscriptionPlan } from "../../config/appInfo.config";
+import { I18n, Search } from "../../config/appInfo.config";
 import { Tagline } from "./atoms/Tagline.atom";
 import { Millisecond } from "../constants/time.constant";
 import { ToastModal } from "./atoms/ToastModel.atom";
@@ -23,6 +23,7 @@ import { useQueryCount } from "../hooks/useQueryCount";
 import { stripHtmlTags } from "../../utils/strip-tags";
 import { Server } from "../modules/persistence";
 import { search } from "../modules/search";
+import { RoutePaths } from "../../config/routes.config";
 
 interface SearchFormProps {
   query: string;
@@ -227,7 +228,7 @@ const debouncedSearch = useCallback(
           </p>
           <BlueButton
             onClick={() => {
-              window.location.href = SubscriptionPlan.PRICING_PAGE_URL;
+              window.location.href = RoutePaths.SUBSCRIPTION;
             }}
           >
             {messages.levelUpToday}
