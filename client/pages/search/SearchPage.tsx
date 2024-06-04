@@ -70,7 +70,7 @@ export const SearchPage = () => {
     if (query.length) {
       try {
         if (!searchResults.length) {
-          // if no results, set loading spinner
+          // if no results yet, activate loading spinner
           setIsLoading(true);
         }
 
