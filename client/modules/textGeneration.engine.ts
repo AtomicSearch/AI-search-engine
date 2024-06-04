@@ -34,9 +34,13 @@ export namespace Engine {
 
     const searchPromise = getSearchPromise(query);
 
-    if (getDisableAiResponseSetting() && !getSummarizeLinksSetting()) return;
+    if (getDisableAiResponseSetting() && !getSummarizeLinksSetting()) {
+      return;
+    }
 
-    if (debug) console.time("Response Generation Time");
+    if (debug) {
+      console.time("Response Generation Time");
+    }
 
     updateLoadingToast(messages.loadingAiModel);
 
