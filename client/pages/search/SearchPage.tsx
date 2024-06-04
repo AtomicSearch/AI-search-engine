@@ -8,7 +8,6 @@ import {
 } from "../../modules/pubSub";
 import { SearchForm } from "../../components/SearchForm";
 import { Toaster } from "react-hot-toast";
-import Markdown from "markdown-to-jsx";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
 import { Engine } from "../../modules/textGeneration.engine";
@@ -111,7 +110,7 @@ export const SearchPage = () => {
       {!getDisableAiResponseSetting() && response.length > 0 && (
         <div className="mt-4">
           <div className="bg-gray-100 p-4 rounded-md mt-2">
-            <Markdown>{response}</Markdown>
+            {response}
           </div>
         </div>
       )}
