@@ -68,12 +68,12 @@ export const SearchPage = () => {
 
   const performSearch = useCallback(async () => {
     if (query.length) {
-      try {
-        if (!searchResults.length) {
-          // if no results yet, activate loading spinner
-          setIsLoading(true);
-        }
+      if (!searchResults.length) {
+        // if no results yet, activate loading spinner
+        setIsLoading(true);
+      }
 
+      try {
         const results = await search(query);
         setSearchResults(results);
 
