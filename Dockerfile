@@ -2,7 +2,13 @@
 FROM searxng/searxng:latest
 
 # Install necessary dependencies
-RUN apk add --no-cache nodejs npm git certbot
+RUN apk add --update \
+  nodejs \
+  npm \
+  git \
+  build-base \
+  cmake \
+  ccache
 
 ARG SEARXNG_SETTINGS_FOLDER=/etc/searxng
 RUN sed -i 's/- html/- json/' /usr/local/searxng/searx/settings.yml \
