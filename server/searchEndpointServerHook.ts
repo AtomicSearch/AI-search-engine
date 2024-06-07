@@ -1,6 +1,8 @@
 import { PreviewServer, ViteDevServer } from "vite";
 import { RateLimiterMemory } from "rate-limiter-flexible";
+import { StatusCodes } from "http-status-codes";
 import { argon2Verify } from "hash-wasm";
+
 import { incrementSearchesSinceLastRestart } from "./searchesSinceLastRestart";
 import { rankSearchResults } from "./rankSearchResults";
 import { getSearchToken } from "./searchToken";
@@ -31,7 +33,7 @@ export function searchEndpointServerHook<
     const query = searchParams.get("q");
 
     if (!query) {
-      response.statusCode = 400;
+      response.statusCode = StatusCodes.BAD_REQUEST;
       response.end("Missing the query parameter.");
       return;
     }
@@ -53,7 +55,7 @@ export function searchEndpointServerHook<
       if (isValidToken) {
         addVerifiedToken(token);
       } else {
-        response.statusCode = 401;
+        response.statusCode = StatusCodes.UNAUTHORIZED;
         response.end("Unauthorized.");
         return;
       }
@@ -62,7 +64,7 @@ export function searchEndpointServerHook<
     try {
       await rateLimiter.consume(token);
     } catch (error) {
-      // response.statusCode = 429;
+      // response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
       // response.end("Too many requests.");
       return;
     }
