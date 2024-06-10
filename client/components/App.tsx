@@ -12,21 +12,22 @@ const AppContainer = styled.div`
   flex-direction: column;
 `;
 
-const Main = styled.main`
+const Root = styled.main`
   flex: 1;
 `;
 
 function InnerApp() {
   return (
     <>
-      <Main>
+      <Root>
         <Routes>
+
           <Route path={RoutePaths.SEARCH} element={<SearchPage />} />
           <Route path={RoutePaths.COMPARISON} element={<ComparisonPage />} />
           <Route path={RoutePaths.MISSION} element={<AboutMissionPage />} />
           <Route path={RoutePaths.SUBSCRIPTION} element={<PricingPage />} />
         </Routes>
-      </Main>
+      </Root>
     </>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
-import Markdown from "markdown-to-jsx";
 import toast from "react-hot-toast";
 
 import { SearchResults } from "../modules/search";
@@ -130,7 +129,7 @@ export function SearchResultsList({
             )}
           </div>
           {urlsDescriptions[url] && (
-            <Markdown>{urlsDescriptions[url]}</Markdown>
+            <blockquote>{urlsDescriptions[url]}</blockquote>
           )}
         </li>
       ))}
