@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePubSub } from "create-pubsub/react";
+import Markdown from "markdown-to-jsx";
 import {
-  promptPubSub,
+  queryPubSub,
   responsePubSub,
   searchResultsPubSub,
   urlsDescriptionsPubSub,
@@ -21,6 +22,12 @@ import { SettingsButton } from "../../components/SettingsButton";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 import { useQueryCount } from "../../hooks/useQueryCount";
 
+const SearchBlock = styled.div`
+  backgroundColor: "var(--background)",
+  borderRadius: "6px",
+  padding: "10px 25px",
+`;
+
 const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
@@ -39,7 +46,7 @@ const SubscriptionBasedComponent = () => {
 };
 
 export const SearchPage = () => {
-  const [query, setQuery] = usePubSub(promptPubSub);
+  const [query, setQuery] = usePubSub(queryPubSub);
   const [response, setResponse] = usePubSub(responsePubSub);
   const [searchResults, setSearchResults] =
     usePubSub<SearchResults>(searchResultsPubSub);
@@ -108,11 +115,11 @@ export const SearchPage = () => {
       )}
 
       {!getDisableAiResponseSetting() && response.length > 0 && (
-        <div className="mt-4">
+        <SearchBlock className="mt-4">
           <div className="bg-gray-100 p-4 rounded-md mt-2">
-            {response}
+            <Markdown>{response}</Markdown>
           </div>
-        </div>
+        </SearchBlock>
       )}
 
       {shouldResultsBeShown && (

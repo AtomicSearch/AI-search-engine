@@ -57,11 +57,9 @@ export const [, , getDisableWebGpuUsageSetting] =
 
 export const numberOfThreadsSettingPubSub = createLocalStoragePubSub(
   "numberOfThreads",
-  isRunningOnMobile && navigator.hardwareConcurrency
-    ? navigator.hardwareConcurrency
-    : (navigator.hardwareConcurrency ?? 1) > 1
-      ? Math.max(navigator.hardwareConcurrency - 2, 2)
-      : 1,
+  !isRunningOnMobile && (navigator.hardwareConcurrency ?? 1) > 1
+    ? Math.max(navigator.hardwareConcurrency - 2, 2)
+    : 1,
 );
 
 export const [, , getNumberOfThreadsSetting] = numberOfThreadsSettingPubSub;
@@ -82,9 +80,11 @@ export const [updateLastSearchTokenHash, , getLastSearchTokenHash] =
 export const [updateQuerySuggestions, , getQuerySuggestions] =
   querySuggestionsPubSub;
 
-export const promptPubSub = createPubSub("");
+export const queryPubSub = createPubSub(
+  new URLSearchParams(self.location.search).get("q") ?? "",
+);
 
-export const [updatePrompt] = promptPubSub;
+export const [updateQuery, , getQuery] = queryPubSub;
 
 export const responsePubSub = createPubSub("");
 
@@ -96,5 +96,15 @@ export const [updateSearchResults, , getSearchResults] = searchResultsPubSub;
 
 export const urlsDescriptionsPubSub = createPubSub<Record<string, string>>({});
 
-export const [updateUrlsDescriptions, , getUrlsDescriptions] =
-  urlsDescriptionsPubSub;
+export const [updateUrlsDescriptions] = urlsDescriptionsPubSub;
+
+export const debugModeEnabledPubSub = createPubSub(
+  new URLSearchParams(self.location.search).has("debug"),
+);
+
+export const [, , isDebugModeEnabled] = debugModeEnabledPubSub;
+
+export const interruptTextGenerationPubSub = createPubSub();
+
+export const [interruptTextGeneration, onTextGenerationInterrupted] =
+  interruptTextGenerationPubSub;

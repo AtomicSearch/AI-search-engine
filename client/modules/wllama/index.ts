@@ -3,7 +3,7 @@ import {
   Wllama,
   WllamaConfig,
   SamplingConfig,
-} from "@wllama/wllama";
+} from "@wllama/wllama/esm";
 import singleThreadWllamaJsUrl from "@wllama/wllama/esm/single-thread/wllama.js?url";
 import singleThreadWllamaWasmUrl from "@wllama/wllama/esm/single-thread/wllama.wasm?url";
 import multiThreadWllamaJsUrl from "@wllama/wllama/esm/multi-thread/wllama.js?url";
@@ -56,51 +56,75 @@ export const availableModels: {
     | "desktopDefault"
     | "desktopLarger"]: {
     url: string | string[];
+    introduction: string;
     userPrefix: string;
+    userSuffix: string;
     assistantPrefix: string;
-    messageSuffix: string;
-    cacheType?: "f16" | "q8_0" | "q4_0";
+    assistantSuffix: string;
+    stopStrings: string[];
+    cacheType: "f16" | "q8_0" | "q4_0";
+    contextSize: number;
     sampling: SamplingConfig;
   };
 } = {
   mobileDefault: {
     url: parseModelUrl(
-      "https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-00001-of-00007.gguf",
+      "https://huggingface.co/Felladrin/gguf-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q4_K_M.gguf",
     ),
+    introduction:
+      "<|im_start|>system\nYou are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.<|im_end|>\n",
     userPrefix: "<|im_start|>user\n",
+    userSuffix: "<|im_end|>\n",
     assistantPrefix: "<|im_start|>assistant\n",
-    messageSuffix: "<|im_end|>\n",
-    cacheType: "q8_0",
+    assistantSuffix: "<|im_end|>\n",
+    stopStrings: ["<|im_start|>", "<|im_end|>"],
+    cacheType: "f16",
+    contextSize: 2048,
     sampling: commonSamplingConfig,
   },
   mobileLarger: {
     url: parseModelUrl(
-      "https://huggingface.co/Felladrin/gguf-sharded-zephyr-220m-dpo-full/resolve/main/zephyr-220m-dpo-full.Q8_0.shard-00001-of-00007.gguf",
+      "https://huggingface.co/Felladrin/gguf-sharded-Llama-160M-Chat-v1/resolve/main/Llama-160M-Chat-v1.Q8_0.shard-00001-of-00007.gguf",
     ),
-    userPrefix: "<|user|>\n",
-    assistantPrefix: "<|assistant|>\n",
-    messageSuffix: "</s>\n",
-    cacheType: "q8_0",
+    introduction:
+      "<|im_start|>system\nYou are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.<|im_end|>\n",
+    userPrefix: "<|im_start|>user\n",
+    userSuffix: "<|im_end|>\n",
+    assistantPrefix: "<|im_start|>assistant\n",
+    assistantSuffix: "<|im_end|>\n",
+    stopStrings: ["<|im_start|>", "<|im_end|>"],
+    cacheType: "f16",
+    contextSize: 2048,
     sampling: commonSamplingConfig,
   },
   desktopDefault: {
     url: parseModelUrl(
-      "https://huggingface.co/Felladrin/gguf-sharded-h2o-danube2-1.8b-chat/resolve/main/h2o-danube2-1.8b-chat.Q8_0.shard-00001-of-00026.gguf",
+      "https://huggingface.co/Felladrin/gguf-sharded-Qwen2-0.5B-Instruct/resolve/main/Qwen2-0.5B-Instruct.Q8_0.shard-00001-of-00004.gguf",
     ),
-    userPrefix: "<|prompt|>\n",
-    assistantPrefix: "<|answer|>\n",
-    messageSuffix: "</s>\n",
+    introduction:
+      "<|im_start|>system\nYou are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.<|im_end|>\n",
+    userPrefix: "<|im_start|>user\n",
+    userSuffix: "<|im_end|>\n",
+    assistantPrefix: "<|im_start|>assistant\n",
+    assistantSuffix: "<|im_end|>\n",
+    stopStrings: ["<|im_start|>", "<|im_end|>"],
     cacheType: "f16",
+    contextSize: 2048,
     sampling: commonSamplingConfig,
   },
   desktopLarger: {
     url: parseModelUrl(
-      "https://huggingface.co/Felladrin/gguf-sharded-phi-2-orange-v2/resolve/main/phi-2-orange-v2.Q5_K_M.shard-00001-of-00025.gguf",
+      "https://huggingface.co/Felladrin/gguf-sharded-h2o-danube2-1.8b-chat/resolve/main/h2o-danube2-1.8b-chat.Q8_0.shard-00001-of-00026.gguf",
     ),
-    userPrefix: "<|im_start|>user\n",
-    assistantPrefix: "<|im_start|>assistant\n",
-    messageSuffix: "<|im_end|>\n",
+    introduction:
+      "You are a highly knowledgeable and friendly assistant. Your goal is to understand and respond to user inquiries with clarity.</s>",
+    userPrefix: "<|prompt|>",
+    userSuffix: "</s>",
+    assistantPrefix: "<|answer|>",
+    assistantSuffix: "</s>",
+    stopStrings: ["<|prompt|>", "<|answer|>", "</s>"],
     cacheType: "f16",
+    contextSize: 2048,
     sampling: commonSamplingConfig,
   },
 };
