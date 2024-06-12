@@ -21,6 +21,7 @@
     "hash-wasm": "^4.11.0",
     "html-to-text": "^9.0.5",
     "http-compression": "^1.0.20",
+    "http-status-codes": "^2.3.0",
     "inter-ui": "^4.0.2",
     "keyword-extractor": "^0.0.28",
     "markdown-to-jsx": "^7.3.2",
