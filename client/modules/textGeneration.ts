@@ -1,4 +1,4 @@
-import { stripHtmlTags } from "./../../utils/strip-tags";
+import { stripHtmlTags } from "../../utils/strip-tags";
 import { isWebGPUAvailable } from "./webGpu";
 import {
   updateQuery,

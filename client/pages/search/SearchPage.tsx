@@ -11,7 +11,7 @@ import { SearchForm } from "../../components/SearchForm";
 import { Toaster } from "react-hot-toast";
 import { getDisableAiResponseSetting } from "../../modules/pubSub";
 import { SearchResultsList } from "../../components/SearchResultsList";
-import { Engine } from "../../modules/textGeneration.engine";
+import { Engine } from "../../modules/textGeneration";
 import { useLocation } from "react-router-dom";
 import { SearchResults, search } from "../../modules/search";
 import { Footer } from "../../components/Footer";
