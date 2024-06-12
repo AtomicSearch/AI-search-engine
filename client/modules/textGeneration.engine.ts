@@ -1,7 +1,7 @@
 import { stripHtmlTags } from "./../../utils/strip-tags";
 import { isWebGPUAvailable } from "./webGpu";
 import {
-  updatePrompt,
+  updateQuery,
   updateSearchResults,
   getDisableAiResponseSetting,
   getSummarizeLinksSetting,
@@ -12,6 +12,9 @@ import {
   getUrlsDescriptions,
   getDisableWebGpuUsageSetting,
   getNumberOfThreadsSetting,
+  getQuery,
+  interruptTextGeneration,
+  isDebugModeEnabled,
 } from "./pubSub";
 import { SearchResults, search } from "./search";
 import { query, debug } from "./urlParams";
@@ -23,22 +26,26 @@ import { Millisecond } from "../constants/time.constant";
 
 export namespace Engine {
   export async function prepareTextGeneration() {
-    if (query === null) {
+    if (getQuery() === "") {
       // TODO If nothing returned - Look automatically with different keywords for the user
       return;
     }
 
-    document.title = stripHtmlTags(query);
+    document.title = getQuery();
 
-    updatePrompt(query);
+    interruptTextGeneration();
 
-    const searchPromise = getSearchPromise(query);
+    updateQuery(getQuery());
 
-    if (getDisableAiResponseSetting() && !getSummarizeLinksSetting()) {
-      return;
-    }
+    updateResponse("");
 
-    if (debug) {
+    updateSearchResults([]);
+
+    const searchPromise = getSearchPromise(getQuery());
+
+    if (getDisableAiResponseSetting()) return;
+
+    if (isDebugModeEnabled()) {
       console.time("Response Generation Time");
     }
 
@@ -78,7 +85,7 @@ export namespace Engine {
       dismissLoadingToast();
     }
 
-    if (debug) {
+    if (isDebugModeEnabled()) {
       console.timeEnd("Response Generation Time");
     }
   }
@@ -99,7 +106,6 @@ export namespace Engine {
       await import("@mlc-ai/web-llm");
 
     const selectedModel = getUseLargerModelSetting() ? Model.Llama : Model.Phi;
-
     const isModelCached = await hasModelInCache(selectedModel);
 
     let initProgressCallback:
@@ -122,11 +128,14 @@ export namespace Engine {
             type: "module",
           }),
           selectedModel,
-          { initProgressCallback, logLevel: debug ? "DEBUG" : "SILENT" },
+          {
+            initProgressCallback,
+            logLevel: isDebugModeEnabled() ? "DEBUG" : "SILENT",
+          },
         )
       : await CreateMLCEngine(selectedModel, {
           initProgressCallback,
-          logLevel: debug ? "DEBUG" : "SILENT",
+          logLevel: isDebugModeEnabled() ? "DEBUG" : "SILENT",
         });
 
     if (!getDisableAiResponseSetting()) {
@@ -139,62 +148,39 @@ export namespace Engine {
       const completion = await engine.chat.completions.create({
         stream: true,
         messages: [{ role: "user", content: getMainPrompt() }],
-        max_gen_len: 768,
       });
 
       let streamedMessage = "";
 
+      let wasInterrupted = false;
+
+      const unsubscribeFromTextGenerationInterruption =
+        onTextGenerationInterrupted(async () => {
+          await engine.interruptGenerate();
+          wasInterrupted = true;
+        });
+
       for await (const chunk of completion) {
         const deltaContent = chunk.choices[0].delta.content;
 
-        if (deltaContent) {
-          streamedMessage += deltaContent;
-        }
+        if (deltaContent) streamedMessage += deltaContent;
 
         if (!isAnswering) {
           isAnswering = true;
-          updateLoadingToast(messages.givingAnswer);
+          updateLoadingToast("Generating response...");
         }
 
         updateResponse(streamedMessage);
       }
-    }
 
-    await engine.resetChat();
+      unsubscribeFromTextGenerationInterruption();
 
-    if (getSummarizeLinksSetting()) {
-      updateLoadingToast(messages.summarizeLinks);
-
-      for (const [title, snippet, url] of getSearchResults()) {
-        const completion = await engine.chat.completions.create({
-          stream: true,
-          messages: [
-            {
-              role: "user",
-              content: await getLinkSummarizationPrompt([title, snippet, url]),
-            },
-          ],
-          max_gen_len: 768,
-        });
-
-        let streamedMessage = "";
-
-        for await (const chunk of completion) {
-          const deltaContent = chunk.choices[0].delta.content;
-
-          if (deltaContent) streamedMessage += deltaContent;
-
-          updateUrlsDescriptions({
-            ...getUrlsDescriptions(),
-            [url]: streamedMessage,
-          });
-        }
-
-        await engine.resetChat();
+      if (wasInterrupted) {
+        updateResponse("");
       }
     }
 
-    if (debug) {
+    if (isDebugModeEnabled()) {
       console.info(await engine.runtimeStatsText());
     }
 
@@ -220,12 +206,13 @@ export namespace Engine {
 
     const wllama = await initializeWllama(selectedModel.url, {
       wllama: {
-        suppressNativeLog: !debug,
+        suppressNativeLog: !isDebugModeEnabled(),
       },
       model: {
-        n_ctx: 2 * 1024,
         n_threads: getNumberOfThreadsSetting(),
+        n_ctx: selectedModel.contextSize,
         cache_type_k: selectedModel.cacheType,
+        parallelDownloads: isRunningOnMobile ? 1 : 3,
         progressCallback: ({ loaded, total }) => {
           const progressPercentage = Math.round((loaded / total) * 100);
 
@@ -248,96 +235,55 @@ export namespace Engine {
       updateLoadingToast(messages.generatingResponse);
 
       const prompt = [
+        selectedModel.introduction,
         selectedModel.userPrefix,
         "Hello!",
-        selectedModel.messageSuffix,
+        selectedModel.userSuffix,
         selectedModel.assistantPrefix,
         "Hi! How can I help you?",
-        selectedModel.messageSuffix,
+        selectedModel.assistantSuffix,
         selectedModel.userPrefix,
-        ["Take a look at this info:", getFormattedSearchResults(5)].join(
-          "\n\n",
-        ),
-        selectedModel.messageSuffix,
-        selectedModel.assistantPrefix,
-        "Alright!",
-        selectedModel.messageSuffix,
-        selectedModel.userPrefix,
-        "Now I'm going to write my question, and if this info is useful you can use them in your answer. Ready?",
-        selectedModel.messageSuffix,
-        selectedModel.assistantPrefix,
-        "I'm ready to answer!",
-        selectedModel.messageSuffix,
-        selectedModel.userPrefix,
-        query,
-        selectedModel.messageSuffix,
+        getMainPrompt(),
+        selectedModel.userSuffix,
         selectedModel.assistantPrefix,
       ].join("");
 
       let isAnswering = false;
 
-      const completion = await wllama.createCompletion(prompt, {
-        nPredict: 768,
+      let abortTextGeneration: (() => void) | undefined;
+
+      let wasInterrupted = false;
+
+      const unsubscribeFromTextGenerationInterruption =
+        onTextGenerationInterrupted(() => {
+          abortTextGeneration?.();
+          wasInterrupted = true;
+        });
+
+      await wllama.createCompletion(prompt, {
         sampling: selectedModel.sampling,
         onNewToken: (_token, _piece, currentText, { abortSignal }) => {
+          abortTextGeneration = abortSignal;
+
           if (!isAnswering) {
             isAnswering = true;
-            updateLoadingToast(messages.givingAnswer);
+            updateLoadingToast("Generating response...");
           }
 
           updateResponse(currentText);
 
-          if (currentText.includes(selectedModel.messageSuffix.trim())) {
-            abortSignal();
+          for (const stopString of selectedModel.stopStrings) {
+            if (currentText.includes(stopString)) {
+              updateResponse(currentText.replaceAll(stopString, ""));
+              abortSignal();
+            }
           }
         },
       });
 
-      updateResponse(
-        completion.replace(selectedModel.messageSuffix.trim(), ""),
-      );
-    }
+      unsubscribeFromTextGenerationInterruption();
 
-    if (getSummarizeLinksSetting()) {
-      updateLoadingToast(messages.summarizeLinks);
-
-      for (const [title, snippet, url] of getSearchResults()) {
-        const prompt = [
-          selectedModel.userPrefix,
-          "Hello!",
-          selectedModel.messageSuffix,
-          selectedModel.assistantPrefix,
-          "Hi! How can I help you?",
-          selectedModel.messageSuffix,
-          selectedModel.userPrefix,
-          ["Context:", `${title}: ${snippet}`].join("\n"),
-          "\n",
-          ["Question:", "What is this text about?"].join("\n"),
-          selectedModel.messageSuffix,
-          selectedModel.assistantPrefix,
-          ["Answer:", "This text is about"].join("\n"),
-        ].join("");
-
-        const completion = await wllama.createCompletion(prompt, {
-          nPredict: 128,
-          sampling: selectedModel.sampling,
-          onNewToken: (_token, _piece, currentText, { abortSignal }) => {
-            updateUrlsDescriptions({
-              ...getUrlsDescriptions(),
-              [url]: `This link is about ${currentText}`,
-            });
-
-            if (currentText.includes(selectedModel.messageSuffix.trim())) {
-              abortSignal();
-            }
-          },
-        });
-
-        updateUrlsDescriptions({
-          ...getUrlsDescriptions(),
-          [url]: `This link is about ${completion.replace(selectedModel.messageSuffix.trim(), "")}`,
-        });
-      }
+      if (wasInterrupted) updateResponse("");
     }
 
     await wllama.exit();
@@ -358,17 +304,23 @@ export namespace Engine {
       updateLoadingToast(messages.generatingResponse);
 
       let isAnswering = false;
+
       let response = "";
+
+      const unsubscribeFromTextGenerationInterruption =
+        onTextGenerationInterrupted(() => self.location.reload());
 
       await runCompletion(getMainPrompt(), (completionChunk) => {
         if (!isAnswering) {
           isAnswering = true;
-          updateLoadingToast(messages.givingAnswer);
+          updateLoadingToast("Generating response...");
         }
 
         response += completionChunk;
         updateResponse(response);
       });
+
+      unsubscribeFromTextGenerationInterruption();
 
       if (!endsWithASign(response)) {
         response += ".";
@@ -376,117 +328,36 @@ export namespace Engine {
       }
     }
 
-    if (getSummarizeLinksSetting()) {
-      updateLoadingToast(messages.summarizeLinks);
-
-      for (const [title, snippet, url] of getSearchResults()) {
-        let response = "";
-
-        await runCompletion(
-          await getLinkSummarizationPrompt([title, snippet, url]),
-          (completionChunk) => {
-            response += completionChunk;
-            updateUrlsDescriptions({
-              ...getUrlsDescriptions(),
-              [url]: response,
-            });
-          },
-        );
-
-        if (!endsWithASign(response)) {
-          response += ".";
-          updateUrlsDescriptions({
-            ...getUrlsDescriptions(),
-            [url]: response,
-          });
-        }
-      }
-    }
-
     await exitRatchet();
-  }
-
-  async function fetchPageContent(
-    url: string,
-    options?: {
-      maxLength?: number;
-    },
-  ) {
-    const jinaResponse = await fetch(`https://r.jina.ai/${url}`);
-
-    if (!jinaResponse) {
-      throw new Error("No response from server");
-    } else if (!jinaResponse.ok) {
-      throw new Error(`HTTP error! status: ${jinaResponse.status}`);
-    }
-
-    const text = await jinaResponse.text();
-
-    return text.trim().substring(0, options?.maxLength);
   }
 
   function endsWithASign(text: string) {
     return text.endsWith(".") || text.endsWith("!") || text.endsWith("?");
   }
 
-  function getMainPrompt(): string {
+  function getMainPrompt() {
     return [
       "Provide a concise response to the request below.",
-      "If the information from the Web Search Results below is useful, you can use it to complement your response. Otherwise, ignore it.",
+      "If the information from the web search results below is useful, you can use it to complement your response. Otherwise, ignore it.",
       "",
-      "Web Search Results:",
+      "Web search results:",
       "",
       getFormattedSearchResults(5),
       "",
       "Request:",
       "",
-      query,
+      getQuery(),
     ].join("\n");
   }
 
-  async function getLinkSummarizationPrompt([
-    title,
-    snippet,
-    url,
-  ]: SearchResults[0]) {
-    let prompt: string;
-
-    try {
-      const pageContent = await fetchPageContent(url, {
-        maxLength: Search.SUMMARIZE_LINKS_LIMIT_LENGTH as number,
-      });
-
-      prompt = [
-        `The context below is related to a link found when searching for "${query}":`,
-        "",
-        "[BEGIN OF CONTEXT]",
-        `Snippet: ${snippet}`,
-        "",
-        pageContent,
-        "[END OF CONTEXT]",
-        "",
-        "Tell me what this link is about and how it is related to the search?",
-        "",
-        "Note: Don't cite the link in your response. Just write a few sentences to indicate if it's worth visiting.",
-      ].join("\n");
-    } catch (error) {
-      prompt = [
-        `When searching for "${query}", this link was found: [${title}](${url} "${snippet}")`,
-        "",
-        "Tell me what this link is about and how it is related to the search?",
-        "",
-        "Note: Don't cite the link in your response. Just write a few sentences to indicate if it's worth visiting.",
-      ].join("\n");
-    }
-
-    return prompt;
-  }
-
-  function getFormattedSearchResults(limit?: number): string {
+  function getFormattedSearchResults(limit?: number) {
     return getSearchResults()
       .slice(0, limit)
-      .map(([title, snippet, url]) => `${title}\n${url}\n${snippet}`)
-      .join("\n\n");
+      .map(
+        ([title, snippet, url], index) =>
+          `${index + 1}. [${title}](${url} "${snippet}")`,
+      )
+      .join("\n");
   }
 
   async function getKeywords(text: string, limit?: number) {

@@ -113,11 +113,8 @@ const debouncedSearch = useCallback(
     try {
       updateQuery(query);
       navigate(`/?q=${encodeURIComponent(query)}`);
-      const searchResults = await search(query);
-      // Handle the search results as needed
     } catch (error: any) {
       console.error("Error performing search:", error);
-      // Handle the error, e.g., show an error message to the user
       if (error.message === "Unauthorized") {
         toast.error("Unauthorized. Please try again later.", {
           position: "top-right",
