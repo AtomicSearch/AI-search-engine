@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "vite preview",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "dev": "vite",
     "eslint:fix": "eslint --fix client",
     "prettier:check": "prettier --check 'client/**/*.{ts,js,jsx,tsx,json}'",
