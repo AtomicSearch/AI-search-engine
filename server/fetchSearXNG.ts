@@ -1,5 +1,7 @@
-import { CategoryEngine } from "../config/appInfo.config";
+import { strip as stripEmojis } from "node-emoji";
 import { convert as convertHtmlToPlainText } from "html-to-text";
+
+import { CategoryEngine } from "../config/appInfo.config";
 
 export async function fetchSearXNG(query: string, limit?: number) {
   try {
