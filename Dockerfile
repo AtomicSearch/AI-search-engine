@@ -26,7 +26,7 @@ COPY package*.json ./
 COPY ./.npmrc ./.npmrc
 
 # Copy the custom SearXNG settings file
-COPY custom-settings.yml ${SEARXNG_SETTINGS_FOLDER}/settings.yml
+#COPY custom-settings.yml ${SEARXNG_SETTINGS_FOLDER}/settings.yml
 
 # Install Node.js dependencies
 RUN npm ci
