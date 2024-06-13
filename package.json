@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@huggingface/hub": "^0.15.1",
-    "@mlc-ai/web-llm": "0.2.43",
+    "@mlc-ai/web-llm": "^0.2.46",
     "@ratchet-ml/ratchet-web": "^0.4.0",
     "@wllama/wllama": "^1.11.0",
     "create-pubsub": "^1.6.3",
@@ -27,7 +27,7 @@
     "markdown-to-jsx": "^7.3.2",
     "mobile-detect": "^1.4.5",
     "node-fetch": "^3.3.2",
-    "node-llama-cpp": "^3.0.0-beta.22",
+    "node-llama-cpp": "^2.8.11",
     "prettier": "^3.0.3",
     "rate-limiter-flexible": "^5.0.2",
     "react": "^18.2.0",
@@ -50,7 +50,7 @@
     "eslint": "^9.0.0",
     "glob": "^10.4.1",
     "globals": "^15.0.0",
-    "tsx": "^4.11.0",
+    "tsx": "^4.15.4",
     "typescript": "^5.0.2",
     "typescript-eslint": "^7.6.0",
     "vite": "^5.2.9"
