@@ -13,6 +13,7 @@ export enum Search {
   SUMMARIZE_LINKS_LIMIT_LENGTH = 2500,
   MAXIMUM_FREE_QUERY_WORDS = 10,
   MAXIMUM_FREE_QUERIES_PER_HOUR = 40,
+  SEARCH_URL = "http://127.0.0.1:8080/search",
 }
 
 // SearXNG engines

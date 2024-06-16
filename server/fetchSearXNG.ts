@@ -1,11 +1,12 @@
 import { strip as stripEmojis } from "node-emoji";
 import { convert as convertHtmlToPlainText } from "html-to-text";
 
-import { CategoryEngine } from "../config/appInfo.config";
+import { CategoryEngine, Search } from "../config/appInfo.config";
+import { logger } from "./logger";
 
 export async function fetchSearXNG(query: string, limit?: number) {
   try {
-    const url = new URL("http://127.0.0.1:8080/search");
+    const url = new URL(Search.SEARCH_URL);
 
     url.search = new URLSearchParams({
       q: query,
