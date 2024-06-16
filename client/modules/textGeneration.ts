@@ -1,23 +1,19 @@
-import { stripHtmlTags } from "../../utils/strip-tags";
 import { isWebGPUAvailable } from "./webGpu";
 import {
   updateQuery,
   updateSearchResults,
   getDisableAiResponseSetting,
-  getSummarizeLinksSetting,
   getUseLargerModelSetting,
   updateResponse,
   getSearchResults,
   updateUrlsDescriptions,
-  getUrlsDescriptions,
   getDisableWebGpuUsageSetting,
   getNumberOfThreadsSetting,
   getQuery,
   interruptTextGeneration,
   isDebugModeEnabled,
 } from "./pubSub";
-import { SearchResults, search } from "./search";
-import { query, debug } from "./urlParams";
+import { search } from "./search";
 import toast from "react-hot-toast";
 import { isRunningOnMobile } from "./mobileDetection";
 import { messages } from "./en.messages.constants";
@@ -43,7 +39,9 @@ export namespace Engine {
 
     const searchPromise = getSearchPromise(getQuery());
 
-    if (getDisableAiResponseSetting()) return;
+    if (getDisableAiResponseSetting()) {
+      return;
+    }
 
     if (isDebugModeEnabled()) {
       console.time("Response Generation Time");

@@ -31,7 +31,9 @@ export async function fetchSearXNG(query: string, limit?: number) {
       const uniqueUrls = new Set<string>();
 
       for (const result of results) {
-        if (uniqueUrls.has(result.url) || !result.content) continue;
+        if (uniqueUrls.has(result.url) || !result.content) {
+          continue;
+        }
 
         const title = convertHtmlToPlainText(result.title, {
           wordwrap: false,
@@ -47,7 +49,9 @@ export async function fetchSearXNG(query: string, limit?: number) {
           content = `${content.split("...Missing:")[0].trim()}...`;
         }
 
-        if (title === "" || content === "") continue;
+        if (title === "" || content === "") {
+          continue;
+        }
 
         const url = result.url;
 
