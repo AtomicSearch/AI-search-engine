@@ -64,7 +64,7 @@ export async function fetchSearXNG(query: string, limit?: number) {
 
     return searchResults;
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     return [];
   }
 }
