@@ -136,7 +136,8 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
     return null;
   }
 
-  const labels = I18n.DEFAULT_LANGUAGE_CODE === "en" ? en : {};
+  const labels =
+    I18n.DEFAULT_LANGUAGE_CODE === I18n.DEFAULT_LANGUAGE_CODE ? en : {};
 
   return (
     <Modal>
