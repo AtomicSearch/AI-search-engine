@@ -113,7 +113,7 @@ export const NotifyMeModal: React.FC<NotifyMeModalProps> = ({
       setPhoneNumber("" as Value);
 
       onSubmitSuccess();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error submitting form:", error);
       onSubmitError();
     }

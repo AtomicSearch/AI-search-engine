@@ -191,7 +191,7 @@ const debouncedSearch = useCallback(
                   }
                 }
                 throw new Error("Something happened. Please try again.");
-              } catch (e) {
+              } catch (e: unknown) {
                 toast.error("Something went wrong. Please try again later.", {
                   position: "top-right",
                   duration: Millisecond.TWO_SECOND,
