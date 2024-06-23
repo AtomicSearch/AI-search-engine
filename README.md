@@ -2,6 +2,8 @@
 
 AI search engine that let you quickly search queries such as `is this place good` or `doctor nearby me`, etc.
 
+![The Simplest AI Search Engine](media/massiveprediction-search-engine.png)
+
 ## History
 
 This project is a fork Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as payment gateway and specific configurations for the specific need of Atomic Search's specifications. The core project is currently still strongly based on the wonderful Victor Nogueira's project as a way to bootstrap quicker the project. Although this might change in the future when Massive Prediction will take a different path in the way the project wants to deliver the information.
@@ -25,7 +27,7 @@ Then, open http://localhost:7860 in your browser and start searching!
 
 ## Building and running from source
 
-You can build and run it from the source if you don't want to use MiniSearch's Docker Image. For that, clone this repository and run the following command:
+You can build and run it from the source if you don't want to use AtomicSearch's Docker Image. For that, clone this repository and run the following command:
 
 ```bash
 docker-compose -f docker-compose.production.yml up --build
