@@ -32,8 +32,8 @@ const TaglineText = styled.h2`
 const icons = [<SearchenginIcon />, <SearchIcon />];
 
 export const Tagline = () => {
-  const pickedUpTagline = useMemo(() => random(taglines), []);
-  const pickedUpIcons = useMemo(() => random(icons), []);
+  const pickedUpTagline = useMemo(() => random(taglines), []) as string;
+  const pickedUpIcons = useMemo(() => random(icons), []) as JSX.Element;
 
   return (
     <TaglineContainer>
