@@ -7,7 +7,9 @@ export async function downloadFileFromHuggingFaceRepository(
   hfRepoFile: string,
   localFilePath: string,
 ): Promise<void> {
-  if (fs.existsSync(localFilePath)) return;
+  if (fs.existsSync(localFilePath)) {
+    return;
+  }
 
   const downloadResponse = await downloadFile({
     repo: hfRepo,
