@@ -1,6 +1,7 @@
 import { fileURLToPath } from "url";
 import path from "node:path";
 import { getLlama } from "node-llama-cpp";
+
 import { downloadFileFromHuggingFaceRepository } from "./downloadFileFromHuggingFaceRepository";
 
 const loadModelPromise = loadModel();
@@ -19,8 +20,9 @@ export async function rankSearchResults(
 
   const documentsEmbeddings: number[][] = [];
 
-  const documents = searchResults.map(([title, snippet, url]) =>
-    `[${title}](${url} "${snippet.replaceAll('"', "'")}")`.toLocaleLowerCase(),
+  const documents = searchResults.map(
+    ([title, snippet, url]: [string, string, string]) =>
+      `[${title}](${url} "${snippet.replaceAll('"', "'")}")`.toLocaleLowerCase(),
   );
 
   for (const document of documents) {
