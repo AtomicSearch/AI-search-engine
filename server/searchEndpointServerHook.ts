@@ -48,7 +48,8 @@ export function searchEndpointServerHook<
           password: getSearchToken(),
           hash: token,
         });
-      } catch (error) {
+      } catch (error: unknown) {
+        console.log(error);
         void error;
       }
 
@@ -63,9 +64,9 @@ export function searchEndpointServerHook<
 
     try {
       await rateLimiter.consume(token);
-    } catch (error) {
-      // response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
-      // response.end("Too many requests.");
+    } catch (error: unknown) {
+      response.statusCode = StatusCodes.TOO_MANY_REQUESTS;
+      response.end("Too many requests.");
       return;
     }
 
@@ -84,7 +85,7 @@ export function searchEndpointServerHook<
       response.end(
         JSON.stringify(await rankSearchResults(query, searchResults)),
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error ranking search results:", error);
       response.setHeader("Content-Type", "application/json");
       response.end(JSON.stringify(searchResults));
