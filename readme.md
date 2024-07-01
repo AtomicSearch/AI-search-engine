@@ -1,6 +1,6 @@
 # Massive Prediction (AtomicSearch Engine)
 
-AI search engine that let you quickly search queries such as `is this place good` or `doctor nearby me`, etc.
+AI search engine that let you quickly search queries such as `is this cafe good`, `are these habits beneficial for productivity` or `pharmacies nearby me`, etc.
 
 ![The Simplest AI Search Engine](media/massiveprediction-search-engine.png)
 
