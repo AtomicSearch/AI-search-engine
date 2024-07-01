@@ -1,12 +1,12 @@
 # Massive Prediction (AtomicSearch Engine)
 
-AI search engine that let you quickly search queries such as `is this cafe good`, `are these habits beneficial for productivity` or `pharmacies nearby me`, etc.
+**Massive Prediction** is an AI search engine that lets you quickly search queries such as `is this cafe good`, `are these habits beneficial for productivity` or `pharmacies near me`, etc.
 
 ![The Simplest AI Search Engine](media/massiveprediction-search-engine.png)
 
 ## History
 
-This project is a fork Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as payment gateway and specific configurations for the specific need of Atomic Search's specifications. The core project is currently still strongly based on the wonderful Victor Nogueira's project as a way to bootstrap quicker the project. Although this might change in the future when Massive Prediction will take a different path in the way the project wants to deliver the information.
+This project is a fork of Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as payment gateway and specific configurations for the specific needs of Atomic Search's specifications. The core project is currently still strongly based on Victor Nogueira's wonderful project as a way to bootstrap the project quicker. Although this might change in the future when Massive Prediction takes a different path in the way the project wants to deliver the information.
 
 ## Features
 
