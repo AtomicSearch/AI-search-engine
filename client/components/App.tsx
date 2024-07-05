@@ -21,7 +21,6 @@ function InnerApp() {
     <>
       <Root>
         <Routes>
-
           <Route path={RoutePaths.SEARCH} element={<SearchPage />} />
           <Route path={RoutePaths.COMPARISON} element={<ComparisonPage />} />
           <Route path={RoutePaths.MISSION} element={<AboutMissionPage />} />
