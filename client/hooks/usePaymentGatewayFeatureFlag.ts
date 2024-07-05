@@ -1,4 +1,4 @@
-import { loadFeatureFlags } from "../../utils/loadFeatureFlags";
+import { loadFeatureFlags } from "../../utils/load-feature-flags";
 
 export const usePaymentGatewayFeatureFlag = (): boolean => {
   const featureFlags = loadFeatureFlags();
