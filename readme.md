@@ -2,7 +2,7 @@
 
 **Massive Prediction** is an AI search engine that lets you quickly search queries such as `is this cafe good`, `are these habits beneficial for productivity` or `pharmacies near me`, etc.
 
-![The Simplest AI Search Engine](media/massiveprediction-search-engine.png)
+![The Simplest AI Search Engine](media/massiveprediction-search-engine-generative-ai-result.png)
 
 ## History
 
