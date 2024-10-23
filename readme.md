@@ -49,4 +49,4 @@ docker pull ghcr.io/atomicsearch/ai-search-engine:main
 
 ## Shoutouts
 
-The foundation of the search engine is based on Victor Nogueira's open-source work. **AtomicSearch** is a fork of **MiniSearch**, a similar AI search engine but with different goals and usage.
+The foundation of the search engine is based on Victor Nogueira's open-source work. **AtomicSearch (AKA Massive Prediction)** is a fork of **MiniSearch**, a similar AI search engine but with different goals and usage.
