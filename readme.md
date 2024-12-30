@@ -18,6 +18,8 @@ This project is a fork of Victor Nogueira's MiniSearch (`felladrin/minisearch`).
 - **Efficient**: Models are loaded and cached only when needed
 - **Optimized**: Aims for the balance between size and performance
 - **Open-source**: [The code is available for inspection and contribution at GitHub](https://github.com/felladrin/MiniSearch)
+- **Anonymous**: All queries go anonymously to the determined search engine. Nothing else leaves your device.
+- **AI-powered**: The AI analyses the results, comments on them, and responds by summarising the information.
 
 ## Prerequisites
 
