@@ -6,7 +6,7 @@
 
 ## History
 
-This project is a fork of Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as instant search results, type-and-see, payment gateways, optional premium (behind paywall) features, waiting list, specific LLM and speed optimization, and specific configurations for the specific needs of Atomic Search's specifications. The core project is currently still strongly based on Victor Nogueira's wonderful project as a way to bootstrap the project quicker. Although this might change in the future when Massive Prediction takes a different path in the way the project wants to deliver the information.
+This project is a fork of Victor Nogueira's MiniSearch (`felladrin/minisearch`). AtomicSearch adds other features such as instant search results, type-and-see, payment gateways, optional premium (behind paywall) features, waiting list, mobile apps with Capacitor, specific LLM and speed optimization, and specific configurations for the specific needs of Atomic Search's specifications. The core project is currently still strongly based on Victor Nogueira's wonderful project as a way to bootstrap the project quicker. Although this might change in the future when Massive Prediction takes a different path in the way the project wants to deliver the information.
 
 ## Features
 
