@@ -1,6 +1,6 @@
-# Massive Prediction (AtomicSearch Engine)
+# Massive Prediction (AtomicSearch AI Engine)
 
-**Massive Prediction** is an AI search engine that lets you quickly search queries such as `is this cafe good`, `are these habits beneficial for productivity` or `pharmacies near me`, etc.
+**Massive Prediction** is an instant and personalized AI search engine that lets you quickly search queries such as "`is this café good`", "`are these habits beneficial for productivity`", or "`pharmacies near me`".
 
 ![The Simplest AI Search Engine](screenshots/massiveprediction-search-engine-generative-ai-result.png)
 
